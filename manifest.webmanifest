@@ -1,0 +1,16 @@
+{
+  "name": "Invoice Kit – E-Rechnung ohne Abo",
+  "short_name": "Invoice Kit",
+  "description": "E-Rechnungen (XRechnung, ZUGFeRD) erstellen, öffnen und prüfen – offline, ohne Konto, ohne Abo.",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f7f9",
+  "theme_color": "#1c2230",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }],
+  "shortcuts": [
+    { "name": "Rechnung schreiben", "url": "./" },
+    { "name": "E-Rechnung öffnen", "url": "anzeigen.html" }
+  ]
+}

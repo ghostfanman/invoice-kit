@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ghostfanman.github.io/invoice-kit/sitemap.xml

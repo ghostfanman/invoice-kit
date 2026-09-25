@@ -21,18 +21,24 @@ Die meisten Anbieter lösen das mit einem Cloud-Abo oder einer Gratis-Version mi
 
 ## Funktionen
 
-- **E-Rechnung im Format XRechnung 3.0** (UN/CEFACT CII, EN 16931) als XML-Datei
-- PDF-Rechnung über die Druckfunktion, auf **Deutsch oder Englisch**
+**Rechnungen schreiben**
+- **ZUGFeRD 2.3 / Factur-X** (Profil EN 16931): PDF/A-3b mit eingebetteter E-Rechnung – für Menschen lesbar, für Buchhaltungssoftware auslesbar
+- **XRechnung 3.0** (UN/CEFACT CII) als reine XML-Datei, z. B. für Behörden
+- **GiroCode** (EPC-QR-Code): Kunde scannt mit der Banking-App und überweist ohne Tippfehler
+- Rechnungssprachen: **Deutsch, Englisch, Französisch, Italienisch, Spanisch, Niederländisch, Polnisch** – inklusive der gesetzlichen Hinweise in der jeweiligen Sprache
 - Sieben Steuerfälle mit automatisch gedrucktem Pflichthinweis (siehe unten)
 - Unterschiedliche Steuersätze pro Position, Voreinstellungen für DE, AT, CH, GB, FR, IT, ES, NL, BE, PL, LU
-- Rechnungskorrektur / Storno mit Bezug auf die Originalrechnung
-- Leistungsdatum oder Leistungszeitraum, Skonto, Firmenangaben (Handelsregister, Geschäftsführung)
-- Fremdwährung mit Ausweis der Umsatzsteuer in Landeswährung
-- Pflichtfeld-Prüfung vor Export und Druck, fehlende Angaben werden markiert
-- Einheiten (Stück, Stunden, Tage, Monate, pauschal)
-- Automatisches Speichern im Browser, Sichern und Laden als JSON
-- Nächste Rechnungsnummer mit einem Klick
-- Offline nutzbar: `index.html` herunterladen und doppelklicken
+- Rechnungskorrektur / Storno, Leistungszeitraum, Skonto, Firmenangaben, Fremdwährung
+- Pflichtfeld-Prüfung vor jedem Export, mehrseitige PDFs mit Seitenzahlen
+
+**E-Rechnungen empfangen** ([anzeigen.html](https://ghostfanman.github.io/invoice-kit/anzeigen.html))
+- Öffnet XRechnung (CII und UBL) sowie ZUGFeRD-/Factur-X-PDFs und zeigt sie lesbar an
+- Prüft die Pflichtangaben für den Vorsteuerabzug und ob die Summen stimmen
+- Drucken und eingebettete XML speichern
+
+**Als App**
+- Installierbar („Zum Startbildschirm hinzufügen“), funktioniert danach auch offline
+- Keine Anmeldung, keine Cloud: alle Daten bleiben im Browser
 
 ## Rechtliche Pflichtangaben
 
@@ -49,6 +55,8 @@ Die meisten Anbieter lösen das mit einem Cloud-Abo oder einer Gratis-Version mi
 
 ## Geprüfte Qualität
 
+Alle ZUGFeRD-PDFs bestehen die PDF/A-3b-Prüfung (veraPDF, über 42.000 Einzelprüfungen) und die EN-16931-Regeln – getestet in allen sieben Steuerfällen und fünf Sprachen, mit Korrektur, Fremdwährung und 30-Positionen-Rechnungen über mehrere Seiten.
+
 Die erzeugten XRechnungen werden mit dem [Mustang-Validator](https://www.mustangproject.org/) gegen die offiziellen Schematron-Regeln von EN 16931 und XRechnung (KoSIT) geprüft. Getestet sind alle sieben Steuerfälle (Regelbesteuerung mit 19 % und 7 % gemischt, Kleinunternehmer, steuerfrei, Reverse Charge, innergemeinschaftliche Lieferung, Ausfuhr, nicht steuerbar), Rechnungskorrektur, Fremdwährung, Leistungszeitraum, Skonto und Firmenangaben. Eine Beispieldatei liegt bei: [`beispiel-xrechnung.xml`](beispiel-xrechnung.xml).
 
 Tipp: Jede Datei lässt sich zusätzlich kostenlos mit dem offiziellen [KoSIT-Validator](https://github.com/itplr-kosit/validator) prüfen.
@@ -57,7 +65,6 @@ Tipp: Jede Datei lässt sich zusätzlich kostenlos mit dem offiziellen [KoSIT-Va
 
 Einmal zahlen, für immer nutzen – kein Abo.
 
-- ZUGFeRD / Factur-X: PDF mit eingebetteter E-Rechnung
 - Kunden- und Artikelstamm
 - Eigenes Logo und Rechnungsdesigns
 - Angebote, Gutschriften und Mahnungen
@@ -81,4 +88,4 @@ Invoice Kit ist ein Hilfsmittel und keine Steuerberatung. Die Nutzung erfolgt oh
 
 ## Lizenz
 
-MIT
+MIT. Mitgelieferte Bibliotheken und Schriften: siehe [`vendor/LIZENZEN.txt`](vendor/LIZENZEN.txt).
