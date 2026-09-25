@@ -3,7 +3,7 @@
 **Rechnungen in 60 Sekunden – kostenlos, ohne Anmeldung, ohne Server.**
 Ein einziges HTML-File. Deine Daten verlassen nie deinen Browser.
 
-👉 **Live-Demo:** https://ghostfanman.github.io/invoice-kit/
+👉 **Online-Version:** https://ghostfanman.github.io/invoice-kit/
 
 ## Funktionen
 
@@ -16,7 +16,7 @@ Ein einziges HTML-File. Deine Daten verlassen nie deinen Browser.
 
 ## So funktioniert’s
 
-1. Öffne die [Live-Demo](https://ghostfanman.github.io/invoice-kit/) oder lade `index.html` herunter.
+1. Öffne die [Online-Version](https://ghostfanman.github.io/invoice-kit/) oder lade `index.html` herunter.
 2. Absender, Kunde und Positionen eintragen.
 3. **Als PDF drucken** – fertig.
 
@@ -26,13 +26,13 @@ Invoice Kit ist und bleibt kostenlos. Wenn es dir Zeit spart, freue ich mich üb
 
 - ⭐ Gib dem Projekt einen Stern
 - 💸 [GitHub Sponsors](https://github.com/sponsors/ghostfanman)
-- 🎨 **Pro-Paket** (in Planung): Premium-Designs, Logo-Upload, ZUGFeRD/XRechnung-Export, Angebots- & Mahnungsvorlagen
+- 🎨 **Pro-Paket** (in Planung): Premium-Designs, Logo hochladen, ZUGFeRD/XRechnung-Export, Angebots- & Mahnungsvorlagen
 
-Firmen, die Invoice Kit mit eigenem Branding einsetzen möchten: Custom-Anpassungen auf Anfrage – öffne einfach ein Issue.
+Firmen, die Invoice Kit mit eigenem Branding einsetzen möchten: Individuelle Anpassungen auf Anfrage – öffne einfach ein Issue.
 
 ## Geplante Funktionen
 
-- [ ] Logo-Upload
+- [ ] Logo hochladen
 - [ ] XRechnung / ZUGFeRD (E-Rechnungspflicht ab 2025/2027)
 - [ ] Angebote & Mahnungen
 - [ ] Mehrsprachigkeit (EN/DE)
