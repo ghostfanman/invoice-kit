@@ -5,24 +5,14 @@
     <ram:GuidelineSpecifiedDocumentContextParameter><ram:ID>urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0</ram:ID></ram:GuidelineSpecifiedDocumentContextParameter>
   </rsm:ExchangedDocumentContext>
   <rsm:ExchangedDocument>
-    <ram:ID>2026-001</ram:ID>
+    <ram:ID>2026-010</ram:ID>
     <ram:TypeCode>380</ram:TypeCode>
     <ram:IssueDateTime><udt:DateTimeString format="102">20260925</udt:DateTimeString></ram:IssueDateTime>
-    <ram:IncludedNote><ram:Content>Vielen Dank für Ihren Auftrag!</ram:Content></ram:IncludedNote>
+    <ram:IncludedNote><ram:Content>Danke!</ram:Content></ram:IncludedNote>
   </rsm:ExchangedDocument>
   <rsm:SupplyChainTradeTransaction>
     <ram:IncludedSupplyChainTradeLineItem>
       <ram:AssociatedDocumentLineDocument><ram:LineID>1</ram:LineID></ram:AssociatedDocumentLineDocument>
-      <ram:SpecifiedTradeProduct><ram:Name>Webdesign – Landingpage</ram:Name></ram:SpecifiedTradeProduct>
-      <ram:SpecifiedLineTradeAgreement><ram:NetPriceProductTradePrice><ram:ChargeAmount>850</ram:ChargeAmount></ram:NetPriceProductTradePrice></ram:SpecifiedLineTradeAgreement>
-      <ram:SpecifiedLineTradeDelivery><ram:BilledQuantity unitCode="LS">1</ram:BilledQuantity></ram:SpecifiedLineTradeDelivery>
-      <ram:SpecifiedLineTradeSettlement>
-        <ram:ApplicableTradeTax><ram:TypeCode>VAT</ram:TypeCode><ram:CategoryCode>S</ram:CategoryCode><ram:RateApplicablePercent>19</ram:RateApplicablePercent></ram:ApplicableTradeTax>
-        <ram:SpecifiedTradeSettlementLineMonetarySummation><ram:LineTotalAmount>850.00</ram:LineTotalAmount></ram:SpecifiedTradeSettlementLineMonetarySummation>
-      </ram:SpecifiedLineTradeSettlement>
-    </ram:IncludedSupplyChainTradeLineItem>
-    <ram:IncludedSupplyChainTradeLineItem>
-      <ram:AssociatedDocumentLineDocument><ram:LineID>2</ram:LineID></ram:AssociatedDocumentLineDocument>
       <ram:SpecifiedTradeProduct><ram:Name>Beratung</ram:Name></ram:SpecifiedTradeProduct>
       <ram:SpecifiedLineTradeAgreement><ram:NetPriceProductTradePrice><ram:ChargeAmount>90</ram:ChargeAmount></ram:NetPriceProductTradePrice></ram:SpecifiedLineTradeAgreement>
       <ram:SpecifiedLineTradeDelivery><ram:BilledQuantity unitCode="HUR">3</ram:BilledQuantity></ram:SpecifiedLineTradeDelivery>
@@ -31,14 +21,24 @@
         <ram:SpecifiedTradeSettlementLineMonetarySummation><ram:LineTotalAmount>270.00</ram:LineTotalAmount></ram:SpecifiedTradeSettlementLineMonetarySummation>
       </ram:SpecifiedLineTradeSettlement>
     </ram:IncludedSupplyChainTradeLineItem>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument><ram:LineID>2</ram:LineID></ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct><ram:Name>Buch</ram:Name></ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement><ram:NetPriceProductTradePrice><ram:ChargeAmount>19.99</ram:ChargeAmount></ram:NetPriceProductTradePrice></ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery><ram:BilledQuantity unitCode="C62">2</ram:BilledQuantity></ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax><ram:TypeCode>VAT</ram:TypeCode><ram:CategoryCode>S</ram:CategoryCode><ram:RateApplicablePercent>7</ram:RateApplicablePercent></ram:ApplicableTradeTax>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation><ram:LineTotalAmount>39.98</ram:LineTotalAmount></ram:SpecifiedTradeSettlementLineMonetarySummation>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
     <ram:ApplicableHeaderTradeAgreement>
-      <ram:BuyerReference>2026-001</ram:BuyerReference>
+      <ram:BuyerReference>2026-010</ram:BuyerReference>
       <ram:SellerTradeParty>
-      <ram:Name>Max Müller Design</ram:Name>
+      <ram:Name>Müller Design GmbH</ram:Name>
       <ram:DefinedTradeContact>
-        <ram:PersonName>Max Müller Design</ram:PersonName>
-        <ram:TelephoneUniversalCommunication><ram:CompleteNumber>+49 30 123456</ram:CompleteNumber></ram:TelephoneUniversalCommunication>
-        <ram:EmailURIUniversalCommunication><ram:URIID>max@example.de</ram:URIID></ram:EmailURIUniversalCommunication>
+        <ram:PersonName>Müller Design GmbH</ram:PersonName>
+        <ram:TelephoneUniversalCommunication><ram:CompleteNumber>+49 30 1</ram:CompleteNumber></ram:TelephoneUniversalCommunication>
+        <ram:EmailURIUniversalCommunication><ram:URIID>info@mueller.de</ram:URIID></ram:EmailURIUniversalCommunication>
       </ram:DefinedTradeContact>
       <ram:PostalTradeAddress>
         <ram:PostcodeCode>10115</ram:PostcodeCode>
@@ -46,23 +46,23 @@
         <ram:CityName>Berlin</ram:CityName>
         <ram:CountryID>DE</ram:CountryID>
       </ram:PostalTradeAddress>
-      <ram:URIUniversalCommunication><ram:URIID schemeID="EM">max@example.de</ram:URIID></ram:URIUniversalCommunication>
+      <ram:URIUniversalCommunication><ram:URIID schemeID="EM">info@mueller.de</ram:URIID></ram:URIUniversalCommunication>
       <ram:SpecifiedTaxRegistration><ram:ID schemeID="FC">12/345/67890</ram:ID></ram:SpecifiedTaxRegistration>
       <ram:SpecifiedTaxRegistration><ram:ID schemeID="VA">DE123456789</ram:ID></ram:SpecifiedTaxRegistration>
       </ram:SellerTradeParty>
       <ram:BuyerTradeParty>
-      <ram:Name>Kunde &amp; Söhne GmbH</ram:Name>
+      <ram:Name>Kunde GmbH</ram:Name>
       <ram:PostalTradeAddress>
         <ram:PostcodeCode>80331</ram:PostcodeCode>
         <ram:LineOne>Ring 5</ram:LineOne>
         <ram:CityName>München</ram:CityName>
         <ram:CountryID>DE</ram:CountryID>
       </ram:PostalTradeAddress>
-      <ram:URIUniversalCommunication><ram:URIID schemeID="EM">buchhaltung@kunde.de</ram:URIID></ram:URIUniversalCommunication>
+      <ram:URIUniversalCommunication><ram:URIID schemeID="EM">rb@kunde.de</ram:URIID></ram:URIUniversalCommunication>
       </ram:BuyerTradeParty>
     </ram:ApplicableHeaderTradeAgreement>
     <ram:ApplicableHeaderTradeDelivery>
-      <ram:ActualDeliverySupplyChainEvent><ram:OccurrenceDateTime><udt:DateTimeString format="102">20260925</udt:DateTimeString></ram:OccurrenceDateTime></ram:ActualDeliverySupplyChainEvent>
+      <ram:ActualDeliverySupplyChainEvent><ram:OccurrenceDateTime><udt:DateTimeString format="102">20260920</udt:DateTimeString></ram:OccurrenceDateTime></ram:ActualDeliverySupplyChainEvent>
     </ram:ApplicableHeaderTradeDelivery>
     <ram:ApplicableHeaderTradeSettlement>
       <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
@@ -71,22 +71,29 @@
         <ram:PayeePartyCreditorFinancialAccount><ram:IBANID>DE02120300000000202051</ram:IBANID></ram:PayeePartyCreditorFinancialAccount>
       </ram:SpecifiedTradeSettlementPaymentMeans>
       <ram:ApplicableTradeTax>
-        <ram:CalculatedAmount>212.80</ram:CalculatedAmount>
+        <ram:CalculatedAmount>51.30</ram:CalculatedAmount>
         <ram:TypeCode>VAT</ram:TypeCode>
-        <ram:BasisAmount>1120.00</ram:BasisAmount>
+        <ram:BasisAmount>270.00</ram:BasisAmount>
         <ram:CategoryCode>S</ram:CategoryCode>
         <ram:RateApplicablePercent>19</ram:RateApplicablePercent>
       </ram:ApplicableTradeTax>
+      <ram:ApplicableTradeTax>
+        <ram:CalculatedAmount>2.80</ram:CalculatedAmount>
+        <ram:TypeCode>VAT</ram:TypeCode>
+        <ram:BasisAmount>39.98</ram:BasisAmount>
+        <ram:CategoryCode>S</ram:CategoryCode>
+        <ram:RateApplicablePercent>7</ram:RateApplicablePercent>
+      </ram:ApplicableTradeTax>
       <ram:SpecifiedTradePaymentTerms>
-        <ram:Description>Zahlbar ohne Abzug bis 9.10.2026</ram:Description>
+        <ram:Description>Zahlbar ohne Abzug bis 09.10.2026.</ram:Description>
         <ram:DueDateDateTime><udt:DateTimeString format="102">20261009</udt:DateTimeString></ram:DueDateDateTime>
       </ram:SpecifiedTradePaymentTerms>
       <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
-        <ram:LineTotalAmount>1120.00</ram:LineTotalAmount>
-        <ram:TaxBasisTotalAmount>1120.00</ram:TaxBasisTotalAmount>
-        <ram:TaxTotalAmount currencyID="EUR">212.80</ram:TaxTotalAmount>
-        <ram:GrandTotalAmount>1332.80</ram:GrandTotalAmount>
-        <ram:DuePayableAmount>1332.80</ram:DuePayableAmount>
+        <ram:LineTotalAmount>309.98</ram:LineTotalAmount>
+        <ram:TaxBasisTotalAmount>309.98</ram:TaxBasisTotalAmount>
+        <ram:TaxTotalAmount currencyID="EUR">54.10</ram:TaxTotalAmount>
+        <ram:GrandTotalAmount>364.08</ram:GrandTotalAmount>
+        <ram:DuePayableAmount>364.08</ram:DuePayableAmount>
       </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
     </ram:ApplicableHeaderTradeSettlement>
   </rsm:SupplyChainTradeTransaction>

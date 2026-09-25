@@ -22,17 +22,34 @@ Die meisten Anbieter lösen das mit einem Cloud-Abo oder einer Gratis-Version mi
 ## Funktionen
 
 - **E-Rechnung im Format XRechnung 3.0** (UN/CEFACT CII, EN 16931) als XML-Datei
-- PDF-Rechnung über die Druckfunktion
-- Regelbesteuerung (19 % / 7 %) oder Kleinunternehmer nach § 19 UStG
-- Pflichtfeld-Prüfung vor dem Export, fehlende Angaben werden markiert
+- PDF-Rechnung über die Druckfunktion, auf **Deutsch oder Englisch**
+- Sieben Steuerfälle mit automatisch gedrucktem Pflichthinweis (siehe unten)
+- Unterschiedliche Steuersätze pro Position, Voreinstellungen für DE, AT, CH, GB, FR, IT, ES, NL, BE, PL, LU
+- Rechnungskorrektur / Storno mit Bezug auf die Originalrechnung
+- Leistungsdatum oder Leistungszeitraum, Skonto, Firmenangaben (Handelsregister, Geschäftsführung)
+- Fremdwährung mit Ausweis der Umsatzsteuer in Landeswährung
+- Pflichtfeld-Prüfung vor Export und Druck, fehlende Angaben werden markiert
 - Einheiten (Stück, Stunden, Tage, Monate, pauschal)
 - Automatisches Speichern im Browser, Sichern und Laden als JSON
 - Nächste Rechnungsnummer mit einem Klick
 - Offline nutzbar: `index.html` herunterladen und doppelklicken
 
+## Rechtliche Pflichtangaben
+
+| Rechtsgrundlage | Abgedeckt |
+| --- | --- |
+| § 14 Abs. 4 UStG (Deutschland): Name und Anschrift beider Parteien, Steuernummer oder USt-IdNr., Datum, fortlaufende Nummer, Menge und Art, Leistungszeitpunkt oder -zeitraum, Entgelt nach Steuersätzen, Skonto, Steuersatz und -betrag bzw. Befreiungshinweis, Aufbewahrungshinweis bei Grundstücksleistungen an Privatpersonen | ✅ |
+| § 14a UStG / Art. 226 MwSt-Richtlinie (EU): Reverse Charge, innergemeinschaftliche Lieferung (beide USt-IdNrn.), Steuerbefreiungen, Ausfuhr | ✅ |
+| Art. 230 MwSt-Richtlinie: Umsatzsteuer bei Fremdwährung in Landeswährung | ✅ |
+| § 35a GmbHG, § 80 AktG, § 37a HGB: Registergericht, Registernummer, Geschäftsführung | ✅ |
+| Österreich (§ 11 UStG): UID des Kunden ab 10.000 € brutto | ✅ Warnhinweis |
+| Schweiz (Art. 26 MWSTG), Vereinigtes Königreich (VAT Notice 700): allgemeine Pflichtangaben | ✅ im PDF |
+| Differenzbesteuerung, Reiseleistungen, Gutschriftverfahren, neue Fahrzeuge | ❌ noch nicht |
+| Länder mit staatlicher Echtzeit-Freigabe (z. B. Italien SDI, Polen KSeF, Mexiko CFDI, Indien, Saudi-Arabien) | ❌ nicht möglich ohne Anbindung an das staatliche System |
+
 ## Geprüfte Qualität
 
-Die erzeugten XRechnungen werden mit dem [Mustang-Validator](https://www.mustangproject.org/) gegen die offiziellen Schematron-Regeln von EN 16931 und XRechnung (KoSIT) geprüft – mit Regelbesteuerung, Kleinunternehmer-Fall und Sonderfällen (nur Steuernummer, Auslandskunde, Sonderzeichen, krumme Beträge). Eine Beispieldatei liegt bei: [`beispiel-xrechnung.xml`](beispiel-xrechnung.xml).
+Die erzeugten XRechnungen werden mit dem [Mustang-Validator](https://www.mustangproject.org/) gegen die offiziellen Schematron-Regeln von EN 16931 und XRechnung (KoSIT) geprüft. Getestet sind alle sieben Steuerfälle (Regelbesteuerung mit 19 % und 7 % gemischt, Kleinunternehmer, steuerfrei, Reverse Charge, innergemeinschaftliche Lieferung, Ausfuhr, nicht steuerbar), Rechnungskorrektur, Fremdwährung, Leistungszeitraum, Skonto und Firmenangaben. Eine Beispieldatei liegt bei: [`beispiel-xrechnung.xml`](beispiel-xrechnung.xml).
 
 Tipp: Jede Datei lässt sich zusätzlich kostenlos mit dem offiziellen [KoSIT-Validator](https://github.com/itplr-kosit/validator) prüfen.
 
