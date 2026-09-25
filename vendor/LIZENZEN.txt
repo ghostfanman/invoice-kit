@@ -1,0 +1,7 @@
+Drittanbieter-Bibliotheken
+
+pdf-lib 1.17.1 – MIT – https://github.com/Hopding/pdf-lib
+@pdf-lib/fontkit 1.1.1 – MIT – https://github.com/Hopding/fontkit
+qrcode-generator 2.0.4 – MIT – https://github.com/kazuhikoarase/qrcode-generator
+DejaVu Fonts 2.37 – freie Lizenz (Bitstream Vera / Arev) – https://dejavu-fonts.github.io/License.html
+sRGB-Farbprofil – erzeugt mit LittleCMS (Pillow ImageCms)
