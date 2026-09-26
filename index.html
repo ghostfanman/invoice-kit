@@ -615,7 +615,7 @@ $("reset").onclick=()=>{const s=state();
 function nextNum(n){const m=String(n).match(/(\d+)$/);return m?n.replace(/\d+$/,String(+m[1]+1).padStart(m[1].length,"0")):new Date().getFullYear()+"-001"}
 function load(s){
   if(s.small==="1"&&!s.taxCase)s.taxCase="KU";           // Übernahme aus Version 2
-  fields.forEach(f=>{if(s[f]!==undefined&&s[f]!==null)$(f).value=s[f]});checks.forEach(c=>$(c).checked=!!s[c]);
+  fields.forEach(f=>{if(s[f]!==undefined&&s[f]!==null)$(f).value=s[f]});checks.forEach(c=>$(c).checked=s[c]==null?$(c).defaultChecked:!!s[c]);
   if(!$("taxCase").value)$("taxCase").value="S";if(!$("docType").value)$("docType").value="380";if(!$("lang").value)$("lang").value="de";
   const r=s.vat?num(s.vat):defRate();
   items=(s.items||[]).map(i=>({unit:"C62",rate:r,...i}));renderItems();update()}
