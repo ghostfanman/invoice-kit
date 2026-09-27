@@ -44,23 +44,32 @@ export function addDays(iso, days) {
 }
 const HOME = {CH:'CHF',GB:'GBP',PL:'PLN',SE:'SEK',DK:'DKK',CZ:'CZK',HU:'HUF',RO:'RON',NO:'NOK'};
 export const home = s => HOME[(s.fromCountry || 'DE').toUpperCase()] || 'EUR';
+// Unentgeltliche Rechnung: Positionen zeigen den Warenwert, ein Nachlass von 100 % je Steuersatz
+// (Nachlass auf Belegebene, EN 16931 BG-20) setzt Netto, Steuer und Zahlbetrag auf null.
+export const FREE = Object.freeze({gift:'Geschenk',promo:'Werbezweck'});
+export const isFree = s => Object.hasOwn(FREE, s.free || '');
 export function totals(s) {
-  const tc = s.taxCase, number = v => num(v) ?? 0;
+  const tc = s.taxCase, number = v => num(v) ?? 0, free = isFree(s);
   const lines = (s.items || []).map(it => {
     const qty = number(it.qty), price = number(it.price), rate = tc === 'S' ? number(it.rate) : 0;
     return {...it, qty, price, rate, total: productCents(qty, price) / 100};
   });
   const groups = new Map();
   for (const line of lines) groups.set(line.rate, (groups.get(line.rate) || 0) + cents(line.total));
-  const breakdown = [...groups].map(([rate, basis]) => ({rate, basis: basis / 100,
-    tax: tc === 'S' ? productCents(basis / 100, rate, 0.01) / 100 : 0})).sort((a,b) => b.rate - a.rate);
-  const netCents = lines.reduce((a,l) => a + cents(l.total), 0);
+  const byRate = (a,b) => b.rate - a.rate;
+  const allowances = free ? [...groups].filter(([, basis]) => basis !== 0).map(([rate, basis]) => ({rate, amount: basis / 100})).sort(byRate) : [];
+  const breakdown = [...groups].map(([rate, basis]) => free ? {rate, basis: 0, tax: 0} : {rate, basis: basis / 100,
+    tax: tc === 'S' ? productCents(basis / 100, rate, 0.01) / 100 : 0}).sort(byRate);
+  const lineCents = lines.reduce((a,l) => a + cents(l.total), 0);
+  const allowanceCents = allowances.reduce((a,x) => a + cents(x.amount), 0);
+  const netCents = lineCents - allowanceCents;
   const taxCents = breakdown.reduce((a,b) => a + cents(b.tax), 0);
   if (!Number.isSafeInteger(netCents + taxCents)) throw new RangeError('Gesamtbetrag ist zu groß');
   const net = netCents / 100, tax = taxCents / 100, gross = (netCents + taxCents) / 100;
-  const sk = number(s.skonto), skDays = number(s.skontoDays), fx = number(s.fx);
+  const sk = free ? 0 : number(s.skonto), skDays = number(s.skontoDays), fx = number(s.fx);
   const discount = productCents(gross, sk, 0.01);
-  return {tc, lines, breakdown, net, tax, gross, dueDate:addDays(s.date, number(s.due)), sk, skDays,
+  return {tc, free, lines, lineTotal: lineCents / 100, allowances, allowance: allowanceCents / 100, breakdown, net, tax, gross,
+    dueDate:free ? '' : addDays(s.date, number(s.due)), sk, skDays,
     skDate:addDays(s.date,skDays), skPay:(netCents + taxCents - discount) / 100,
     fxNeeded:s.cur !== home(s) && tax !== 0, fx, taxHome:productCents(tax,fx) / 100};
 }
@@ -98,20 +107,26 @@ export const needsIBAN = code => code === '58' || code === '30';
 export function canGiroCode(s, t) { return s.qrCode && s.paymentMeans === '58' && s.cur === 'EUR' && validIBAN(s.iban) && t.gross > 0 && t.gross <= 999999999.99; }
 
 export function validateInvoice(s) {
-  const errors = [], add = (field,message) => errors.push({field,message});
-  const required = {from:'Name des Absenders',fromStreet:'Straße des Absenders',fromZip:'PLZ des Absenders',fromCity:'Ort des Absenders',fromCountry:'Land des Absenders',fromMail:'E-Mail des Absenders',fromPhone:'Telefon des Absenders',to:'Name des Empfängers',toStreet:'Straße des Empfängers',toZip:'PLZ des Empfängers',toCity:'Ort des Empfängers',toCountry:'Land des Empfängers',toMail:'E-Mail des Empfängers',num:'Rechnungsnummer',date:'Rechnungsdatum',serviceDate:'Leistungsdatum',due:'Zahlungsziel',cur:'Währung'};
+  const errors = [], add = (field,message) => errors.push({field,message}), free = isFree(s);
+  const required = {from:'Name des Absenders',fromStreet:'Straße des Absenders',fromZip:'PLZ des Absenders',fromCity:'Ort des Absenders',fromCountry:'Land des Absenders',fromMail:'E-Mail des Absenders',fromPhone:'Telefon des Absenders',to:'Name des Empfängers',toStreet:'Straße des Empfängers',toZip:'PLZ des Empfängers',toCity:'Ort des Empfängers',toCountry:'Land des Empfängers',toMail:'E-Mail des Empfängers',num:'Rechnungsnummer',date:'Rechnungsdatum',serviceDate:'Leistungsdatum',cur:'Währung'};
+  // Bei unentgeltlichen Rechnungen entfallen Zahlungsziel, Zahlungsart und Bankverbindung.
+  if (!free) required.due = 'Zahlungsziel';
   if (s.docType === '384') Object.assign(required,{refNum:'Nummer der korrigierten Rechnung',refDate:'Datum der korrigierten Rechnung'});
   if (s.taxCase === 'EX') required.exReason = 'Befreiungsgrund';
   if (['AE','K','G'].includes(s.taxCase)) required.vatId = 'USt-IdNr. des Absenders';
   if (['AE','K'].includes(s.taxCase)) required.toVatId = 'USt-IdNr. des Empfängers';
-  if (needsIBAN(s.paymentMeans)) required.iban = 'IBAN';
-  if (s.paymentMeans === '48') required.cardLast4 = 'Letzte vier Kartenziffern';
+  if (!free && needsIBAN(s.paymentMeans)) required.iban = 'IBAN';
+  if (!free && s.paymentMeans === '48') required.cardLast4 = 'Letzte vier Kartenziffern';
   for (const [key,label] of Object.entries(required)) if (isMissing(s[key])) add(key,`${label}: bitte ausfüllen.`);
-  if (!Object.hasOwn(PAYMENT,s.paymentMeans)) add('paymentMeans','Bitte eine unterstützte Zahlungsart wählen.');
-  if (s.paymentMeans === '58' && s.cur !== 'EUR') add('paymentMeans','SEPA benötigt EUR. Für Fremdwährung bitte Überweisung, Karte oder Barzahlung wählen.');
-  if (s.paymentMeans === '48' && !isMissing(s.cardLast4) && !/^\d{4}$/.test(s.cardLast4)) add('cardLast4','Bitte genau die letzten vier Kartenziffern eingeben.');
+  if (!isMissing(s.free) && !free) add('free','Bitte eine unterstützte Berechnung wählen.');
+  if (free && s.docType === '384') add('free','Unentgeltlich geht nur bei einer Rechnung, nicht bei einer Rechnungskorrektur.');
+  if (!free) {
+    if (!Object.hasOwn(PAYMENT,s.paymentMeans)) add('paymentMeans','Bitte eine unterstützte Zahlungsart wählen.');
+    if (s.paymentMeans === '58' && s.cur !== 'EUR') add('paymentMeans','SEPA benötigt EUR. Für Fremdwährung bitte Überweisung, Karte oder Barzahlung wählen.');
+    if (s.paymentMeans === '48' && !isMissing(s.cardLast4) && !/^\d{4}$/.test(s.cardLast4)) add('cardLast4','Bitte genau die letzten vier Kartenziffern eingeben.');
+  }
   for (const key of ['fromMail','toMail']) if (!isMissing(s[key]) && !validEmail(s[key])) add(key,'Bitte eine gültige E-Mail-Adresse eingeben, z. B. name@firma.de.');
-  if (needsIBAN(s.paymentMeans) && !isMissing(s.iban) && !validIBAN(s.iban)) add('iban','IBAN: Länderformat, Länge oder MOD-97-Prüfziffer ist ungültig.');
+  if (!free && needsIBAN(s.paymentMeans) && !isMissing(s.iban) && !validIBAN(s.iban)) add('iban','IBAN: Länderformat, Länge oder MOD-97-Prüfziffer ist ungültig.');
   if (!s.vatId && !s.taxNo) add('taxNo','Bitte Steuernummer oder USt-IdNr. des Absenders angeben.');
   for (const key of ['vatId','toVatId']) if (!isMissing(s[key]) && !validVAT(s[key])) add(key,'USt-IdNr.: Grundformat für dieses Land ungültig oder nicht unterstützt. Es findet keine Online-Prüfung statt.');
   for (const key of ['fromCountry','toCountry']) if (!isMissing(s[key]) && !validCountry(s[key])) add(key,'Bitte einen gültigen ISO-Ländercode eingeben, z. B. DE, AT oder CH.');
@@ -120,12 +135,14 @@ export function validateInvoice(s) {
   if (s.serviceEnd && s.serviceEnd < s.serviceDate) add('serviceEnd','Das Ende des Leistungszeitraums liegt vor dem Beginn.');
   if (s.docType === '384' && s.refDate > s.date) add('refDate','Die ursprüngliche Rechnung darf nicht nach der Korrektur datiert sein.');
   const due = num(s.due), sk = num(s.skonto);
-  if (due !== null && (!Number.isInteger(due) || due < 0 || due > 36500)) add('due','Zahlungsziel: bitte ganze Tage von 0 bis 36500 eingeben.');
-  if (!isMissing(s.due) && due === null) add('due','Zahlungsziel: bitte eine gültige Zahl eingeben.');
-  if (!isMissing(s.skonto) && (sk === null || sk < 0 || sk > 100 || r2(sk) !== sk)) add('skonto','Skonto muss zwischen 0 und 100 Prozent liegen, mit höchstens zwei Nachkommastellen.');
-  if (sk > 0 || !isMissing(s.skontoDays)) {
-    const days = num(s.skontoDays);
-    if (!Number.isInteger(days) || days < 0 || days > due || days > 36500) add('skontoDays','Skontofrist: ganze Tage ab 0, höchstens bis zum Zahlungsziel.');
+  if (!free) {
+    if (due !== null && (!Number.isInteger(due) || due < 0 || due > 36500)) add('due','Zahlungsziel: bitte ganze Tage von 0 bis 36500 eingeben.');
+    if (!isMissing(s.due) && due === null) add('due','Zahlungsziel: bitte eine gültige Zahl eingeben.');
+    if (!isMissing(s.skonto) && (sk === null || sk < 0 || sk > 100 || r2(sk) !== sk)) add('skonto','Skonto muss zwischen 0 und 100 Prozent liegen, mit höchstens zwei Nachkommastellen.');
+    if (sk > 0 || !isMissing(s.skontoDays)) {
+      const days = num(s.skontoDays);
+      if (!Number.isInteger(days) || days < 0 || days > due || days > 36500) add('skontoDays','Skontofrist: ganze Tage ab 0, höchstens bis zum Zahlungsziel.');
+    }
   }
   if (!['380','384'].includes(s.docType)) add('docType','Bitte Rechnung oder Rechnungskorrektur wählen.');
   if (!['S','KU','EX','AE','K','G','O'].includes(s.taxCase)) add('taxCase','Bitte einen unterstützten Steuerfall wählen.');

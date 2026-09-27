@@ -8,6 +8,7 @@ Invoice Kit erstellt CII-XML für XRechnung und ZUGFeRD-/Factur-X-PDFs mit einge
 
 - Rechnungsvorschau, XML-Export, PDF-Export, Drucken sowie JSON-Sicherung und Import.
 - Sieben Rechnungssprachen, mehrere Steuersätze, steuerfreie Fälle, Rechnungskorrekturen, Leistungszeiträume, Skonto und Fremdwährungen.
+- Unentgeltliche Rechnungen für Geschenke und Werbezwecke: Unter „Zahlung“ → „Berechnung“ auswählbar. Die Positionen zeigen den Warenwert, ein Nachlass von 100 % je Steuersatz setzt den Zahlbetrag auf 0,00. Zahlungsart, Zahlungsziel, Bankverbindung und GiroCode entfallen, im XML steht Zahlungsart 1 (nicht festgelegt). Ob die Zuwendung steuerliche Folgen hat, klärt das Werkzeug nicht.
 - SEPA-Überweisung (Code 58), Überweisung mit IBAN einschließlich Fremdwährung (30), Kartenzahlung (48) und Barzahlung (10).
 - Bei Kartenzahlung werden ausschließlich die letzten vier Kartenziffern erfasst. Lastschriften sind mangels Mandatsdaten nicht vorgesehen.
 - Ein GiroCode erscheint nur für eine positive EUR-SEPA-Überweisung mit gültiger IBAN-Prüfziffer.

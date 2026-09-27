@@ -323,6 +323,9 @@
     <button class="ghost" id="add">+ Position</button>
 
     <h2>Zahlung</h2><aside class="ik-tip hide" id="ikTip">Zahlungen aus dem Ausland: <a href="https://wise.prf.hn/click/camref:1110lMwVq" target="_blank" rel="sponsored noopener">Wise-Konto ansehen <span class="btn-ad">Anzeige</span></a> · <a href="/geld-ins-ausland">Optionen im Vergleich</a></aside>
+    <label for="free">Berechnung</label><select id="free" aria-describedby="freeHint"><option value="">Normal berechnen</option><option value="gift">Unentgeltlich: Geschenk (Nachlass 100 %)</option><option value="promo">Unentgeltlich: Werbezweck (Nachlass 100 %)</option></select>
+    <p id="freeHint" class="hint">Bei unentgeltlicher Leistung bleiben die Preise als Warenwert sichtbar. Die Rechnung zieht sie vollständig als Nachlass ab und weist 0,00 zur Zahlung aus. Zahlungsart, Zahlungsziel und GiroCode entfallen.</p>
+    <div id="payBox">
     <label for="paymentMeans">Zahlungsart</label><select id="paymentMeans"><option value="58">SEPA-Überweisung (EUR)</option><option value="30">Überweisung (IBAN, auch Fremdwährung)</option><option value="48">Kartenzahlung</option><option value="10">Barzahlung</option></select>
     <div id="cardBox" class="hide"><label for="cardLast4">Letzte vier Kartenziffern *</label><input id="cardLast4" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" autocomplete="off" aria-describedby="cardHint"><p id="cardHint" class="hint">Nur die letzten vier Ziffern, niemals die vollständige Kartennummer.</p></div>
     <div class="row">
@@ -335,6 +338,7 @@
     </div>
     <p class="hint">Ein vereinbarter Skonto ist Pflichtangabe (§ 14 Abs. 4 Nr. 7 UStG).</p>
     <label class="check" for="qrCode"><input type="checkbox" id="qrCode" checked> Zahlungs-QR-Code (GiroCode) aufdrucken: Kunde scannt und überweist ohne Tippfehler (nur EUR)</label>
+    </div>
 
     <h2>Hinweise</h2>
     <label class="check" for="keepNote"><input type="checkbox" id="keepNote"> Leistung an einem Grundstück für eine Privatperson (Hinweis auf 2 Jahre Aufbewahrungspflicht, § 14 Abs. 4 Nr. 9 UStG)</label>

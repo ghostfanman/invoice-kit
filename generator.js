@@ -1,10 +1,10 @@
-import {decimalText, num, home, totals, validateInvoice, PAYMENT, needsIBAN, canGiroCode, normalizeVAT} from './core.js';
+import {decimalText, num, home, totals, validateInvoice, PAYMENT, needsIBAN, canGiroCode, normalizeVAT, FREE} from './core.js';
 import {STORAGE_CHOICE, readDraft, clearInvoiceData, clearDrafts} from './storage.js';
 
 const $=id=>document.getElementById(id);
 const fields=["from","fromStreet","fromZip","fromCity","fromCountry","fromMail","fromPhone","vatId","taxNo","iban","bic","register","managers",
   "to","toStreet","toZip","toCity","toCountry","toMail","toVatId","buyerRef","docType","lang","refNum","refDate","num","date","serviceDate","serviceEnd",
-  "paymentMeans","cardLast4","taxCase","exReason","cur","fx","due","skonto","skontoDays","note"];
+  "free","paymentMeans","cardLast4","taxCase","exReason","cur","fx","due","skonto","skontoDays","note"];
 const checks=["keepNote","qrCode"];
 const fieldDefaults=Object.fromEntries(fields.map(f=>[f,$(f).value]));
 const KEY=document.body.dataset.storageKey || "invoice-kit-v3";
@@ -48,37 +48,51 @@ const L={
     ref:"Ihre Referenz",custVat:"USt-IdNr. des Kunden",desc:"Beschreibung",qty:"Menge",price:"Einzelpreis",vat:"USt.",sum:"Summe",net:"Netto",total:"Gesamt",
     vatOn:"USt. {r} % auf {b}",vatHome:"USt. in {c} (Kurs {x})",skonto:"Bei Zahlung bis {d} ({t} Tage) {p} % Skonto: zu zahlen {a}.",pay:"Zahlbar ohne Abzug bis {d}.",
     keep:"Sie sind gesetzlich verpflichtet, diese Rechnung zwei Jahre aufzubewahren (§ 14b Abs. 1 Satz 5 UStG).",
-    vatIdL:"USt-IdNr.",taxNoL:"Steuernr.",reg:"Register",mgr:"Geschäftsführung",qr:"Mit der Banking-App scannen und bezahlen"},
+    vatIdL:"USt-IdNr.",taxNoL:"Steuernr.",reg:"Register",mgr:"Geschäftsführung",qr:"Mit der Banking-App scannen und bezahlen",
+    sub:"Summe Positionen",allow:"Nachlass 100 % ({r})",gift:"Geschenk",promo:"Werbezweck",payable:"Zu zahlen",
+    freeGift:"Unentgeltliche Leistung als Geschenk. Es ist kein Betrag zu zahlen.",freePromo:"Unentgeltliche Leistung zu Werbezwecken. Es ist kein Betrag zu zahlen."},
   en:{inv:"Invoice",corr:"Credit note / corrected invoice",corrRef:"for invoice no. {n} dated {d}",no:"No.",date:"Invoice date",svc:"Date of supply",period:"Period of supply",due:"Due date",
     ref:"Your reference",custVat:"Customer VAT No.",desc:"Description",qty:"Qty",price:"Unit price",vat:"VAT",sum:"Amount",net:"Net",total:"Total",
     vatOn:"VAT {r} % on {b}",vatHome:"VAT in {c} (rate {x})",skonto:"If paid by {d} ({t} days), {p} % discount: pay {a}.",pay:"Payable without deduction by {d}.",
     keep:"You are legally required to keep this invoice for two years (Section 14b (1) German VAT Act).",
-    vatIdL:"VAT No.",taxNoL:"Tax No.",reg:"Register",mgr:"Managing director",qr:"Scan with your banking app to pay"},
+    vatIdL:"VAT No.",taxNoL:"Tax No.",reg:"Register",mgr:"Managing director",qr:"Scan with your banking app to pay",
+    sub:"Subtotal",allow:"Discount 100 % ({r})",gift:"Gift",promo:"Promotional purposes",payable:"Amount due",
+    freeGift:"Supplied free of charge as a gift. No payment is due.",freePromo:"Supplied free of charge for promotional purposes. No payment is due."},
   fr:{inv:"Facture",corr:"Facture rectificative",corrRef:"relative à la facture n° {n} du {d}",no:"N°",date:"Date de facture",svc:"Date de livraison",period:"Période de prestation",due:"Échéance",
     ref:"Votre référence",custVat:"N° TVA du client",desc:"Désignation",qty:"Qté",price:"Prix unitaire",vat:"TVA",sum:"Montant",net:"Total HT",total:"Total TTC",
     vatOn:"TVA {r} % sur {b}",vatHome:"TVA en {c} (taux {x})",skonto:"Escompte de {p} % en cas de paiement avant le {d} ({t} jours) : {a}.",pay:"Payable sans escompte au plus tard le {d}.",
     keep:"Vous êtes légalement tenu de conserver cette facture pendant deux ans (§ 14b UStG allemand).",
-    vatIdL:"N° TVA",taxNoL:"N° fiscal",reg:"Registre",mgr:"Gérant",qr:"Scannez avec votre appli bancaire pour payer"},
+    vatIdL:"N° TVA",taxNoL:"N° fiscal",reg:"Registre",mgr:"Gérant",qr:"Scannez avec votre appli bancaire pour payer",
+    sub:"Sous-total",allow:"Remise 100 % ({r})",gift:"Cadeau",promo:"Fins promotionnelles",payable:"Montant dû",
+    freeGift:"Prestation gratuite offerte en cadeau. Aucun montant n'est dû.",freePromo:"Prestation gratuite à des fins promotionnelles. Aucun montant n'est dû."},
   it:{inv:"Fattura",corr:"Nota di variazione",corrRef:"relativa alla fattura n. {n} del {d}",no:"N.",date:"Data fattura",svc:"Data della prestazione",period:"Periodo della prestazione",due:"Scadenza",
     ref:"Vostro riferimento",custVat:"P. IVA cliente",desc:"Descrizione",qty:"Qtà",price:"Prezzo unitario",vat:"IVA",sum:"Importo",net:"Imponibile",total:"Totale",
     vatOn:"IVA {r} % su {b}",vatHome:"IVA in {c} (cambio {x})",skonto:"Sconto del {p} % per pagamento entro il {d} ({t} giorni): {a}.",pay:"Pagabile senza sconto entro il {d}.",
     keep:"È obbligatorio conservare la presente fattura per due anni (§ 14b UStG tedesca).",
-    vatIdL:"P. IVA",taxNoL:"Cod. fiscale",reg:"Registro imprese",mgr:"Amministratore",qr:"Inquadra con l'app della banca per pagare"},
+    vatIdL:"P. IVA",taxNoL:"Cod. fiscale",reg:"Registro imprese",mgr:"Amministratore",qr:"Inquadra con l'app della banca per pagare",
+    sub:"Subtotale",allow:"Sconto 100 % ({r})",gift:"Omaggio",promo:"Scopi promozionali",payable:"Importo dovuto",
+    freeGift:"Prestazione gratuita in omaggio. Nessun importo da pagare.",freePromo:"Prestazione gratuita a scopo promozionale. Nessun importo da pagare."},
   es:{inv:"Factura",corr:"Factura rectificativa",corrRef:"de la factura n.º {n} del {d}",no:"N.º",date:"Fecha de factura",svc:"Fecha de la prestación",period:"Período de la prestación",due:"Vencimiento",
     ref:"Su referencia",custVat:"NIF-IVA del cliente",desc:"Descripción",qty:"Cant.",price:"Precio unitario",vat:"IVA",sum:"Importe",net:"Base imponible",total:"Total",
     vatOn:"IVA {r} % sobre {b}",vatHome:"IVA en {c} (tipo de cambio {x})",skonto:"Descuento del {p} % por pago hasta el {d} ({t} días): {a}.",pay:"Pagadero sin descuento hasta el {d}.",
     keep:"Está obligado legalmente a conservar esta factura durante dos años (§ 14b UStG alemana).",
-    vatIdL:"NIF-IVA",taxNoL:"N.º fiscal",reg:"Registro",mgr:"Administrador",qr:"Escanee con su app bancaria para pagar"},
+    vatIdL:"NIF-IVA",taxNoL:"N.º fiscal",reg:"Registro",mgr:"Administrador",qr:"Escanee con su app bancaria para pagar",
+    sub:"Subtotal",allow:"Descuento 100 % ({r})",gift:"Regalo",promo:"Fines promocionales",payable:"Importe a pagar",
+    freeGift:"Prestación gratuita como regalo. No hay ningún importe a pagar.",freePromo:"Prestación gratuita con fines promocionales. No hay ningún importe a pagar."},
   nl:{inv:"Factuur",corr:"Creditnota",corrRef:"bij factuur nr. {n} van {d}",no:"Nr.",date:"Factuurdatum",svc:"Leveringsdatum",period:"Leveringsperiode",due:"Vervaldatum",
     ref:"Uw referentie",custVat:"Btw-nr. klant",desc:"Omschrijving",qty:"Aantal",price:"Prijs per eenheid",vat:"Btw",sum:"Bedrag",net:"Subtotaal",total:"Totaal",
     vatOn:"Btw {r} % over {b}",vatHome:"Btw in {c} (koers {x})",skonto:"Bij betaling vóór {d} ({t} dagen) {p} % korting: te betalen {a}.",pay:"Te betalen zonder aftrek vóór {d}.",
     keep:"U bent wettelijk verplicht deze factuur twee jaar te bewaren (§ 14b Duitse UStG).",
-    vatIdL:"Btw-nr.",taxNoL:"Belastingnr.",reg:"Handelsregister",mgr:"Bestuurder",qr:"Scan met je bank-app om te betalen"},
+    vatIdL:"Btw-nr.",taxNoL:"Belastingnr.",reg:"Handelsregister",mgr:"Bestuurder",qr:"Scan met je bank-app om te betalen",
+    sub:"Subtotaal",allow:"Korting 100 % ({r})",gift:"Geschenk",promo:"Promotiedoeleinden",payable:"Te betalen",
+    freeGift:"Kosteloos geleverd als geschenk. Er hoeft niets te worden betaald.",freePromo:"Kosteloos geleverd voor promotiedoeleinden. Er hoeft niets te worden betaald."},
   pl:{inv:"Faktura",corr:"Faktura korygująca",corrRef:"do faktury nr {n} z dnia {d}",no:"Nr",date:"Data wystawienia",svc:"Data dostawy",period:"Okres świadczenia",due:"Termin płatności",
     ref:"Państwa numer referencyjny",custVat:"NIP UE nabywcy",desc:"Opis",qty:"Ilość",price:"Cena jedn.",vat:"VAT",sum:"Wartość",net:"Netto",total:"Razem",
     vatOn:"VAT {r} % od {b}",vatHome:"VAT w {c} (kurs {x})",skonto:"Przy płatności do {d} ({t} dni) rabat {p} %: do zapłaty {a}.",pay:"Płatne bez potrąceń do {d}.",
     keep:"Mają Państwo prawny obowiązek przechowywania tej faktury przez dwa lata (§ 14b niemieckiej UStG).",
-    vatIdL:"NIP UE",taxNoL:"Nr podatkowy",reg:"Rejestr",mgr:"Zarząd",qr:"Zeskanuj w aplikacji bankowej, aby zapłacić"}
+    vatIdL:"NIP UE",taxNoL:"Nr podatkowy",reg:"Rejestr",mgr:"Zarząd",qr:"Zeskanuj w aplikacji bankowej, aby zapłacić",
+    sub:"Suma pozycji",allow:"Rabat 100 % ({r})",gift:"Prezent",promo:"Cele promocyjne",payable:"Do zapłaty",
+    freeGift:"Świadczenie nieodpłatne jako prezent. Brak kwoty do zapłaty.",freePromo:"Świadczenie nieodpłatne w celach promocyjnych. Brak kwoty do zapłaty."}
 };
 
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c]));
@@ -116,28 +130,31 @@ function view(s){
   const dt=iso=>iso?new Date(iso+"T12:00:00").toLocaleDateString(loc):"";
   const nr=n=>n.toLocaleString(loc);
   const addr=(st,zip,city,c)=>[st,[zip,city].filter(Boolean).join(" "),c&&c.toUpperCase()!==(s.fromCountry||"").toUpperCase()?c.toUpperCase():""].filter(Boolean);
-  const meta=[[T.no,s.num],[T.date,dt(s.date)],s.serviceEnd?[T.period,`${dt(s.serviceDate)} bis ${dt(s.serviceEnd)}`]:[T.svc,dt(s.serviceDate)],[T.due,dt(t.dueDate)]];
+  const free=t.free?s.free:"";
+  const meta=[[T.no,s.num],[T.date,dt(s.date)],s.serviceEnd?[T.period,`${dt(s.serviceDate)} bis ${dt(s.serviceEnd)}`]:[T.svc,dt(s.serviceDate)]].concat(free?[]:[[T.due,dt(t.dueDate)]]);
   const legal=[legalText(s,t),s.keepNote?T.keep:""].filter(Boolean);
-  const totalsRows=[[T.net,money(t.net)]].concat(t.tc==="S"?t.breakdown.map(b=>[fmt(T.vatOn,{r:nr(b.rate),b:money(b.basis)}),money(b.tax)]):[]);
+  const totalsRows=(free?[[T.sub,money(t.lineTotal)],[fmt(T.allow,{r:T[free]}),money(-t.allowance)]]:[]).concat([[T.net,money(t.net)]]).concat(t.tc==="S"?t.breakdown.map(b=>[fmt(T.vatOn,{r:nr(b.rate),b:money(b.basis)}),money(b.tax)]):[]);
   const fxRow=t.fxNeeded&&t.fx?[fmt(T.vatHome,{c:home(s),x:t.fx}),money(t.taxHome,home(s))]:null;
-  const payText=(PAYMENT[s.paymentMeans]||"")+". "+fmt(T.pay,{d:dt(t.dueDate)})+(t.sk?" "+fmt(T.skonto,{d:dt(t.skDate),t:t.skDays,p:nr(t.sk),a:money(t.skPay)}):"");
+  const payText=free?T[free==="gift"?"freeGift":"freePromo"]:(PAYMENT[s.paymentMeans]||"")+". "+fmt(T.pay,{d:dt(t.dueDate)})+(t.sk?" "+fmt(T.skonto,{d:dt(t.skDate),t:t.skDays,p:nr(t.sk),a:money(t.skPay)}):"");
   const foot=[[s.from,addr(s.fromStreet,s.fromZip,s.fromCity,"").join(", "),s.vatId?`${T.vatIdL}: ${s.vatId}`:"",s.taxNo?`${T.taxNoL}: ${s.taxNo}`:""].filter(Boolean).join(" · "),
     [s.register?`${T.reg}: ${s.register}`:"",s.managers?`${T.mgr}: ${s.managers}`:""].filter(Boolean).join(" · "),
-    [needsIBAN(s.paymentMeans)&&s.iban?`IBAN: ${s.iban}`:"",needsIBAN(s.paymentMeans)&&s.bic?`BIC: ${s.bic}`:""].filter(Boolean).join(" · ")].filter(Boolean);
+    ...(free?[]:[[needsIBAN(s.paymentMeans)&&s.iban?`IBAN: ${s.iban}`:"",needsIBAN(s.paymentMeans)&&s.bic?`BIC: ${s.bic}`:""].filter(Boolean).join(" · ")])].filter(Boolean);
   return {t,T,lang,loc,money,
     title:s.docType==="384"?T.corr:T.inv, corrRef:s.docType==="384"?fmt(T.corrRef,{n:s.refNum,d:dt(s.refDate)}):"",
     meta, seller:[s.from,...addr(s.fromStreet,s.fromZip,s.fromCity,""),s.fromMail,s.fromPhone].filter(Boolean),
     buyer:[s.to,...addr(s.toStreet,s.toZip,s.toCity,s.toCountry),s.toVatId?`${T.custVat}: ${s.toVatId}`:"",s.buyerRef?`${T.ref}: ${s.buyerRef}`:""].filter(Boolean),
     head:[T.desc,T.qty,T.price].concat(t.tc==="S"?[T.vat]:[]).concat([T.sum]),
     rows:t.lines.map(l=>[l.desc,`${nr(l.qty)} ${(UNITS[l.unit]||{})[lang]||""}`.trim(),money(l.price)].concat(t.tc==="S"?[`${nr(l.rate)} %`]:[]).concat([money(l.total)])),
-    totalsRows,grand:[T.total,money(t.gross)],fxRow,legal,payText,note:s.note,foot,qr:epcPayload(s,t),qrLabel:T.qr};
+    totalsRows,grand:[free?T.payable:T.total,money(t.gross)],fxRow,legal,payText,note:s.note,foot,qr:epcPayload(s,t),qrLabel:T.qr};
 }
 
 /* ---------- Formular ---------- */
 function syncForm(){
   const tc=$("taxCase").value;
+  const free=!!FREE[$("free").value];
+  $("payBox").classList.toggle("hide",free);
   $("cardBox").classList.toggle("hide",$("paymentMeans").value!=="48");
-  $("iban").required=needsIBAN($("paymentMeans").value);
+  $("iban").required=!free&&needsIBAN($("paymentMeans").value);
   $("taxHint").textContent=HINT[tc];
   $("exBox").classList.toggle("hide",tc!=="EX");
   $("refBox").classList.toggle("hide",$("docType").value!=="384");
@@ -216,6 +233,7 @@ function warnings(s,t){
   if(t.tc==="G"&&EU.includes(tcC)) w.push("Ausfuhrlieferung gilt nur für Lieferungen außerhalb der EU.");
   if(fc!=="DE") w.push("XRechnung ist das deutsche Format. Für "+fc+" gelten ggf. eigene E-Rechnungsregeln: das PDF enthält die allgemeinen Pflichtangaben.");
   if(t.tc==="S"&&t.tax===0&&t.net!==0) w.push("Steuersatz 0 %: Wenn die Leistung steuerfrei ist, wähle besser einen passenden Steuerfall.");
+  if(t.free) w.push("Unentgeltliche Leistung: Ob für dich dabei Umsatzsteuer anfällt oder der Betriebsausgabenabzug begrenzt ist (etwa bei Geschenken an Geschäftspartner), hängt vom Einzelfall ab. Kläre das mit deiner Steuerberatung.");
   return w;
 }
 
@@ -273,7 +291,16 @@ function buildXML(s,profile="xrechnung"){
         <ram:CategoryCode>${cat}</ram:CategoryCode>
         <ram:RateApplicablePercent>${decimalText(b.rate)}</ram:RateApplicablePercent>
       </ram:ApplicableTradeTax>`).join("");   // BR-DE-14: Satz im Kopf immer angeben (bei O = 0)
-  const payText=`${PAYMENT[s.paymentMeans]}. Zahlbar ohne Abzug bis ${t.dueDate.split("-").reverse().join(".")}.`;
+  // Unentgeltlich: Zahlungsart 1 (nicht festgelegt), ohne Bankverbindung und Fälligkeit.
+  const means=t.free?"1":s.paymentMeans;
+  const payText=t.free?L.de[s.free==="gift"?"freeGift":"freePromo"]:`${PAYMENT[s.paymentMeans]}. Zahlbar ohne Abzug bis ${t.dueDate.split("-").reverse().join(".")}.`;
+  const allowances=t.allowances.map(x=>`
+      <ram:SpecifiedTradeAllowanceCharge>
+        <ram:ChargeIndicator><udt:Indicator>false</udt:Indicator></ram:ChargeIndicator>
+        <ram:ActualAmount>${a(x.amount)}</ram:ActualAmount>
+        <ram:Reason>Unentgeltlich: ${esc(L.de[s.free])}</ram:Reason>
+        <ram:CategoryTradeTax><ram:TypeCode>VAT</ram:TypeCode><ram:CategoryCode>${cat}</ram:CategoryCode>${rateEl(x.rate)}</ram:CategoryTradeTax>
+      </ram:SpecifiedTradeAllowanceCharge>`).join("");
   const skontoLine=t.sk?`#SKONTO#TAGE=${t.skDays}#PROZENT=${t.sk.toFixed(2)}#\n`:"";
   const period=s.serviceEnd?`
       <ram:BillingSpecifiedPeriod>
@@ -316,17 +343,18 @@ function buildXML(s,profile="xrechnung"){
       <ram:TaxCurrencyCode>${esc(home(s))}</ram:TaxCurrencyCode>`:""}
       <ram:InvoiceCurrencyCode>${esc(cur)}</ram:InvoiceCurrencyCode>
       <ram:SpecifiedTradeSettlementPaymentMeans>
-        <ram:TypeCode>${esc(s.paymentMeans)}</ram:TypeCode>${s.paymentMeans==="48"?`
-        <ram:ApplicableTradeSettlementFinancialCard><ram:ID>${esc(s.cardLast4)}</ram:ID></ram:ApplicableTradeSettlementFinancialCard>`:""}${needsIBAN(s.paymentMeans)?`
+        <ram:TypeCode>${esc(means)}</ram:TypeCode>${means==="48"?`
+        <ram:ApplicableTradeSettlementFinancialCard><ram:ID>${esc(s.cardLast4)}</ram:ID></ram:ApplicableTradeSettlementFinancialCard>`:""}${needsIBAN(means)?`
         <ram:PayeePartyCreditorFinancialAccount><ram:IBANID>${esc(vat(s.iban))}</ram:IBANID></ram:PayeePartyCreditorFinancialAccount>${s.bic?`
         <ram:PayeeSpecifiedCreditorFinancialInstitution><ram:BICID>${esc(vat(s.bic))}</ram:BICID></ram:PayeeSpecifiedCreditorFinancialInstitution>`:""}`:""}
-      </ram:SpecifiedTradeSettlementPaymentMeans>${taxes}${period}
+      </ram:SpecifiedTradeSettlementPaymentMeans>${taxes}${period}${allowances}
       <ram:SpecifiedTradePaymentTerms>
-        <ram:Description>${esc(skontoLine+payText)}</ram:Description>
-        <ram:DueDateDateTime>${d(t.dueDate)}</ram:DueDateDateTime>
+        <ram:Description>${esc(skontoLine+payText)}</ram:Description>${t.dueDate?`
+        <ram:DueDateDateTime>${d(t.dueDate)}</ram:DueDateDateTime>`:""}
       </ram:SpecifiedTradePaymentTerms>
       <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
-        <ram:LineTotalAmount>${a(t.net)}</ram:LineTotalAmount>
+        <ram:LineTotalAmount>${a(t.lineTotal)}</ram:LineTotalAmount>${t.allowances.length?`
+        <ram:AllowanceTotalAmount>${a(t.allowance)}</ram:AllowanceTotalAmount>`:""}
         <ram:TaxBasisTotalAmount>${a(t.net)}</ram:TaxBasisTotalAmount>
         <ram:TaxTotalAmount currencyID="${esc(cur)}">${a(t.tax)}</ram:TaxTotalAmount>${taxCur?`
         <ram:TaxTotalAmount currencyID="${esc(home(s))}">${a(t.taxHome)}</ram:TaxTotalAmount>`:""}

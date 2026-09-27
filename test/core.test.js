@@ -80,3 +80,21 @@ test('Berechnung verwendet ausschließlich das übergebene Modell',()=>{
 test('XML-Zahlen behalten kleine Dezimalwerte ohne Exponentialschreibweise',async()=>{
   const {decimalText}=await import('../core.js');assert.equal(decimalText(1e-7),'0.0000001');assert.equal(decimalText(-1e-7),'-0.0000001');assert.equal(decimalText(0),'0');assert.equal(decimalText(1e21),'1000000000000000000000');
 });
+test('Unentgeltlich: Warenwert bleibt, Nachlass je Steuersatz, Zahlbetrag null',()=>{
+  const s=invoice({free:'gift',items:[{desc:'A',qty:3,price:.335,rate:19,unit:'C62'},{desc:'B',qty:2,price:10,rate:7,unit:'C62'},{desc:'C',qty:1,price:0,rate:0,unit:'C62'}]});
+  const t=totals(s);
+  assert.equal(t.free,true);assert.equal(t.lineTotal,21.01);assert.equal(t.allowance,21.01);
+  assert.deepEqual(t.allowances,[{rate:19,amount:1.01},{rate:7,amount:20}],'Kein Nachlass für eine Steuergruppe ohne Betrag');
+  assert.deepEqual(t.breakdown,[{rate:19,basis:0,tax:0},{rate:7,basis:0,tax:0},{rate:0,basis:0,tax:0}]);
+  assert.equal(t.net,0);assert.equal(t.tax,0);assert.equal(t.gross,0);assert.equal(t.sk,0);assert.equal(t.dueDate,'');
+  assert.equal(canGiroCode(s,t),false);
+  // Zahlungsangaben sind nicht nötig und werden nicht geprüft.
+  assert.deepEqual(fields({...s,iban:'',due:'',paymentMeans:'',cardLast4:'x',skonto:'x',skontoDays:'x'}),[]);
+  assert.deepEqual(fields({...s,docType:'384',refNum:'1',refDate:'2026-09-01'}),['free']);
+  assert.deepEqual(fields({...s,free:'gratis'}),['free']);
+  const ku=totals(invoice({free:'promo',taxCase:'KU'}));
+  assert.deepEqual(ku.allowances,[{rate:0,amount:100}]);assert.equal(ku.gross,0);
+  const normal=totals(invoice());
+  assert.equal(normal.free,false);assert.deepEqual(normal.allowances,[]);assert.equal(normal.allowance,0);assert.equal(normal.lineTotal,normal.net);
+  assert.deepEqual(fields(invoice({iban:''})),['iban'],'Ohne Auswahl bleibt die IBAN Pflicht');
+});

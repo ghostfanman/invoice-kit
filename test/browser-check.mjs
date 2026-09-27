@@ -60,6 +60,21 @@ try {
     variants.push(await evaluate(`g.buildXML(${JSON.stringify(s)})`));
   }
   for(const extra of [{cur:'USD',fx:'0.92',paymentMeans:'30'},{docType:'384',refNum:'alt',refDate:'2026-09-01',items:[{desc:'Korrektur',qty:1,price:-100,rate:19,unit:'C62'}]},{skonto:'2',skontoDays:'7',serviceEnd:'2026-09-30'}])variants.push(await evaluate(`g.buildXML(${JSON.stringify(invoice(extra))})`));
+  // Unentgeltliche Rechnung: Warenwert sichtbar, Nachlass 100 % je Steuersatz, keine Zahlungsangaben.
+  const gift=invoice({free:'gift',iban:'',due:'',items:[{desc:'Muster',qty:2,price:50,rate:19,unit:'C62'},{desc:'Buch',qty:1,price:20,rate:7,unit:'C62'}]});
+  await evaluate(`g.load(${JSON.stringify(gift)})`);
+  assert.equal(await evaluate('g.check()'),true,'Unentgeltliche Rechnung ohne IBAN und Zahlungsziel gültig');
+  assert.deepEqual(await evaluate('[document.getElementById("payBox").classList.contains("hide"),document.querySelectorAll("#preview svg").length]'),[true,0]);
+  const giftText=await evaluate('document.getElementById("preview").textContent');
+  for(const text of ['Summe Positionen','Nachlass 100 % (Geschenk)','Zu zahlen','Unentgeltliche Leistung als Geschenk. Es ist kein Betrag zu zahlen.'])assert.ok(giftText.includes(text),text);
+  assert.ok(!giftText.includes('Fällig')&&!giftText.includes('IBAN'),'Keine Fälligkeit und keine Bankverbindung');
+  const giftXml=await evaluate('g.buildXML(g.state())');
+  assert.ok(giftXml.includes('<ram:TypeCode>1</ram:TypeCode>')&&!giftXml.includes('<ram:IBANID>')&&!giftXml.includes('<ram:DueDateDateTime>'),'Zahlungsart 1 ohne Konto und Fälligkeit');
+  assert.equal((giftXml.match(/<ram:SpecifiedTradeAllowanceCharge>/g)||[]).length,2,'Ein Nachlass je Steuersatz');
+  assert.ok(['<ram:LineTotalAmount>120.00</ram:LineTotalAmount>','<ram:AllowanceTotalAmount>120.00</ram:AllowanceTotalAmount>','<ram:TaxBasisTotalAmount>0.00</ram:TaxBasisTotalAmount>','<ram:DuePayableAmount>0.00</ram:DuePayableAmount>'].every(x=>giftXml.includes(x)));
+  variants.push(giftXml);
+  for(const extra of [{free:'promo',taxCase:'KU'},{free:'promo',taxCase:'O',lang:'en'},{free:'gift',taxCase:'K',toVatId:'ATU12345678',toCountry:'AT'}])variants.push(await evaluate(`g.buildXML(${JSON.stringify(invoice(extra))})`));
+  writeFileSync('.test-artifacts/geschenk.png',Buffer.from((await cmd('Page.captureScreenshot',{format:'png'})).data,'base64'));
   await evaluate(`g.load(${JSON.stringify(invoice())});await navigator.serviceWorker.ready`);
   mkdirSync('.test-artifacts',{recursive:true});
   writeFileSync('.test-artifacts/generator.png',Buffer.from((await cmd('Page.captureScreenshot',{format:'png',captureBeyondViewport:false})).data,'base64'));
@@ -76,11 +91,16 @@ try {
     const doc=await PDFLib.PDFDocument.load(bytes);return {bytes:Array.from(bytes),xml,pages:doc.getPageCount()};
   })()`);
   assert.ok(pdfResult.pages>1,`PDF: ${pdfResult.pages} Seiten, ${pdfResult.bytes.length} Bytes, XML-Positionen ${(pdfResult.xml.match(/IncludedSupplyChainTradeLineItem>/g)||[]).length/2}`);writeFileSync('.test-artifacts/rechnung.pdf',Buffer.from(pdfResult.bytes));writeFileSync('.test-artifacts/rechnung.xml',pdfResult.xml);
+  const giftPdf=await evaluate(`await (async()=>{const s=${JSON.stringify(gift)};const {buildZugferd}=await import('./zugferd.js');const bytes=await buildZugferd(s,g.view(s),g.buildXML(s,'en16931'),g.qrMatrix);return {bytes:Array.from(bytes),pages:(await PDFLib.PDFDocument.load(bytes)).getPageCount()}})()`);
+  assert.equal(giftPdf.pages,1,'PDF einer unentgeltlichen Rechnung');writeFileSync('.test-artifacts/rechnung-geschenk.pdf',Buffer.from(giftPdf.bytes));
   // Vorhandene Legacy-Entwürfe werden geladen, ohne Opt-in neu zu speichern.
   await evaluate(`localStorage.setItem('invoice-kit-v2',JSON.stringify(${JSON.stringify(invoice({num:'ALT-002'}))}));location.reload()`);
   await pause(300);await evaluate('window.g=await import("./generator.js")');assert.equal(await evaluate('document.getElementById("num").value'),'ALT-002');assert.equal(await evaluate('document.getElementById("saveDraft").checked'),false);
   await go('/anzeigen.html');await evaluate('window.v=await import("./viewer.js");window.vc=await import("./viewer-check.js")');
   const results=await evaluate(`(${JSON.stringify(variants)}).map(xml=>vc.checks(v.parseXml(xml)).filter(c=>c.cls==='bad'))`);assert.deepEqual(results,variants.map(()=>[]));
+  await evaluate(`v.render(v.parseXml(${JSON.stringify(giftXml)}))`);
+  const giftView=await evaluate('document.getElementById("inv").textContent');
+  for(const text of ['Summe Positionen','Nachlässe','keine Zahlungsart festgelegt'])assert.ok(giftView.includes(text),'Viewer: '+text);
   await evaluate(`v.render(v.parseXml(${JSON.stringify(pdfResult.xml)}));document.getElementById('result').classList.remove('hide')`);
   const extracted=await evaluate(`(await v.xmlFromPdf(new Uint8Array(${JSON.stringify(pdfResult.bytes)}))).text`);assert.equal(extracted,pdfResult.xml);
   assert.equal(await evaluate(`await (async()=>{const doc=await PDFLib.PDFDocument.load(new Uint8Array(${JSON.stringify(pdfResult.bytes)}));doc.catalog.delete(PDFLib.PDFName.of('Names'));const bytes=await doc.save();return (await v.xmlFromPdf(bytes)).text})()`),pdfResult.xml);

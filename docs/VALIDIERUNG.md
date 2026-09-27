@@ -9,7 +9,8 @@ Die Befehle in der README prüfen die Programmlogik, nicht die rechtliche Eignun
 | Zahlen | Fehlende Werte und 0 getrennt, strikte Zahlenkonvertierung, dezimale Cent-Rundung, Summen über gerundete Positionen und Steuergruppen |
 | Formular | Vollständige Anschriften, Datumswerte, Leistungszeitraum, Zahlungsziel, Skonto von 0 bis 100 Prozent, Vorzeichen und erforderliche Zahlungsdaten |
 | Identifikatoren | IBAN-Länge und MOD-97, übliche E-Mail-Formate, USt-ID-Grundformate der EU sowie CH, GB, XI und NO, lokale Länder- und Währungslisten |
-| Zahlung | UNCL-4461-Codes 10, 30, 48 und 58, letzte vier Kartenziffern, GiroCode nur für EUR-SEPA mit gültiger IBAN |
+| Zahlung | UNCL-4461-Codes 10, 30, 48 und 58, letzte vier Kartenziffern, GiroCode nur für EUR-SEPA mit gültiger IBAN. Unentgeltliche Rechnungen: Code 1 ohne Konto und Fälligkeit |
+| Unentgeltlich | Nachlass auf Belegebene (BG-20) je Steuersatz in Höhe der Positionssumme, Positionssumme minus Nachlässe gleich Netto 0,00, Steuergruppen mit Basis und Steuer 0,00, nicht bei Rechnungskorrekturen |
 | Viewer | CII und UBL, vollständige Adressen, fehlende Beträge, Positionssummen mit Preisbasis und Zu-/Abschlägen, Kopf-Nachlässe und -Zuschläge, Steuergruppen, Brutto, Vorauszahlung und Rundungsbetrag |
 | Datenschutz | Speicherwahl, Migration alter Entwürfe, gezielte Löschung eigener Schlüssel, Cache-Präfix und vollständige Offline-Abhängigkeiten |
 | Oberfläche | Eindeutige IDs, gültige Labelziele, Labels an allen Feldern; dynamische Positionsfelder zusätzlich im Browsertest |
@@ -29,7 +30,7 @@ Für einen belastbaren Nachweis müssen die tatsächlich exportierten Dateien ge
 2. **Mustang:** Das ZUGFeRD-/Factur-X-PDF und seine eingebettete XML mit [Mustangproject](https://www.mustangproject.org/) prüfen. Profil, Einbettung und Rechnungsregeln anhand des vollständigen Berichts beurteilen.
 3. **veraPDF:** Das PDF mit [veraPDF](https://verapdf.org/) gegen das deklarierte PDF/A-3b-Profil prüfen. PDF/A-Konformität allein bestätigt keine korrekte Rechnung oder XML.
 
-Zu prüfen sind insbesondere alle sieben Steuerfälle, gemischte Steuersätze, Korrekturen mit negativen Mengen beziehungsweise Preisen, Nullbeträge, Skonto, Fremdwährungen, alle Zahlungsarten und mehrseitige PDFs. Negative Preise bei Korrekturen werden im XML in positive Preise mit entsprechendem Mengenvorzeichen umgewandelt.
+Zu prüfen sind insbesondere alle sieben Steuerfälle, gemischte Steuersätze, Korrekturen mit negativen Mengen beziehungsweise Preisen, Nullbeträge, unentgeltliche Rechnungen mit Nachlass auf Belegebene und Zahlungsart 1, Skonto, Fremdwährungen, alle Zahlungsarten und mehrseitige PDFs. Negative Preise bei Korrekturen werden im XML in positive Preise mit entsprechendem Mengenvorzeichen umgewandelt.
 
 Diese externen Prüfungen sind nicht Teil des Node-Testlaufs. Ohne zugehörige Berichte darf kein Release als vollständig nach EN 16931, XRechnung, ZUGFeRD oder PDF/A validiert bezeichnet werden. Die Metadaten im PDF beschreiben das angestrebte Profil, keinen unabhängigen Prüfbeleg.
 

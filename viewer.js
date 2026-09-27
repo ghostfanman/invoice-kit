@@ -6,7 +6,7 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const TYPES={"380":"Rechnung","381":"Gutschrift","383":"Belastungsanzeige","384":"Rechnungskorrektur","386":"Vorauszahlungsrechnung","389":"Gutschrift (Gutschriftverfahren)","326":"Teilrechnung","875":"Teilrechnung (Bau)","876":"Teilschlussrechnung (Bau)","877":"Schlussrechnung (Bau)","751":"Rechnungsinformation"};
 const UNITS={C62:"Stk.",H87:"Stk.",XPP:"Stk.",EA:"Stk.",HUR:"Std.",MIN:"Min.",DAY:"Tage",WEE:"Wochen",MON:"Monate",ANN:"Jahre",LS:"pauschal",KGM:"kg",GRM:"g",TNE:"t",MTR:"m",KMT:"km",MTK:"m²",MTQ:"m³",LTR:"l",KWH:"kWh",SET:"Satz",PR:"Paar"};
 const CATS={S:"Normalsatz",Z:"Nullsatz",E:"steuerbefreit",AE:"Reverse Charge",K:"innergemeinschaftliche Lieferung",G:"Ausfuhr",O:"nicht steuerbar",L:"Kanarische Inseln",M:"Ceuta/Melilla"};
-const MEANS={"10":"Bar","30":"Überweisung","42":"Zahlung auf Bankkonto","48":"Kartenzahlung","49":"Lastschrift","57":"Dauerauftrag","58":"SEPA-Überweisung","59":"SEPA-Lastschrift","68":"Online-Zahlung","97":"Verrechnung","ZZZ":"sonstige"};
+const MEANS={"1":"keine Zahlungsart festgelegt","10":"Bar","30":"Überweisung","42":"Zahlung auf Bankkonto","48":"Kartenzahlung","49":"Lastschrift","57":"Dauerauftrag","58":"SEPA-Überweisung","59":"SEPA-Lastschrift","68":"Online-Zahlung","97":"Verrechnung","ZZZ":"sonstige"};
 let lastXml="",lastName="rechnung.xml";
 
 /* --- XML-Helfer (namespace-unabhängig über localName) --- */
@@ -134,7 +134,8 @@ function render(v){
     ${v.lines.map(l=>`<tr><td>${esc(l.id)}</td><td><strong>${esc(l.name)}</strong>${l.desc?`<div class="muted pre">${esc(l.desc)}</div>`:""}</td><td class="r">${l.qty===null?"":l.qty.toLocaleString("de-DE")} ${esc(UNITS[l.unit]||l.unit||"")}</td>
       <td class="r">${money(l.price)}</td><td class="r">${l.rate===null?"":l.rate.toLocaleString("de-DE")+" %"}</td><td class="r">${money(l.total)}</td></tr>`).join("")}
     </tbody></table></div>
-    <div class="tot"><div><span>Netto</span><span>${money(v.totals.net)}</span></div>
+    <div class="tot">${v.totals.allowance||v.totals.charge?`<div><span>Summe Positionen</span><span>${money(v.totals.lines)}</span></div>${v.totals.allowance?`<div><span>Nachlässe</span><span>${money(-v.totals.allowance)}</span></div>`:""}${v.totals.charge?`<div><span>Zuschläge</span><span>${money(v.totals.charge)}</span></div>`:""}`:""}
+      <div><span>Netto</span><span>${money(v.totals.net)}</span></div>
       ${v.taxes.map(t=>`<div><span>${t.cat==="S"||t.cat==="Z"?`USt. ${t.rate===null?"fehlt":t.rate.toLocaleString("de-DE")} % auf ${money(t.basis)}`:esc(CATS[t.cat]||t.cat)}</span><span>${money(t.tax)}</span></div>`).join("")}
       <div class="big"><span>Gesamt</span><span>${money(v.totals.gross)}</span></div>
       ${v.totals.prepaid?`<div><span>Bereits bezahlt</span><span>${money(v.totals.prepaid)}</span></div>`:""}
