@@ -3,17 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Invoice Kit – E-Rechnung (XRechnung) &amp; PDF-Rechnung kostenlos erstellen</title>
-<meta name="description" content="E-Rechnung kostenlos erstellen: ZUGFeRD-PDF und XRechnung 3.0 mit allen Pflichtangaben nach § 14 UStG und EU-Recht, GiroCode, Reverse Charge, 7 Sprachen. Ohne Anmeldung, ohne Abo, Daten bleiben im Browser.">
+<title>Invoice Kit: E-Rechnung (XRechnung) &amp; PDF-Rechnung kostenlos erstellen</title>
+<meta name="description" content="E-Rechnung kostenlos erstellen: ZUGFeRD-PDF und XRechnung 3.0 mit Eingabeprüfung, GiroCode, Reverse Charge, 7 Sprachen. Ohne Anmeldung, ohne Abo, Daten bleiben im Browser.">
 <meta name="keywords" content="E-Rechnung erstellen, XRechnung erstellen kostenlos, Rechnung Pflichtangaben, Reverse Charge Rechnung, innergemeinschaftliche Lieferung Rechnung, Rechnung Kleinunternehmer, Rechnung auf Englisch">
-<meta property="og:title" content="Invoice Kit – E-Rechnung kostenlos, ohne Abo, ohne Cloud">
-<meta property="og:description" content="XRechnung und PDF-Rechnung mit allen Pflichtangaben. Unbegrenzt, offline, Open Source.">
+<meta property="og:title" content="Invoice Kit: E-Rechnung kostenlos, ohne Abo, ohne Cloud">
+<meta property="og:description" content="XRechnung und PDF-Rechnung mit lokaler Eingabeprüfung. Unbegrenzt, offline, Open Source.">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://ghostfanman.github.io/invoice-kit/">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#1c2230">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Invoice Kit","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":"de","url":"https://ghostfanman.github.io/invoice-kit/","description":"E-Rechnungen im Format XRechnung und ZUGFeRD kostenlos erstellen, öffnen und prüfen. Ohne Anmeldung, ohne Abo, Daten bleiben im Browser.","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"featureList":["XRechnung 3.0","ZUGFeRD 2.3 / Factur-X (PDF/A-3)","GiroCode","Reverse Charge","7 Rechnungssprachen","E-Rechnung-Viewer"]}</script>
+<link rel="stylesheet" href="accessibility.css">
 <style>
 :root{--bg:#f6f7f9;--card:#fff;--ink:#1c2230;--muted:#6b7280;--line:#e5e7eb;--accent:#1d4ed8;--ok:#15803d;--err:#b91c1c;--warn:#b45309}
 *{box-sizing:border-box}
@@ -90,70 +91,76 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 
 <main>
   <section class="card form">
+    <h2>Lokale Daten</h2>
+    <label class="check" for="saveDraft"><input id="saveDraft" type="checkbox" aria-describedby="storageHint"> Entwurf auf diesem Gerät speichern</label>
+    <p id="storageHint" class="hint">Ohne Auswahl bleibt die Rechnung nur bis zum Schließen geöffnet. Gespeicherte Rechnungsdaten können auf gemeinsam genutzten Geräten für andere sichtbar bleiben. JSON-Sicherungen und Downloads musst du separat löschen.</p>
+    <button class="ghost" id="clearData">Alle lokal gespeicherten Invoice-Kit-Daten löschen</button>
+    <p id="storageStatus" class="hint" role="status"></p>
+
     <h2>Absender (du)</h2>
-    <input id="from" placeholder="Name / Firma *">
-    <input id="fromStreet" class="mt" placeholder="Straße und Hausnummer *">
+    <div><label for="from">Name / Firma *</label><input id="from" placeholder="Name / Firma *" autocomplete="section-seller organization"></div>
+    <div><label for="fromStreet">Straße und Hausnummer *</label><input id="fromStreet" class="mt" placeholder="Straße und Hausnummer *" autocomplete="section-seller street-address"></div>
     <div class="row3">
-      <input id="fromZip" class="mt" placeholder="PLZ *">
-      <input id="fromCity" class="mt" placeholder="Ort *">
-      <input id="fromCountry" class="mt" placeholder="Land" value="DE" maxlength="2" title="Ländercode, z. B. DE, AT, CH, GB">
+      <div><label for="fromZip">PLZ *</label><input id="fromZip" class="mt" placeholder="PLZ *" autocomplete="section-seller postal-code"></div>
+      <div><label for="fromCity">Ort *</label><input id="fromCity" class="mt" placeholder="Ort *" autocomplete="section-seller address-level2"></div>
+      <div><label for="fromCountry">Land *</label><input id="fromCountry" class="mt" placeholder="Land" value="DE" maxlength="2" title="Ländercode, z. B. DE, AT, CH, GB" autocomplete="section-seller country"></div>
     </div>
     <div class="row">
-      <input id="fromMail" class="mt" type="email" placeholder="E-Mail *">
-      <input id="fromPhone" class="mt" placeholder="Telefon *">
+      <div><label for="fromMail">E-Mail *</label><input id="fromMail" class="mt" type="email" placeholder="E-Mail *" autocomplete="section-seller email"></div>
+      <div><label for="fromPhone">Telefon *</label><input id="fromPhone" class="mt" placeholder="Telefon *" autocomplete="section-seller tel"></div>
     </div>
     <div class="row">
-      <div><label>USt-IdNr. / UID / VAT No.</label><input id="vatId" placeholder="DE123456789"></div>
-      <div><label>Steuernummer</label><input id="taxNo" placeholder="12/345/67890"></div>
+      <div><label for="vatId">USt-IdNr. / UID / VAT No.</label><input id="vatId" placeholder="DE123456789"></div>
+      <div><label for="taxNo">Steuernummer</label><input id="taxNo" placeholder="12/345/67890"></div>
     </div>
-    <p class="hint">Mindestens eins von beiden ist Pflicht (§ 14 Abs. 4 Nr. 2 UStG).</p>
+    <p class="hint">Bitte mindestens eine der beiden Angaben ausfüllen. USt-IdNrn. werden nur auf ihr Grundformat geprüft, ohne Online-Abfrage oder Bestätigung der Registrierung.</p>
     <div class="row">
-      <div><label>IBAN *</label><input id="iban"></div>
-      <div><label>BIC (optional)</label><input id="bic"></div>
+      <div><label for="iban">IBAN (bei Überweisung erforderlich)</label><input id="iban"></div>
+      <div><label for="bic">BIC (optional)</label><input id="bic"></div>
     </div>
     <details id="companyBox">
       <summary>Firmenangaben (Pflicht für GmbH, UG, AG, e.K., OHG, KG)</summary>
       <div class="row">
-        <div><label>Handelsregister</label><input id="register" placeholder="Amtsgericht Berlin HRB 12345"></div>
-        <div><label>Geschäftsführung / Inhaber</label><input id="managers" placeholder="Max Müller"></div>
+        <div><label for="register">Handelsregister</label><input id="register" placeholder="Amtsgericht Berlin HRB 12345"></div>
+        <div><label for="managers">Geschäftsführung / Inhaber</label><input id="managers" placeholder="Max Müller"></div>
       </div>
       <p class="hint">Nach § 35a GmbHG, § 80 AktG, § 37a HGB gehören Rechtsform, Sitz, Registergericht, Registernummer und Geschäftsführer auf Geschäftsbriefe. Rechtsform und Sitz stehen im Namen bzw. in der Anschrift.</p>
     </details>
 
     <h2>Empfänger (Kunde)</h2>
-    <input id="to" placeholder="Firma / Name *">
-    <input id="toStreet" class="mt" placeholder="Straße und Hausnummer">
+    <div><label for="to">Firma / Name *</label><input id="to" placeholder="Firma / Name *" autocomplete="section-buyer organization"></div>
+    <div><label for="toStreet">Straße und Hausnummer *</label><input id="toStreet" class="mt" placeholder="Straße und Hausnummer" autocomplete="section-buyer street-address"></div>
     <div class="row3">
-      <input id="toZip" class="mt" placeholder="PLZ *">
-      <input id="toCity" class="mt" placeholder="Ort *">
-      <input id="toCountry" class="mt" placeholder="Land" value="DE" maxlength="2">
+      <div><label for="toZip">PLZ *</label><input id="toZip" class="mt" placeholder="PLZ *" autocomplete="section-buyer postal-code"></div>
+      <div><label for="toCity">Ort *</label><input id="toCity" class="mt" placeholder="Ort *" autocomplete="section-buyer address-level2"></div>
+      <div><label for="toCountry">Land *</label><input id="toCountry" class="mt" placeholder="Land" value="DE" maxlength="2" autocomplete="section-buyer country"></div>
     </div>
     <div class="row">
-      <div><label>E-Mail des Kunden (für E-Rechnung) *</label><input id="toMail" type="email"></div>
-      <div><label>USt-IdNr. des Kunden</label><input id="toVatId" placeholder="z. B. ATU12345678"></div>
+      <div><label for="toMail">E-Mail des Kunden (für E-Rechnung) *</label><input id="toMail" autocomplete="section-buyer email" type="email"></div>
+      <div><label for="toVatId">USt-IdNr. des Kunden</label><input id="toVatId" placeholder="z. B. ATU12345678"></div>
     </div>
-    <label>Leitweg-ID / Käuferreferenz</label><input id="buyerRef" placeholder="nur falls vorhanden (Pflicht bei Behörden)">
+    <label for="buyerRef">Leitweg-ID / Käuferreferenz</label><input id="buyerRef" placeholder="nur falls vorhanden (Pflicht bei Behörden)">
 
     <h2>Rechnung</h2>
     <div class="row">
-      <div><label>Art</label><select id="docType"><option value="380">Rechnung</option><option value="384">Rechnungskorrektur / Storno</option></select></div>
-      <div><label>Sprache der Rechnung</label><select id="lang"><option value="de">Deutsch</option><option value="en">English</option><option value="fr">Français</option><option value="it">Italiano</option><option value="es">Español</option><option value="nl">Nederlands</option><option value="pl">Polski</option></select></div>
+      <div><label for="docType">Art</label><select id="docType"><option value="380">Rechnung</option><option value="384">Rechnungskorrektur / Storno</option></select></div>
+      <div><label for="lang">Sprache der Rechnung</label><select id="lang"><option value="de">Deutsch</option><option value="en">English</option><option value="fr">Français</option><option value="it">Italiano</option><option value="es">Español</option><option value="nl">Nederlands</option><option value="pl">Polski</option></select></div>
     </div>
     <div class="row" id="refBox">
-      <div><label>Korrigiert Rechnung Nr. *</label><input id="refNum"></div>
-      <div><label>vom *</label><input id="refDate" type="date"></div>
+      <div><label for="refNum">Korrigiert Rechnung Nr. *</label><input id="refNum"></div>
+      <div><label for="refDate">vom *</label><input id="refDate" type="date"></div>
     </div>
     <div class="row">
-      <div><label>Rechnungsnummer *</label><input id="num"></div>
-      <div><label>Rechnungsdatum *</label><input id="date" type="date"></div>
+      <div><label for="num">Rechnungsnummer *</label><input id="num"></div>
+      <div><label for="date">Rechnungsdatum *</label><input id="date" type="date"></div>
     </div>
     <div class="row">
-      <div><label>Leistungsdatum bzw. Beginn *</label><input id="serviceDate" type="date"></div>
-      <div><label>Leistungszeitraum bis (optional)</label><input id="serviceEnd" type="date"></div>
+      <div><label for="serviceDate">Leistungsdatum bzw. Beginn *</label><input id="serviceDate" type="date"></div>
+      <div><label for="serviceEnd">Leistungszeitraum bis (optional)</label><input id="serviceEnd" type="date"></div>
     </div>
 
     <h2>Umsatzsteuer</h2>
-    <label>Steuerfall</label>
+    <label for="taxCase">Steuerfall</label>
     <select id="taxCase">
       <option value="S">Normal: Umsatzsteuer wird berechnet</option>
       <option value="KU">Kleinunternehmer (§ 19 UStG)</option>
@@ -164,32 +171,34 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
       <option value="O">Nicht im Inland steuerbar (z. B. Leistung an Unternehmen außerhalb der EU)</option>
     </select>
     <p class="hint" id="taxHint"></p>
-    <div id="exBox"><label>Befreiungsgrund *</label><input id="exReason" placeholder="Steuerfrei gemäß § 4 Nr. 21 UStG"></div>
+    <div id="exBox"><label for="exReason">Befreiungsgrund *</label><input id="exReason" placeholder="Steuerfrei gemäß § 4 Nr. 21 UStG"></div>
     <div class="row">
-      <div><label>Währung</label><input id="cur" value="EUR" maxlength="3" list="curList"><datalist id="curList"><option>EUR</option><option>CHF</option><option>GBP</option><option>USD</option><option>PLN</option><option>SEK</option><option>DKK</option><option>CZK</option></datalist></div>
-      <div id="fxBox"><label id="fxLabel">Umrechnungskurs *</label><input id="fx" type="number" step="any" placeholder="z. B. 0.92"></div>
+      <div><label for="cur">Währung</label><input id="cur" value="EUR" maxlength="3" list="curList"><datalist id="curList"><option>EUR</option><option>CHF</option><option>GBP</option><option>USD</option><option>PLN</option><option>SEK</option><option>DKK</option><option>CZK</option></datalist></div>
+      <div id="fxBox"><label id="fxLabel" for="fx">Umrechnungskurs *</label><input id="fx" type="number" step="any" placeholder="z. B. 0.92"></div>
     </div>
 
     <h2>Positionen</h2>
-    <table class="items"><thead><tr><th>Leistung</th><th>Menge</th><th>Einheit</th><th>Einzelpreis netto</th><th class="rateCol">USt. %</th><th></th></tr></thead><tbody id="items"></tbody></table>
+    <div class="table-scroll"><table class="items"><thead><tr><th>Leistung</th><th>Menge</th><th>Einheit</th><th>Einzelpreis netto</th><th class="rateCol">USt. %</th><th></th></tr></thead><tbody id="items"></tbody></table></div>
     <datalist id="rateList"></datalist>
     <button class="ghost" id="add">+ Position</button>
 
     <h2>Zahlung</h2>
+    <label for="paymentMeans">Zahlungsart</label><select id="paymentMeans"><option value="58">SEPA-Überweisung (EUR)</option><option value="30">Überweisung (IBAN, auch Fremdwährung)</option><option value="48">Kartenzahlung</option><option value="10">Barzahlung</option></select>
+    <div id="cardBox" class="hide"><label for="cardLast4">Letzte vier Kartenziffern *</label><input id="cardLast4" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" autocomplete="off" aria-describedby="cardHint"><p id="cardHint" class="hint">Nur die letzten vier Ziffern, niemals die vollständige Kartennummer.</p></div>
     <div class="row">
-      <div><label>Zahlungsziel (Tage)</label><input id="due" type="number" value="14" min="0"></div>
+      <div><label for="due">Zahlungsziel (Tage)</label><input id="due" type="number" value="14" min="0"></div>
       <div></div>
     </div>
     <div class="row">
-      <div><label>Skonto % (optional)</label><input id="skonto" type="number" step="any" min="0" placeholder="2"></div>
-      <div><label>Skonto bei Zahlung innerhalb (Tage)</label><input id="skontoDays" type="number" min="0" placeholder="7"></div>
+      <div><label for="skonto">Skonto % (optional)</label><input id="skonto" type="number" step="any" min="0" max="100" placeholder="2"></div>
+      <div><label for="skontoDays">Skonto bei Zahlung innerhalb (Tage)</label><input id="skontoDays" type="number" min="0" placeholder="7"></div>
     </div>
     <p class="hint">Ein vereinbarter Skonto ist Pflichtangabe (§ 14 Abs. 4 Nr. 7 UStG).</p>
-    <label class="check"><input type="checkbox" id="qrCode" checked> Zahlungs-QR-Code (GiroCode) aufdrucken – Kunde scannt und überweist ohne Tippfehler (nur EUR)</label>
+    <label class="check" for="qrCode"><input type="checkbox" id="qrCode" checked> Zahlungs-QR-Code (GiroCode) aufdrucken: Kunde scannt und überweist ohne Tippfehler (nur EUR)</label>
 
     <h2>Hinweise</h2>
-    <label class="check"><input type="checkbox" id="keepNote"> Leistung an einem Grundstück für eine Privatperson (Hinweis auf 2 Jahre Aufbewahrungspflicht, § 14 Abs. 4 Nr. 9 UStG)</label>
-    <label>Notiz</label>
+    <label class="check" for="keepNote"><input type="checkbox" id="keepNote"> Leistung an einem Grundstück für eine Privatperson (Hinweis auf 2 Jahre Aufbewahrungspflicht, § 14 Abs. 4 Nr. 9 UStG)</label>
+    <label for="note">Notiz</label>
     <textarea id="note" placeholder="Vielen Dank für Ihren Auftrag!"></textarea>
 
     <div class="actions">
@@ -198,433 +207,27 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
       <button class="ghost" id="print">Drucken</button>
       <button class="ghost" id="export">Sichern (JSON)</button>
       <button class="ghost" id="importBtn">Laden (JSON)</button>
-      <input type="file" id="importFile" accept=".json" hidden>
+      <label for="importFile" class="sr-only">Rechnungsentwurf als JSON laden</label><input type="file" id="importFile" accept=".json" hidden>
       <button class="ghost" id="reset">Nächste Rechnung</button>
     </div>
-    <div id="warn"></div>
-    <div id="msg"></div>
+    <div id="warn" role="status"></div>
+    <div id="msg" role="status" aria-live="polite"></div>
   </section>
   <section id="preview" aria-label="Vorschau"></section>
 </main>
 
 <section class="info" aria-label="Häufige Fragen">
   <div class="card">
-    <div><h3>Ist das eine gültige E-Rechnung?</h3><p>Ja, in zwei Formaten: ZUGFeRD 2.3 / Factur-X (PDF/A-3 mit eingebetteter XML, für Menschen und Software lesbar) und XRechnung 3.0 (reines XML, Pflicht bei Behörden). Beide sind gegen die offiziellen Regeln geprüft.</p></div>
-    <div><h3>Sind alle Pflichtangaben drauf?</h3><p>Für die üblichen Fälle ja: Deutschland (§ 14, § 14a UStG) und EU (Art. 226 MwSt-Richtlinie), inklusive Reverse Charge, innergemeinschaftlicher Lieferung, Ausfuhr, Skonto und Firmenangaben, auf Deutsch oder Englisch. Nicht abgedeckt: Differenzbesteuerung, Reiseleistungen, Gutschriften im Gutschriftverfahren.</p></div>
-    <div><h3>Wo landen meine Daten?</h3><p>Nirgends. Invoice Kit läuft komplett in deinem Browser, ohne Server und ohne Konto. Über „Zum Startbildschirm hinzufügen“ wird es zur App, die auch offline funktioniert.</p></div>
+    <div><h3>Ist das eine gültige E-Rechnung?</h3><p>Das Tool erzeugt CII-XML für XRechnung und ZUGFeRD-/Factur-X-PDFs mit eingebetteter XML. Ob eine konkrete Datei alle Regeln erfüllt, muss extern mit KoSIT, Mustang und veraPDF geprüft werden.</p></div>
+    <div><h3>Sind alle Pflichtangaben drauf?</h3><p>Das Formular prüft ausgewählte Pflichtfelder und Zahlen. Den passenden Steuerfall musst du selbst bestimmen. Sonderfälle wie Differenzbesteuerung, Reiseleistungen und Gutschriftverfahren sind nicht abgedeckt.</p></div>
+    <div><h3>Wo landen meine Daten?</h3><p>Rechnungsdaten werden lokal im Browser verarbeitet. Du entscheidest, ob ein Entwurf auf diesem Gerät gespeichert wird. Über „Zum Startbildschirm hinzufügen“ wird es zur App, die auch offline funktioniert.</p></div>
     <div><h3>Was kostet es?</h3><p>Nichts, unbegrenzt viele Rechnungen. Die geplante Pro-Version (Einmalkauf statt Abo) bringt Kunden- und Artikelstamm, Logo, Angebote, Mahnungen und ein Rechnungsarchiv.</p></div>
   </div>
 </section>
 
-<footer>Invoice Kit · Open Source (MIT) · Keine Steuerberatung, ohne Gewähr – im Zweifel Steuerberater fragen.</footer>
+<footer>Invoice Kit · Open Source (MIT) · Keine Steuerberatung, ohne Gewähr: im Zweifel Steuerberater fragen.</footer>
 
 <script src="vendor/qrcode.js"></script>
-<script>
-const $=id=>document.getElementById(id);
-const fields=["from","fromStreet","fromZip","fromCity","fromCountry","fromMail","fromPhone","vatId","taxNo","iban","bic","register","managers",
-  "to","toStreet","toZip","toCity","toCountry","toMail","toVatId","buyerRef","docType","lang","refNum","refDate","num","date","serviceDate","serviceEnd",
-  "taxCase","exReason","cur","fx","due","skonto","skontoDays","note"];
-const checks=["keepNote","qrCode"];
-const KEY="invoice-kit-v3";
-const RATES={DE:[19,7,0],AT:[20,13,10,0],CH:[8.1,3.8,2.6,0],GB:[20,5,0],FR:[20,10,5.5,2.1],IT:[22,10,5,4],ES:[21,10,4],NL:[21,9,0],BE:[21,12,6],PL:[23,8,5],LU:[17,14,8,3]};
-const HOME={CH:"CHF",GB:"GBP",PL:"PLN",SE:"SEK",DK:"DKK",CZ:"CZK",HU:"HUF",RO:"RON",BG:"BGN",NO:"NOK"};
-const UNITS={C62:{de:"Stk.",en:"pcs",fr:"pce",it:"pz",es:"ud.",nl:"st.",pl:"szt."},HUR:{de:"Std.",en:"hrs",fr:"h",it:"ore",es:"h",nl:"uur",pl:"godz."},
-  DAY:{de:"Tage",en:"days",fr:"jours",it:"giorni",es:"días",nl:"dagen",pl:"dni"},MON:{de:"Monate",en:"months",fr:"mois",it:"mesi",es:"meses",nl:"maanden",pl:"mies."},
-  LS:{de:"pauschal",en:"lump sum",fr:"forfait",it:"forfait",es:"global",nl:"forfait",pl:"ryczałt"}};
-const LOCALE={de:"de-DE",en:"en-GB",fr:"fr-FR",it:"it-IT",es:"es-ES",nl:"nl-NL",pl:"pl-PL"};
-let items=[];
-
-/* Rechtlich vorgeschriebene Hinweise je Steuerfall (Art. 226 Nr. 11/11a MwSt-Richtlinie, § 14a UStG) */
-const TAXTEXT={
-  KU:{de:"Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.",en:"No VAT is charged under the small business scheme (Section 19 German VAT Act).",
-      fr:"TVA non applicable, régime des petites entreprises (§ 19 UStG allemand).",it:"Operazione senza IVA ai sensi del regime dei piccoli imprenditori (§ 19 UStG tedesca).",
-      es:"Sin IVA: régimen de pequeños empresarios (§ 19 UStG alemana).",nl:"Geen btw: kleineondernemersregeling (§ 19 Duitse UStG).",pl:"Bez VAT: zwolnienie dla małych przedsiębiorców (§ 19 niemieckiej UStG)."},
-  AE:{de:"Steuerschuldnerschaft des Leistungsempfängers (Reverse Charge).",en:"Reverse charge: VAT to be accounted for by the recipient (Art. 196 Directive 2006/112/EC).",
-      fr:"Autoliquidation : TVA due par le preneur (art. 196 directive 2006/112/CE).",it:"Inversione contabile (art. 196 direttiva 2006/112/CE).",
-      es:"Inversión del sujeto pasivo (art. 196 Directiva 2006/112/CE).",nl:"Btw verlegd (art. 196 Richtlijn 2006/112/EG).",pl:"Odwrotne obciążenie (art. 196 dyrektywy 2006/112/WE)."},
-  K:{de:"Steuerfreie innergemeinschaftliche Lieferung (§ 4 Nr. 1b i. V. m. § 6a UStG).",en:"Exempt intra-Community supply (Art. 138 Directive 2006/112/EC).",
-      fr:"Exonération de TVA, livraison intracommunautaire (art. 138 directive 2006/112/CE).",it:"Cessione intracomunitaria non imponibile (art. 138 direttiva 2006/112/CE).",
-      es:"Entrega intracomunitaria exenta (art. 138 Directiva 2006/112/CE).",nl:"Vrijgestelde intracommunautaire levering (art. 138 Richtlijn 2006/112/EG).",pl:"Wewnątrzwspólnotowa dostawa towarów zwolniona z VAT (art. 138 dyrektywy 2006/112/WE)."},
-  G:{de:"Steuerfreie Ausfuhrlieferung (§ 4 Nr. 1a i. V. m. § 6 UStG).",en:"VAT-exempt export supply (Art. 146 Directive 2006/112/EC).",
-      fr:"Exonération de TVA, exportation (art. 146 directive 2006/112/CE).",it:"Esportazione non imponibile (art. 146 direttiva 2006/112/CE).",
-      es:"Exportación exenta (art. 146 Directiva 2006/112/CE).",nl:"Vrijgestelde uitvoer (art. 146 Richtlijn 2006/112/EG).",pl:"Eksport zwolniony z VAT (art. 146 dyrektywy 2006/112/WE)."},
-  O:{de:"Nicht im Inland steuerbare Leistung. Die Steuer schuldet ggf. der Leistungsempfänger nach dem Recht seines Landes.",en:"Not subject to German VAT; place of supply outside Germany. Any VAT is due by the recipient under local law.",
-      fr:"Opération non soumise à la TVA allemande ; lieu de la prestation hors d'Allemagne.",it:"Operazione non soggetta all'IVA tedesca; luogo della prestazione fuori dalla Germania.",
-      es:"Operación no sujeta al IVA alemán; lugar de prestación fuera de Alemania.",nl:"Niet onderworpen aan Duitse btw; plaats van dienst buiten Duitsland.",pl:"Transakcja niepodlegająca niemieckiemu VAT; miejsce świadczenia poza Niemcami."}
-};
-const HINT={
-  S:"Normalfall im Inland. Der Steuersatz kann je Position unterschiedlich sein.",
-  KU:"Kein Steuerausweis. Der Pflichthinweis wird automatisch gedruckt.",
-  EX:"Z. B. Heilbehandlung, Unterricht, Vermietung. Den genauen Paragrafen als Befreiungsgrund angeben.",
-  AE:"Die USt-IdNr. des Kunden und deine eigene sind Pflicht. Der Hinweis „Steuerschuldnerschaft des Leistungsempfängers“ wird gedruckt.",
-  K:"Warenlieferung an ein Unternehmen in einem anderen EU-Land. Beide USt-IdNrn. sind Pflicht.",
-  G:"Warenlieferung in ein Land außerhalb der EU. Deine USt-IdNr. ist für die E-Rechnung Pflicht. Ausfuhrnachweis aufbewahren.",
-  O:"Z. B. Beratung oder Software für ein Unternehmen in den USA oder der Schweiz."
-};
-const L={
-  de:{inv:"Rechnung",corr:"Rechnungskorrektur",corrRef:"zu Rechnung Nr. {n} vom {d}",no:"Nr.",date:"Rechnungsdatum",svc:"Leistungsdatum",period:"Leistungszeitraum",due:"Fällig",
-    ref:"Ihre Referenz",custVat:"USt-IdNr. des Kunden",desc:"Beschreibung",qty:"Menge",price:"Einzelpreis",vat:"USt.",sum:"Summe",net:"Netto",total:"Gesamt",
-    vatOn:"USt. {r} % auf {b}",vatHome:"USt. in {c} (Kurs {x})",skonto:"Bei Zahlung bis {d} ({t} Tage) {p} % Skonto: zu zahlen {a}.",pay:"Zahlbar ohne Abzug bis {d}.",
-    keep:"Sie sind gesetzlich verpflichtet, diese Rechnung zwei Jahre aufzubewahren (§ 14b Abs. 1 Satz 5 UStG).",
-    vatIdL:"USt-IdNr.",taxNoL:"Steuernr.",reg:"Register",mgr:"Geschäftsführung",qr:"Mit der Banking-App scannen und bezahlen"},
-  en:{inv:"Invoice",corr:"Credit note / corrected invoice",corrRef:"for invoice no. {n} dated {d}",no:"No.",date:"Invoice date",svc:"Date of supply",period:"Period of supply",due:"Due date",
-    ref:"Your reference",custVat:"Customer VAT No.",desc:"Description",qty:"Qty",price:"Unit price",vat:"VAT",sum:"Amount",net:"Net",total:"Total",
-    vatOn:"VAT {r} % on {b}",vatHome:"VAT in {c} (rate {x})",skonto:"If paid by {d} ({t} days), {p} % discount: pay {a}.",pay:"Payable without deduction by {d}.",
-    keep:"You are legally required to keep this invoice for two years (Section 14b (1) German VAT Act).",
-    vatIdL:"VAT No.",taxNoL:"Tax No.",reg:"Register",mgr:"Managing director",qr:"Scan with your banking app to pay"},
-  fr:{inv:"Facture",corr:"Facture rectificative",corrRef:"relative à la facture n° {n} du {d}",no:"N°",date:"Date de facture",svc:"Date de livraison",period:"Période de prestation",due:"Échéance",
-    ref:"Votre référence",custVat:"N° TVA du client",desc:"Désignation",qty:"Qté",price:"Prix unitaire",vat:"TVA",sum:"Montant",net:"Total HT",total:"Total TTC",
-    vatOn:"TVA {r} % sur {b}",vatHome:"TVA en {c} (taux {x})",skonto:"Escompte de {p} % en cas de paiement avant le {d} ({t} jours) : {a}.",pay:"Payable sans escompte au plus tard le {d}.",
-    keep:"Vous êtes légalement tenu de conserver cette facture pendant deux ans (§ 14b UStG allemand).",
-    vatIdL:"N° TVA",taxNoL:"N° fiscal",reg:"Registre",mgr:"Gérant",qr:"Scannez avec votre appli bancaire pour payer"},
-  it:{inv:"Fattura",corr:"Nota di variazione",corrRef:"relativa alla fattura n. {n} del {d}",no:"N.",date:"Data fattura",svc:"Data della prestazione",period:"Periodo della prestazione",due:"Scadenza",
-    ref:"Vostro riferimento",custVat:"P. IVA cliente",desc:"Descrizione",qty:"Qtà",price:"Prezzo unitario",vat:"IVA",sum:"Importo",net:"Imponibile",total:"Totale",
-    vatOn:"IVA {r} % su {b}",vatHome:"IVA in {c} (cambio {x})",skonto:"Sconto del {p} % per pagamento entro il {d} ({t} giorni): {a}.",pay:"Pagabile senza sconto entro il {d}.",
-    keep:"È obbligatorio conservare la presente fattura per due anni (§ 14b UStG tedesca).",
-    vatIdL:"P. IVA",taxNoL:"Cod. fiscale",reg:"Registro imprese",mgr:"Amministratore",qr:"Inquadra con l'app della banca per pagare"},
-  es:{inv:"Factura",corr:"Factura rectificativa",corrRef:"de la factura n.º {n} del {d}",no:"N.º",date:"Fecha de factura",svc:"Fecha de la prestación",period:"Período de la prestación",due:"Vencimiento",
-    ref:"Su referencia",custVat:"NIF-IVA del cliente",desc:"Descripción",qty:"Cant.",price:"Precio unitario",vat:"IVA",sum:"Importe",net:"Base imponible",total:"Total",
-    vatOn:"IVA {r} % sobre {b}",vatHome:"IVA en {c} (tipo de cambio {x})",skonto:"Descuento del {p} % por pago hasta el {d} ({t} días): {a}.",pay:"Pagadero sin descuento hasta el {d}.",
-    keep:"Está obligado legalmente a conservar esta factura durante dos años (§ 14b UStG alemana).",
-    vatIdL:"NIF-IVA",taxNoL:"N.º fiscal",reg:"Registro",mgr:"Administrador",qr:"Escanee con su app bancaria para pagar"},
-  nl:{inv:"Factuur",corr:"Creditnota",corrRef:"bij factuur nr. {n} van {d}",no:"Nr.",date:"Factuurdatum",svc:"Leveringsdatum",period:"Leveringsperiode",due:"Vervaldatum",
-    ref:"Uw referentie",custVat:"Btw-nr. klant",desc:"Omschrijving",qty:"Aantal",price:"Prijs per eenheid",vat:"Btw",sum:"Bedrag",net:"Subtotaal",total:"Totaal",
-    vatOn:"Btw {r} % over {b}",vatHome:"Btw in {c} (koers {x})",skonto:"Bij betaling vóór {d} ({t} dagen) {p} % korting: te betalen {a}.",pay:"Te betalen zonder aftrek vóór {d}.",
-    keep:"U bent wettelijk verplicht deze factuur twee jaar te bewaren (§ 14b Duitse UStG).",
-    vatIdL:"Btw-nr.",taxNoL:"Belastingnr.",reg:"Handelsregister",mgr:"Bestuurder",qr:"Scan met je bank-app om te betalen"},
-  pl:{inv:"Faktura",corr:"Faktura korygująca",corrRef:"do faktury nr {n} z dnia {d}",no:"Nr",date:"Data wystawienia",svc:"Data dostawy",period:"Okres świadczenia",due:"Termin płatności",
-    ref:"Państwa numer referencyjny",custVat:"NIP UE nabywcy",desc:"Opis",qty:"Ilość",price:"Cena jedn.",vat:"VAT",sum:"Wartość",net:"Netto",total:"Razem",
-    vatOn:"VAT {r} % od {b}",vatHome:"VAT w {c} (kurs {x})",skonto:"Przy płatności do {d} ({t} dni) rabat {p} %: do zapłaty {a}.",pay:"Płatne bez potrąceń do {d}.",
-    keep:"Mają Państwo prawny obowiązek przechowywania tej faktury przez dwa lata (§ 14b niemieckiej UStG).",
-    vatIdL:"NIP UE",taxNoL:"Nr podatkowy",reg:"Rejestr",mgr:"Zarząd",qr:"Zeskanuj w aplikacji bankowej, aby zapłacić"}
-};
-
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c]));
-const r2=n=>Math.round((n+Math.sign(n)*Number.EPSILON)*100)/100;
-const num=v=>{const n=parseFloat(String(v??"").replace(",","."));return isFinite(n)?n:0};
-const today=()=>new Date().toISOString().slice(0,10);
-const addDays=(iso,d)=>{const x=new Date((iso||today())+"T12:00:00");x.setDate(x.getDate()+d);return x.toISOString().slice(0,10)};
-const fmt=(s,o)=>s.replace(/\{(\w)\}/g,(_,k)=>o[k]??"");
-const home=s=>HOME[(s.fromCountry||"DE").toUpperCase()]||"EUR";
-
-function state(){const s={items};fields.forEach(f=>s[f]=$(f).value.trim());checks.forEach(c=>s[c]=$(c).checked);s.cur=(s.cur||"EUR").toUpperCase();return s}
-
-function totals(s){
-  const tc=s.taxCase;
-  const lines=items.map(it=>{const qty=num(it.qty),price=num(it.price),rate=tc==="S"?num(it.rate):0;return {...it,qty,price,rate,total:r2(qty*price)}});
-  const groups={};lines.forEach(l=>{groups[l.rate]=(groups[l.rate]||0)+l.total});
-  const breakdown=Object.entries(groups).map(([rate,basis])=>{rate=num(rate);basis=r2(basis);return {rate,basis,tax:tc==="S"?r2(basis*rate/100):0}}).sort((a,b)=>b.rate-a.rate);
-  const net=r2(lines.reduce((a,l)=>a+l.total,0)), tax=r2(breakdown.reduce((a,b)=>a+b.tax,0)), gross=r2(net+tax);
-  const dueDate=addDays(s.date,parseInt(s.due)||0);
-  const sk=num(s.skonto), skDays=parseInt(s.skontoDays)||0;
-  const fxNeeded=s.cur!==home(s)&&tax!==0, fx=num(s.fx);
-  return {tc,lines,breakdown,net,tax,gross,dueDate,sk,skDays,skDate:addDays(s.date,skDays),skPay:r2(gross*(1-sk/100)),fxNeeded,fx,taxHome:r2(tax*fx)};
-}
-
-function legalText(s,t){
-  if(t.tc==="EX")return s.exReason;
-  const x=TAXTEXT[t.tc];return x?(x[s.lang]||x.de):"";
-}
-
-/* EPC-QR-Code (GiroCode) nach EPC069-12, Version 002 */
-function epcPayload(s,t){
-  const iban=(s.iban||"").replace(/\s/g,"").toUpperCase();
-  if(!s.qrCode||s.cur!=="EUR"||!(t.gross>0)||t.gross>999999999.99||!/^[A-Z]{2}\d{2}[A-Z0-9]{8,30}$/.test(iban))return "";
-  const clean=v=>String(v||"").replace(/[\r\n]+/g," ").trim();
-  return ["BCD","002","1","SCT",clean(s.bic).replace(/\s/g,"").toUpperCase(),clean(s.from).slice(0,70),iban,"EUR"+t.gross.toFixed(2),"","",
-    clean(`Rechnung ${s.num}`).slice(0,140)].join("\n");
-}
-function qrMatrix(text){
-  if(!text||typeof qrcode!=="function")return null;
-  qrcode.stringToBytes=qrcode.stringToBytesFuncs["UTF-8"];
-  const q=qrcode(0,"M");q.addData(text,"Byte");q.make();
-  const n=q.getModuleCount(),m=[];for(let r=0;r<n;r++){m.push([]);for(let c=0;c<n;c++)m[r].push(q.isDark(r,c))}return m;
-}
-
-/* Gemeinsames Rechnungsmodell für Vorschau und PDF */
-function view(s){
-  const t=totals(s),lang=L[s.lang]?s.lang:"de",T=L[lang],loc=LOCALE[lang];
-  const cur=/^[A-Z]{3}$/.test(s.cur)?s.cur:"EUR";
-  const money=(n,c=cur)=>{try{return new Intl.NumberFormat(loc,{style:"currency",currency:c}).format(n||0)}catch(e){return (n||0).toFixed(2)+" "+c}};
-  const dt=iso=>iso?new Date(iso+"T12:00:00").toLocaleDateString(loc):"";
-  const nr=n=>n.toLocaleString(loc);
-  const addr=(st,zip,city,c)=>[st,[zip,city].filter(Boolean).join(" "),c&&c.toUpperCase()!==(s.fromCountry||"").toUpperCase()?c.toUpperCase():""].filter(Boolean);
-  const meta=[[T.no,s.num],[T.date,dt(s.date)],s.serviceEnd?[T.period,`${dt(s.serviceDate)} – ${dt(s.serviceEnd)}`]:[T.svc,dt(s.serviceDate)],[T.due,dt(t.dueDate)]];
-  const legal=[legalText(s,t),s.keepNote?T.keep:""].filter(Boolean);
-  const totalsRows=[[T.net,money(t.net)]].concat(t.tc==="S"?t.breakdown.map(b=>[fmt(T.vatOn,{r:nr(b.rate),b:money(b.basis)}),money(b.tax)]):[]);
-  const fxRow=t.fxNeeded&&t.fx?[fmt(T.vatHome,{c:home(s),x:t.fx}),money(t.taxHome,home(s))]:null;
-  const payText=fmt(T.pay,{d:dt(t.dueDate)})+(t.sk?" "+fmt(T.skonto,{d:dt(t.skDate),t:t.skDays,p:nr(t.sk),a:money(t.skPay)}):"");
-  const foot=[[s.from,addr(s.fromStreet,s.fromZip,s.fromCity,"").join(", "),s.vatId?`${T.vatIdL}: ${s.vatId}`:"",s.taxNo?`${T.taxNoL}: ${s.taxNo}`:""].filter(Boolean).join(" · "),
-    [s.register?`${T.reg}: ${s.register}`:"",s.managers?`${T.mgr}: ${s.managers}`:""].filter(Boolean).join(" · "),
-    [s.iban?`IBAN: ${s.iban}`:"",s.bic?`BIC: ${s.bic}`:""].filter(Boolean).join(" · ")].filter(Boolean);
-  return {t,T,lang,loc,money,
-    title:s.docType==="384"?T.corr:T.inv, corrRef:s.docType==="384"?fmt(T.corrRef,{n:s.refNum,d:dt(s.refDate)}):"",
-    meta, seller:[s.from,...addr(s.fromStreet,s.fromZip,s.fromCity,""),s.fromMail,s.fromPhone].filter(Boolean),
-    buyer:[s.to,...addr(s.toStreet,s.toZip,s.toCity,s.toCountry),s.toVatId?`${T.custVat}: ${s.toVatId}`:"",s.buyerRef?`${T.ref}: ${s.buyerRef}`:""].filter(Boolean),
-    head:[T.desc,T.qty,T.price].concat(t.tc==="S"?[T.vat]:[]).concat([T.sum]),
-    rows:t.lines.map(l=>[l.desc,`${nr(l.qty)} ${(UNITS[l.unit]||{})[lang]||""}`.trim(),money(l.price)].concat(t.tc==="S"?[`${nr(l.rate)} %`]:[]).concat([money(l.total)])),
-    totalsRows,grand:[T.total,money(t.gross)],fxRow,legal,payText,note:s.note,foot,qr:epcPayload(s,t),qrLabel:T.qr};
-}
-
-/* ---------- Formular ---------- */
-function syncForm(){
-  const tc=$("taxCase").value;
-  $("taxHint").textContent=HINT[tc];
-  $("exBox").classList.toggle("hide",tc!=="EX");
-  $("refBox").classList.toggle("hide",$("docType").value!=="384");
-  document.querySelectorAll(".rateCol").forEach(e=>e.classList.toggle("hide",tc!=="S"));
-  const s=state(),t=totals(s);
-  $("fxBox").classList.toggle("hide",!t.fxNeeded);
-  $("fxLabel").textContent=`Kurs: 1 ${s.cur} = ? ${home(s)} *`;
-  $("rateList").innerHTML=(RATES[(s.fromCountry||"DE").toUpperCase()]||[0]).map(r=>`<option value="${r}">`).join("");
-}
-function defRate(){const r=RATES[($("fromCountry").value||"DE").toUpperCase()];return r?r[0]:0}
-function renderItems(){
-  const hideRate=$("taxCase").value!=="S";
-  $("items").innerHTML=items.map((it,i)=>`<tr>
-    <td style="width:36%"><input data-i="${i}" data-k="desc" value="${esc(it.desc)}" placeholder="Leistung"></td>
-    <td><input data-i="${i}" data-k="qty" type="number" step="any" value="${esc(it.qty)}"></td>
-    <td><select data-i="${i}" data-k="unit">${Object.entries(UNITS).map(([c,l])=>`<option value="${c}"${it.unit===c?" selected":""}>${l.de}</option>`).join("")}</select></td>
-    <td><input data-i="${i}" data-k="price" type="number" step="any" value="${esc(it.price)}"></td>
-    <td class="rateCol${hideRate?" hide":""}"><input data-i="${i}" data-k="rate" type="number" step="any" list="rateList" value="${esc(it.rate)}" style="width:70px"></td>
-    <td><button class="del" data-del="${i}" title="Entfernen">✕</button></td></tr>`).join("");
-}
-
-/* ---------- Vorschau ---------- */
-function qrSvg(text){
-  const m=qrMatrix(text);if(!m)return "";const n=m.length,q=4;let p="";
-  m.forEach((row,r)=>row.forEach((d,c)=>{if(d)p+=`M${c+q} ${r+q}h1v1h-1z`}));
-  return `<svg viewBox="0 0 ${n+2*q} ${n+2*q}" width="110" height="110" shape-rendering="crispEdges" role="img" aria-label="GiroCode"><rect width="100%" height="100%" fill="#fff"/><path d="${p}" fill="#000"/></svg>`;
-}
-function update(){
-  syncForm();
-  const s=state(),v=view(s),num1=v.head.length;
-  $("preview").innerHTML=`
-    <div class="top"><div><h1>${esc(v.title)}</h1>${v.corrRef?`<div>${esc(v.corrRef)}</div>`:""}
-      ${v.meta.map(([k,x])=>`<div>${esc(k)}: ${esc(x)}</div>`).join("")}</div>
-    <div style="text-align:right">${v.seller.map((x,i)=>i?`<div>${esc(x)}</div>`:`<strong>${esc(x)}</strong>`).join("")}</div></div>
-    <div>${v.buyer.map((x,i)=>i?`<div>${esc(x)}</div>`:`<strong>${esc(x)}</strong>`).join("")}</div>
-    <table><thead><tr>${v.head.map((h,i)=>`<th${i?' class="r"':""}>${esc(h)}</th>`).join("")}</tr></thead><tbody>
-    ${v.rows.map(r=>`<tr>${r.map((c,i)=>`<td${i?' class="r"':""}>${esc(c)}</td>`).join("")}</tr>`).join("")}
-    </tbody></table>
-    <div class="tot">${v.totalsRows.map(([k,x])=>`<div><span>${esc(k)}</span><span>${esc(x)}</span></div>`).join("")}
-      <div class="big"><span>${esc(v.grand[0])}</span><span>${esc(v.grand[1])}</span></div>
-      ${v.fxRow?`<div><span>${esc(v.fxRow[0])}</span><span>${esc(v.fxRow[1])}</span></div>`:""}</div>
-    ${v.legal.map(x=>`<p class="legal">${esc(x)}</p>`).join("")}
-    <div class="payrow"><p>${esc(v.payText)}</p>${v.qr?`<figure class="qr">${qrSvg(v.qr)}<figcaption>${esc(v.qrLabel)}</figcaption></figure>`:""}</div>
-    <p class="pre">${esc(v.note)}</p>
-    <div class="foot">${v.foot.map(esc).join("\n")}</div>`;
-  $("warn").textContent=warnings(s,v.t).join("\n");
-  try{localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}
-}
-
-/* ---------- Pflichtprüfung ---------- */
-function validate(s){
-  const t=totals(s),tc=s.taxCase;
-  const req={from:"Absender-Name",fromStreet:"Absender-Straße",fromZip:"Absender-PLZ",fromCity:"Absender-Ort",fromMail:"Absender-E-Mail",
-    fromPhone:"Absender-Telefon",iban:"IBAN",to:"Kunden-Name",toZip:"Kunden-PLZ",toCity:"Kunden-Ort",toMail:"Kunden-E-Mail",
-    num:"Rechnungsnummer",date:"Rechnungsdatum",serviceDate:"Leistungsdatum"};
-  if(s.docType==="384")Object.assign(req,{refNum:"Nummer der korrigierten Rechnung",refDate:"Datum der korrigierten Rechnung"});
-  if(tc==="EX")req.exReason="Befreiungsgrund";
-  if(tc==="AE"||tc==="K"){req.vatId="deine USt-IdNr. (Pflicht bei "+(tc==="AE"?"Reverse Charge":"innergemeinschaftlicher Lieferung")+")";req.toVatId="USt-IdNr. des Kunden"}
-  if(tc==="G")req.vatId="deine USt-IdNr. (Pflicht bei Ausfuhrlieferung)";
-  if(t.fxNeeded)req.fx="Umrechnungskurs in "+home(s)+" (USt. muss in Landeswährung angegeben werden)";
-  document.querySelectorAll(".missing").forEach(e=>e.classList.remove("missing"));
-  const miss=[];
-  for(const [k,l] of Object.entries(req)) if(!s[k]||(k==="fx"&&num(s.fx)<=0)){miss.push(l);$(k).classList.add("missing")}
-  if(!s.vatId&&!s.taxNo){miss.push("USt-IdNr. oder Steuernummer");$("vatId").classList.add("missing");$("taxNo").classList.add("missing")}
-  if(!/^[A-Z]{2}$/i.test(s.fromCountry)||!/^[A-Z]{2}$/i.test(s.toCountry)) miss.push("Ländercode (2 Buchstaben, z. B. DE)");
-  if(!/^[A-Z]{3}$/.test(s.cur)) miss.push("Währung als 3-Buchstaben-Code (z. B. EUR)");
-  if(s.serviceEnd&&s.serviceEnd<s.serviceDate) miss.push("Leistungszeitraum: Ende liegt vor dem Beginn");
-  if(!items.length||items.some(i=>!String(i.desc).trim())) miss.push("mindestens eine Position mit Beschreibung");
-  if(s.docType!=="384"&&items.some(i=>num(i.qty)<=0)) miss.push("Menge größer 0 bei allen Positionen (Minusbeträge nur bei Rechnungskorrektur)");
-  if(s.docType==="384"&&items.some(i=>num(i.qty)===0)) miss.push("Menge ungleich 0 bei allen Positionen");
-  if(tc==="S"&&items.some(i=>String(i.rate??"").trim()===""||num(i.rate)<0)) miss.push("Steuersatz bei allen Positionen");
-  if(num(s.skonto)&&!(parseInt(s.skontoDays)>0)) miss.push("Skonto-Frist in Tagen");
-  return miss;
-}
-function warnings(s,t){
-  const w=[],fc=(s.fromCountry||"").toUpperCase(),tcC=(s.toCountry||"").toUpperCase();
-  const EU=["AT","BE","BG","CY","CZ","DE","DK","EE","ES","FI","FR","GR","HR","HU","IE","IT","LT","LU","LV","MT","NL","PL","PT","RO","SE","SI","SK"];
-  if(fc==="AT"&&t.gross>10000&&!s.toVatId) w.push("Österreich: Über 10.000 € brutto ist die UID des Kunden Pflicht.");
-  if((t.tc==="AE"||t.tc==="K")&&tcC===fc) w.push("Hinweis: Reverse Charge / innergemeinschaftliche Lieferung betrifft meist Kunden in einem anderen Land.");
-  if(t.tc==="K"&&!EU.includes(tcC)) w.push("Innergemeinschaftliche Lieferung gilt nur für Kunden in der EU.");
-  if(t.tc==="G"&&EU.includes(tcC)) w.push("Ausfuhrlieferung gilt nur für Lieferungen außerhalb der EU.");
-  if(fc!=="DE") w.push("XRechnung ist das deutsche Format. Für "+fc+" gelten ggf. eigene E-Rechnungsregeln – das PDF enthält die allgemeinen Pflichtangaben.");
-  if(t.tc==="S"&&t.tax===0&&t.net!==0) w.push("Steuersatz 0 %: Wenn die Leistung steuerfrei ist, wähle besser einen passenden Steuerfall.");
-  return w;
-}
-
-/* ---------- XRechnung 3.0 (UN/CEFACT CII) ---------- */
-function buildXML(s,profile="xrechnung"){
-  const t=totals(s),tc=t.tc,cur=s.cur;
-  const cat={S:"S",KU:"E",EX:"E",AE:"AE",K:"K",G:"G",O:"O"}[tc];
-  const reason=tc==="S"?"":legalText({...s,lang:"de"},t);
-  const d=iso=>`<udt:DateTimeString format="102">${iso.replaceAll("-","")}</udt:DateTimeString>`;
-  const a=n=>n.toFixed(2), q=n=>String(Math.round(n*10000)/10000);
-  const noVA=tc==="O";                         // BR-O-02: bei "nicht steuerbar" keine USt-IdNrn. im XML
-  const rateEl=r=>cat==="O"?"":`<ram:RateApplicablePercent>${r}</ram:RateApplicablePercent>`;
-  const vat=v=>v.replace(/\s/g,"").toUpperCase();
-  const party=(o)=>`${o.id?`
-      <ram:ID>${esc(o.id)}</ram:ID>`:""}
-      <ram:Name>${esc(o.name)}</ram:Name>${o.desc?`
-      <ram:Description>${esc(o.desc)}</ram:Description>`:""}${o.legal?`
-      <ram:SpecifiedLegalOrganization><ram:ID>${esc(o.legal)}</ram:ID></ram:SpecifiedLegalOrganization>`:""}${o.contact||""}
-      <ram:PostalTradeAddress>
-        <ram:PostcodeCode>${esc(o.zip)}</ram:PostcodeCode>${o.street?`
-        <ram:LineOne>${esc(o.street)}</ram:LineOne>`:""}
-        <ram:CityName>${esc(o.city)}</ram:CityName>
-        <ram:CountryID>${esc(o.country.toUpperCase())}</ram:CountryID>
-      </ram:PostalTradeAddress>${o.mail?`
-      <ram:URIUniversalCommunication><ram:URIID schemeID="EM">${esc(o.mail)}</ram:URIID></ram:URIUniversalCommunication>`:""}${o.tax||""}`;
-  const sellerTax=(s.taxNo?`
-      <ram:SpecifiedTaxRegistration><ram:ID schemeID="FC">${esc(s.taxNo)}</ram:ID></ram:SpecifiedTaxRegistration>`:"")+(s.vatId&&!noVA?`
-      <ram:SpecifiedTaxRegistration><ram:ID schemeID="VA">${esc(vat(s.vatId))}</ram:ID></ram:SpecifiedTaxRegistration>`:"");
-  const buyerTax=s.toVatId&&!noVA?`
-      <ram:SpecifiedTaxRegistration><ram:ID schemeID="VA">${esc(vat(s.toVatId))}</ram:ID></ram:SpecifiedTaxRegistration>`:"";
-  const sellerId=(!s.vatId||noVA)?(s.taxNo||vat(s.vatId)):"";   // BR-CO-26
-  const sellerContact=`
-      <ram:DefinedTradeContact>
-        <ram:PersonName>${esc(s.managers||s.from)}</ram:PersonName>
-        <ram:TelephoneUniversalCommunication><ram:CompleteNumber>${esc(s.fromPhone)}</ram:CompleteNumber></ram:TelephoneUniversalCommunication>
-        <ram:EmailURIUniversalCommunication><ram:URIID>${esc(s.fromMail)}</ram:URIID></ram:EmailURIUniversalCommunication>
-      </ram:DefinedTradeContact>`;
-  const lines=t.lines.map((l,i)=>`
-    <ram:IncludedSupplyChainTradeLineItem>
-      <ram:AssociatedDocumentLineDocument><ram:LineID>${i+1}</ram:LineID></ram:AssociatedDocumentLineDocument>
-      <ram:SpecifiedTradeProduct><ram:Name>${esc(l.desc)}</ram:Name></ram:SpecifiedTradeProduct>
-      <ram:SpecifiedLineTradeAgreement><ram:NetPriceProductTradePrice><ram:ChargeAmount>${q(l.price)}</ram:ChargeAmount></ram:NetPriceProductTradePrice></ram:SpecifiedLineTradeAgreement>
-      <ram:SpecifiedLineTradeDelivery><ram:BilledQuantity unitCode="${esc(l.unit||"C62")}">${q(l.qty)}</ram:BilledQuantity></ram:SpecifiedLineTradeDelivery>
-      <ram:SpecifiedLineTradeSettlement>
-        <ram:ApplicableTradeTax><ram:TypeCode>VAT</ram:TypeCode><ram:CategoryCode>${cat}</ram:CategoryCode>${rateEl(l.rate)}</ram:ApplicableTradeTax>
-        <ram:SpecifiedTradeSettlementLineMonetarySummation><ram:LineTotalAmount>${a(l.total)}</ram:LineTotalAmount></ram:SpecifiedTradeSettlementLineMonetarySummation>
-      </ram:SpecifiedLineTradeSettlement>
-    </ram:IncludedSupplyChainTradeLineItem>`).join("");
-  const taxes=t.breakdown.map(b=>`
-      <ram:ApplicableTradeTax>
-        <ram:CalculatedAmount>${a(b.tax)}</ram:CalculatedAmount>
-        <ram:TypeCode>VAT</ram:TypeCode>${reason?`
-        <ram:ExemptionReason>${esc(reason)}</ram:ExemptionReason>`:""}
-        <ram:BasisAmount>${a(b.basis)}</ram:BasisAmount>
-        <ram:CategoryCode>${cat}</ram:CategoryCode>
-        <ram:RateApplicablePercent>${b.rate}</ram:RateApplicablePercent>
-      </ram:ApplicableTradeTax>`).join("");   // BR-DE-14: Satz im Kopf immer angeben (bei O = 0)
-  const payText=`Zahlbar ohne Abzug bis ${t.dueDate.split("-").reverse().join(".")}.`;
-  const skontoLine=t.sk?`#SKONTO#TAGE=${t.skDays}#PROZENT=${t.sk.toFixed(2)}#\n`:"";
-  const period=s.serviceEnd?`
-      <ram:BillingSpecifiedPeriod>
-        <ram:StartDateTime>${d(s.serviceDate)}</ram:StartDateTime>
-        <ram:EndDateTime>${d(s.serviceEnd)}</ram:EndDateTime>
-      </ram:BillingSpecifiedPeriod>`:"";
-  const shipTo=tc==="K"?`
-      <ram:ShipToTradeParty>
-        <ram:Name>${esc(s.to)}</ram:Name>
-        <ram:PostalTradeAddress><ram:PostcodeCode>${esc(s.toZip)}</ram:PostcodeCode>${s.toStreet?`<ram:LineOne>${esc(s.toStreet)}</ram:LineOne>`:""}<ram:CityName>${esc(s.toCity)}</ram:CityName><ram:CountryID>${esc(s.toCountry.toUpperCase())}</ram:CountryID></ram:PostalTradeAddress>
-      </ram:ShipToTradeParty>`:"";
-  const delivery=s.serviceEnd?"":`
-      <ram:ActualDeliverySupplyChainEvent><ram:OccurrenceDateTime>${d(s.serviceDate)}</ram:OccurrenceDateTime></ram:ActualDeliverySupplyChainEvent>`;
-  const notes=[s.note,s.keepNote?L.de.keep:""].filter(Boolean);
-  const taxCur=t.fxNeeded&&home(s)!==cur;
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
-  <rsm:ExchangedDocumentContext>
-    <ram:BusinessProcessSpecifiedDocumentContextParameter><ram:ID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</ram:ID></ram:BusinessProcessSpecifiedDocumentContextParameter>
-    <ram:GuidelineSpecifiedDocumentContextParameter><ram:ID>${profile==="en16931"?"urn:cen.eu:en16931:2017":"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0"}</ram:ID></ram:GuidelineSpecifiedDocumentContextParameter>
-  </rsm:ExchangedDocumentContext>
-  <rsm:ExchangedDocument>
-    <ram:ID>${esc(s.num)}</ram:ID>
-    <ram:TypeCode>${s.docType==="384"?"384":"380"}</ram:TypeCode>
-    <ram:IssueDateTime>${d(s.date)}</ram:IssueDateTime>${notes.map(n=>`
-    <ram:IncludedNote><ram:Content>${esc(n)}</ram:Content></ram:IncludedNote>`).join("")}
-  </rsm:ExchangedDocument>
-  <rsm:SupplyChainTradeTransaction>${lines}
-    <ram:ApplicableHeaderTradeAgreement>
-      <ram:BuyerReference>${esc(s.buyerRef||s.num)}</ram:BuyerReference>
-      <ram:SellerTradeParty>${party({id:sellerId,name:s.from,desc:s.managers?`Geschäftsführung: ${s.managers}`:"",legal:s.register,contact:sellerContact,
-        street:s.fromStreet,zip:s.fromZip,city:s.fromCity,country:s.fromCountry,mail:s.fromMail,tax:sellerTax})}
-      </ram:SellerTradeParty>
-      <ram:BuyerTradeParty>${party({name:s.to,street:s.toStreet,zip:s.toZip,city:s.toCity,country:s.toCountry,mail:s.toMail,tax:buyerTax})}
-      </ram:BuyerTradeParty>
-    </ram:ApplicableHeaderTradeAgreement>
-    <ram:ApplicableHeaderTradeDelivery>${shipTo}${delivery}
-    </ram:ApplicableHeaderTradeDelivery>
-    <ram:ApplicableHeaderTradeSettlement>${taxCur?`
-      <ram:TaxCurrencyCode>${esc(home(s))}</ram:TaxCurrencyCode>`:""}
-      <ram:InvoiceCurrencyCode>${esc(cur)}</ram:InvoiceCurrencyCode>
-      <ram:SpecifiedTradeSettlementPaymentMeans>
-        <ram:TypeCode>58</ram:TypeCode>
-        <ram:PayeePartyCreditorFinancialAccount><ram:IBANID>${esc(vat(s.iban))}</ram:IBANID></ram:PayeePartyCreditorFinancialAccount>${s.bic?`
-        <ram:PayeeSpecifiedCreditorFinancialInstitution><ram:BICID>${esc(vat(s.bic))}</ram:BICID></ram:PayeeSpecifiedCreditorFinancialInstitution>`:""}
-      </ram:SpecifiedTradeSettlementPaymentMeans>${taxes}${period}
-      <ram:SpecifiedTradePaymentTerms>
-        <ram:Description>${esc(skontoLine+payText)}</ram:Description>
-        <ram:DueDateDateTime>${d(t.dueDate)}</ram:DueDateDateTime>
-      </ram:SpecifiedTradePaymentTerms>
-      <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
-        <ram:LineTotalAmount>${a(t.net)}</ram:LineTotalAmount>
-        <ram:TaxBasisTotalAmount>${a(t.net)}</ram:TaxBasisTotalAmount>
-        <ram:TaxTotalAmount currencyID="${esc(cur)}">${a(t.tax)}</ram:TaxTotalAmount>${taxCur?`
-        <ram:TaxTotalAmount currencyID="${esc(home(s))}">${a(t.taxHome)}</ram:TaxTotalAmount>`:""}
-        <ram:GrandTotalAmount>${a(t.gross)}</ram:GrandTotalAmount>
-        <ram:DuePayableAmount>${a(t.gross)}</ram:DuePayableAmount>
-      </ram:SpecifiedTradeSettlementHeaderMonetarySummation>${s.docType==="384"?`
-      <ram:InvoiceReferencedDocument>
-        <ram:IssuerAssignedID>${esc(s.refNum)}</ram:IssuerAssignedID>
-        <ram:FormattedIssueDateTime><qdt:DateTimeString format="102">${s.refDate.replaceAll("-","")}</qdt:DateTimeString></ram:FormattedIssueDateTime>
-      </ram:InvoiceReferencedDocument>`:""}
-    </ram:ApplicableHeaderTradeSettlement>
-  </rsm:SupplyChainTradeTransaction>
-</rsm:CrossIndustryInvoice>
-`;
-}
-
-/* ---------- Aktionen ---------- */
-function download(name,text,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-function msg(text,ok){$("msg").textContent=text;$("msg").className=ok?"ok":"err"}
-function check(){const miss=validate(state());if(miss.length){msg("Es fehlen noch Pflichtangaben:\n• "+miss.join("\n• "),false);return false}return true}
-
-$("xml").onclick=()=>{
-  if(!check())return;const s=state();
-  download(`XRechnung-${s.num.replace(/[^\w.-]+/g,"_")}.xml`,buildXML(s),"application/xml");
-  msg("E-Rechnung erstellt. Schicke die XML-Datei per E-Mail an deinen Kunden und bewahre sie 8 Jahre im Original auf.",true);
-};
-$("print").onclick=()=>{if(check()){msg("",true);window.print()}};
-function loadScript(src){return new Promise((ok,err)=>{if(document.querySelector(`script[src="${src}"]`))return ok();const e=document.createElement("script");e.src=src;e.onload=ok;e.onerror=()=>err(new Error(src));document.head.appendChild(e)})}
-$("zugferd").onclick=async()=>{
-  if(!check())return;const s=state();
-  msg("PDF wird erstellt …",true);
-  try{
-    for(const f of ["vendor/pdf-lib.min.js","vendor/fontkit.umd.min.js","vendor/fonts.js","zugferd.js"])await loadScript(f);
-    const bytes=await buildZugferd(s);
-    download(`Rechnung-${s.num.replace(/[^\w.-]+/g,"_")}.pdf`,bytes,"application/pdf");
-    msg("ZUGFeRD-Rechnung erstellt: ein normales PDF zum Lesen mit eingebetteter E-Rechnung (EN 16931). Bitte 8 Jahre im Original aufbewahren.",true);
-  }catch(e){console.error(e);msg("Das PDF konnte nicht erstellt werden: "+e.message,false)}
-};
-document.addEventListener("input",e=>{const t=e.target;if(t.dataset.i!==undefined)items[t.dataset.i][t.dataset.k]=t.value;t.classList?.remove("missing");update()});
-document.addEventListener("change",e=>{const t=e.target;if(t.dataset.i!==undefined)items[t.dataset.i][t.dataset.k]=t.value;
-  if(t.id==="taxCase"||t.id==="fromCountry")renderItems();update()});
-document.addEventListener("click",e=>{if(e.target.dataset.del!==undefined){items.splice(+e.target.dataset.del,1);renderItems();update()}});
-$("add").onclick=()=>{items.push({desc:"",qty:1,unit:"C62",price:0,rate:defRate()});renderItems();update()};
-$("export").onclick=()=>download(`rechnung-${$("num").value||"entwurf"}.json`,JSON.stringify(state(),null,2),"application/json");
-$("importBtn").onclick=()=>$("importFile").click();
-$("importFile").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{load(JSON.parse(r.result))}catch(err){msg("Datei konnte nicht gelesen werden.",false)}};r.readAsText(f)};
-$("reset").onclick=()=>{const s=state();
-  ["to","toStreet","toZip","toCity","toMail","toVatId","buyerRef","note","refNum","refDate","serviceEnd","fx"].forEach(k=>s[k]="");
-  s.toCountry="DE";s.docType="380";s.keepNote=false;s.num=nextNum(s.num);s.date=today();s.serviceDate=today();
-  s.items=[{desc:"",qty:1,unit:"C62",price:0,rate:defRate()}];load(s);msg("",true)};
-function nextNum(n){const m=String(n).match(/(\d+)$/);return m?n.replace(/\d+$/,String(+m[1]+1).padStart(m[1].length,"0")):new Date().getFullYear()+"-001"}
-function load(s){
-  if(s.small==="1"&&!s.taxCase)s.taxCase="KU";           // Übernahme aus Version 2
-  fields.forEach(f=>{if(s[f]!==undefined&&s[f]!==null)$(f).value=s[f]});checks.forEach(c=>$(c).checked=!!s[c]);
-  if(!$("taxCase").value)$("taxCase").value="S";if(!$("docType").value)$("docType").value="380";if(!$("lang").value)$("lang").value="de";
-  const r=s.vat?num(s.vat):defRate();
-  items=(s.items||[]).map(i=>({unit:"C62",rate:r,...i}));renderItems();update()}
-
-if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
-let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||localStorage.getItem("invoice-kit-v2"))}catch(e){}
-load(saved||{num:new Date().getFullYear()+"-001",date:today(),serviceDate:today(),taxCase:"S",
-  items:[{desc:"Webdesign – Landingpage",qty:1,unit:"LS",price:850,rate:19},{desc:"Beratung",qty:3,unit:"HUR",price:90,rate:19}],
-  note:"Vielen Dank für Ihren Auftrag!"});
-</script>
+<script type="module" src="generator.js"></script>
 </body>
 </html>

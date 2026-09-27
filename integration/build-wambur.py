@@ -20,11 +20,6 @@ def between(s, a, b, start=0):
     i = s.index(a, start) + len(a)
     return s[i:s.index(b, i)]
 
-def main_script(src):
-    """Letzter <script>-Block ohne src (die Werkzeug-Logik)."""
-    blocks = re.findall(r"<script>(.*?)</script>", src, re.S)
-    return blocks[-1]
-
 # ---------------------------------------------------------------- CSS
 CSS = """
 .ik{--ik-bg:var(--surface,#1e1e20);--ik-panel:var(--panel,#26262a);--ik-line:var(--border,#2f2f34);--ik-text:var(--text,#f1f1f2);
@@ -150,10 +145,11 @@ def page(title, desc, canonical, crumb, h1, lead, tool_html, after_html, scripts
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png">
   <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="accessibility.css">
   <style>{CSS}</style>
 {jsonld}
 </head>
-<body>
+<body data-storage-key="wambur-rechnung-v3" data-no-service-worker="true">
   <div id="site-header-slot"></div>
   <main id="main">
     <section class="hero">
@@ -197,137 +193,45 @@ def crumbs_ld(items):
 
 # ================================================================ 1) Rechnung schreiben
 src = (ROOT / "index.html").read_text(encoding="utf-8")
-body = between(src, "<main>", "</main>")
-body = body.replace('<section class="card form">', '<section class="ik-card ik-form">')
-body = body.replace('<section id="preview" aria-label="Vorschau"></section>', '<section id="preview" aria-label="Rechnungsvorschau"></section>')
-tip = f"""
-    <div class="ik-tip hide" id="ikTip">Kunde im Ausland? Mit einem Wise-Konto bekommst du lokale Kontodaten in EUR, USD, GBP und weiteren Währungen. Dein Kunde überweist wie im Inland, du sparst teure Auslandsgebühren.
-      <a href="{WISE}" target="_blank" rel="sponsored noopener">Zum Wise-Konto<span class="btn-ad">Anzeige</span></a> · <a href="/geld-ins-ausland">Geld ins Ausland: alle Optionen</a></div>"""
-anchor = '<div><label>BIC (optional)</label><input id="bic"></div>\n    </div>'
-assert anchor in body, "IBAN/BIC-Block nicht gefunden"
-body = body.replace(anchor, anchor + tip, 1)
-tool1 = ('        <p class="ik-links"><a href="anzeigen.html">Eine E-Rechnung bekommen? Hier öffnen und prüfen →</a></p>\n'
-         '        <div class="ik-grid">' + body + '</div>')
-
-js = main_script(src)
-js = js.replace('const KEY="invoice-kit-v3";', 'const KEY="wambur-rechnung-v3";')
-js = re.sub(r'if\("serviceWorker" in navigator.*?\n', '', js)
-js = js.replace('localStorage.getItem("invoice-kit-v2")', 'null')
-js += """
-/* Wambur: Hinweis auf Konto für Auslandszahlungen nur, wenn er zum Kunden passt */
-function ikTip(){try{const s=state();const foreign=(s.toCountry||"DE").toUpperCase()!=="DE"||s.cur!=="EUR"||["AE","K","G","O"].includes(s.taxCase);
-  document.getElementById("ikTip").classList.toggle("hide",!foreign)}catch(e){}}
-document.addEventListener("input",ikTip);document.addEventListener("change",ikTip);ikTip();
-"""
-scripts1 = '  <script src="vendor/qrcode.js"></script>\n  <script>' + js + "</script>"
-
-faq1 = [
- ("Welche Rechnung schreibe ich, wenn ich im Ausland arbeite, aber in Deutschland steuerpflichtig bin?",
-  "Solange du in Deutschland steuerpflichtig bist, gilt das deutsche Umsatzsteuergesetz, egal wo dein Laptop gerade steht. Entscheidend ist, wo dein Kunde sitzt: Firma in Deutschland, Firma in der EU, Firma außerhalb der EU oder Privatperson. Die Tabelle oben zeigt, welchen Steuerfall du im Tool auswählst. Wenn du deinen Wohnsitz in Deutschland aufgibst, ändern sich die Regeln. Das gehört in eine Steuerberatung."),
- ("Was bedeutet Reverse Charge?",
-  "Bei Leistungen an Unternehmen in einem anderen EU-Land zahlt nicht du die Umsatzsteuer, sondern dein Kunde in seinem Land. Du stellst die Rechnung ohne Umsatzsteuer aus, mit beiden USt-IdNrn. und dem Hinweis „Steuerschuldnerschaft des Leistungsempfängers“. Das Tool druckt den Hinweis automatisch, auf Wunsch in der Sprache deines Kunden."),
- ("Darf ich Rechnungen auf Englisch schreiben?",
-  "Ja. Das Gesetz schreibt keine Sprache vor. Das Finanzamt kann bei Bedarf eine Übersetzung verlangen. Invoice Kit erstellt Rechnungen auf Deutsch, Englisch, Französisch, Italienisch, Spanisch, Niederländisch und Polnisch."),
- ("Muss ich ab 2027 oder 2028 E-Rechnungen schreiben?",
-  "Für Rechnungen an Unternehmen in Deutschland ja: ab 2027 bei mehr als 800.000 € Vorjahresumsatz, ab 2028 für alle. Kleinunternehmer nach § 19 UStG sind ausgenommen, müssen E-Rechnungen aber empfangen können. Für Kunden im Ausland gilt die deutsche Pflicht nicht, eine ZUGFeRD-Rechnung ist trotzdem ein normales, lesbares PDF."),
- ("Brauche ich eine USt-IdNr.?",
-  "Für Reverse Charge und Lieferungen in die EU ja. Du beantragst sie kostenlos online beim Bundeszentralamt für Steuern. Als Kleinunternehmer ohne EU-Kunden reicht die Steuernummer."),
- ("Wo werden meine Rechnungsdaten gespeichert?",
-  "Nur in deinem Browser. Das Tool läuft komplett auf deinem Gerät, es gibt kein Konto und keine Übertragung an einen Server. Für ein Backup kannst du jede Rechnung als Datei sichern."),
-]
-after1 = f"""    <section class="section">
-      <div class="wrap">
-        <div class="answer-box"><p><strong>Kurz gesagt:</strong> Solange du in Deutschland steuerpflichtig bist, schreibst du Rechnungen nach deutschem Recht, auch vom Strand in Lissabon aus. Für Firmenkunden in der EU gilt meist Reverse Charge, für Firmen außerhalb der EU ist deine Leistung meist nicht in Deutschland steuerbar. Ab 2028 muss jede Rechnung an deutsche Firmen eine E-Rechnung sein. Das Tool oben erledigt alle drei Fälle und kostet nichts.</p></div>
-        <h2>Welcher Steuerfall passt zu deinem Kunden?</h2>
-        <p>Für Dienstleistungen wie Design, Entwicklung, Text oder Beratung gilt als Faustregel:</p>
-        <div class="table-wrap"><table>
-          <thead><tr><th>Dein Kunde</th><th>Beispiel</th><th>Steuerfall im Tool</th><th>Was auf die Rechnung muss</th></tr></thead>
-          <tbody>
-            <tr><td>Firma in Deutschland</td><td>Agentur in Hamburg</td><td>Normal (19 %) oder Kleinunternehmer</td><td>Umsatzsteuer bzw. Hinweis auf § 19 UStG</td></tr>
-            <tr><td>Firma in einem anderen EU-Land</td><td>Startup in Lissabon</td><td>Reverse Charge</td><td>Beide USt-IdNrn., Hinweis „Steuerschuldnerschaft des Leistungsempfängers“</td></tr>
-            <tr><td>Firma außerhalb der EU</td><td>Kunde in den USA, UK oder der Schweiz</td><td>Nicht im Inland steuerbar</td><td>Keine Umsatzsteuer, Hinweis wird gedruckt</td></tr>
-            <tr><td>Privatperson</td><td>Coaching für eine Kundin in Wien</td><td>Normal (19 %)</td><td>Deutsche Umsatzsteuer; bei digitalen Leistungen an EU-Privatkunden über 10.000 € im Jahr gilt die Steuer des Kundenlandes (OSS)</td></tr>
-          </tbody>
-        </table></div>
-        <p>Für Warenlieferungen gibt es eigene Fälle (innergemeinschaftliche Lieferung, Ausfuhr), die das Tool ebenfalls abdeckt.</p>
-        <h2>ZUGFeRD oder XRechnung: welches Format?</h2>
-        <p><strong>ZUGFeRD</strong> ist ein normales PDF, in dem die E-Rechnung als Datei steckt. Menschen lesen das PDF, Buchhaltungsprogramme die Daten. Das passt für fast alle Firmenkunden. <strong>XRechnung</strong> ist reines XML und wird vor allem von Behörden verlangt. Beide Formate erstellt das Tool nach den offiziellen Regeln.</p>
-        <h2>Damit das Geld auch ankommt</h2>
-        <div class="card-grid">
-          <div class="card"><h3 class="mt-0">Zahlungen aus dem Ausland</h3><p>Mit lokalen Kontodaten in EUR, USD und GBP überweisen deine Kunden wie im Inland, ohne Auslandsgebühren. <a href="/geld-ins-ausland">Alle Optionen im Vergleich</a>.</p>
-            <div class="tool-actions"><a class="btn-accent" href="{WISE}" target="_blank" rel="sponsored noopener">Zum Wise-Konto <span class="btn-ad">Anzeige</span></a></div></div>
-          <div class="card"><h3 class="mt-0">Girokonto für unterwegs</h3><p>Ein deutsches Konto, mit dem du weltweit gebührenfrei Geld abhebst, als Basis für Rechnungen an deutsche Kunden. <a href="/dkb">Mehr dazu</a>.</p>
-            <div class="tool-actions"><a class="btn-accent" href="/go/dkb" rel="sponsored noopener">DKB-Girokonto ansehen <span class="btn-ad">Anzeige</span></a></div></div>
-          <div class="card"><h3 class="mt-0">Rechnung bekommen?</h3><p>Seit 2025 musst du E-Rechnungen empfangen können. Unser Viewer öffnet XRechnung und ZUGFeRD und prüft die Pflichtangaben für deinen Vorsteuerabzug.</p>
-            <div class="tool-actions"><a class="tool-more" href="anzeigen.html">E-Rechnung öffnen</a></div></div>
-        </div>
-        <h2>Häufige Fragen</h2>
-{faq_html(faq1)}
-        <aside class="med-disclaimer"><span class="callout-eyebrow">Wichtig</span><p>Das Tool und diese Seite ersetzen keine Steuerberatung. Welcher Steuerfall für dich gilt, hängt von deinem Wohnsitz, deinem Kunden und deiner Leistung ab. Im Zweifel frag eine Steuerberaterin oder einen Steuerberater. Das Tool basiert auf dem Open-Source-Projekt <a href="https://github.com/ghostfanman/invoice-kit" target="_blank" rel="noopener">Invoice Kit</a> (MIT-Lizenz).</p></aside>
-      </div>
-    </section>"""
-
-title1 = "Rechnung schreiben als Freelancer: E-Rechnung kostenlos, auch ins Ausland | Wambur"
-desc1 = "Kostenloser Rechnungsgenerator für Freelancer und digitale Nomaden: ZUGFeRD und XRechnung, Reverse Charge, Rechnung auf Englisch, GiroCode. Ohne Anmeldung, Daten bleiben auf deinem Gerät."
-crumb1 = '<a href="/">Start</a> › <a href="/ortsunabhaengig-arbeiten">Ortsunabhängig arbeiten</a> › E-Rechnung schreiben'
-jsonld1 = "\n".join([
-    ld(crumbs_ld([("Start", "https://wambur.com/"), ("Ortsunabhängig arbeiten", "https://wambur.com/ortsunabhaengig-arbeiten"), ("E-Rechnung schreiben", BASE)])),
-    ld({"@context": "https://schema.org", "@type": "WebApplication", "name": "E-Rechnung schreiben (Wambur)", "url": BASE,
-        "applicationCategory": "BusinessApplication", "operatingSystem": "Web", "inLanguage": "de", "isAccessibleForFree": True,
-        "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"},
-        "featureList": ["ZUGFeRD 2.3 / Factur-X", "XRechnung 3.0", "Reverse Charge", "Rechnung auf Englisch und 5 weiteren Sprachen", "GiroCode", "Daten bleiben im Browser"],
-        "publisher": {"@id": "https://wambur.com/#organization"}}),
-    ld(faq_ld(faq1))])
-lead1 = "ZUGFeRD-PDF oder XRechnung mit allen Pflichtangaben, auch für Kunden im Ausland und auf Englisch. Kostenlos, ohne Anmeldung, deine Daten bleiben auf deinem Gerät."
-
-# ================================================================ 2) E-Rechnung öffnen
+body = between(src, "<main>", "</main>").replace('<section class="card form">', '<section class="ik-card ik-form">')
+body = body.replace('<h2>Zahlung</h2>', f'<h2>Zahlung</h2><aside class="ik-tip hide" id="ikTip">Zahlungen aus dem Ausland: <a href="{WISE}" target="_blank" rel="sponsored noopener">Wise-Konto ansehen <span class="btn-ad">Anzeige</span></a> · <a href="/geld-ins-ausland">Optionen im Vergleich</a></aside>')
+tool1 = '<p class="ik-links"><a href="anzeigen.html">E-Rechnung öffnen und auf Plausibilität prüfen</a></p><div class="ik-grid">' + body + '</div>'
 vsrc = (ROOT / "anzeigen.html").read_text(encoding="utf-8")
 vbody = between(vsrc, "<main>", "</main>")
 vbody = re.sub(r'\s*<section class="info card".*?</section>', "", vbody, flags=re.S)
-vbody = vbody.replace('<div class="card" id="drop"', '<div id="drop"').replace('<div class="card" id="checkCard">', '<div class="ik-card" id="checkCard" style="margin-bottom:16px">')
-vbody = vbody.replace('<h3 style="margin:0 0 8px">', "<h3>")
-tool2 = '        <p class="ik-links"><a href="./">← Eigene Rechnung schreiben</a></p>\n' + vbody
-vjs = main_script(vsrc)
-vjs = re.sub(r'if\("serviceWorker" in navigator.*?\n', '', vjs)
-scripts2 = "  <script>" + vjs + "</script>"
-faq2 = [
- ("Muss ich als Freelancer E-Rechnungen empfangen können?",
-  "Ja. Seit 1. Januar 2025 muss jedes Unternehmen in Deutschland E-Rechnungen annehmen können, auch Kleinunternehmer und Freelancer, die gerade im Ausland arbeiten. Eine E-Mail-Adresse und ein Programm zum Öffnen reichen dafür."),
- ("Wie bewahre ich E-Rechnungen auf?",
-  "Im Original, also die XML- oder ZUGFeRD-Datei selbst, acht Jahre lang und unveränderbar. Ein Ausdruck allein reicht nicht. Ein fester Ordner im Cloud-Speicher mit Versionierung ist ein pragmatischer Anfang."),
- ("Was prüft der Pflichtangaben-Check?",
-  "Ob die Angaben aus § 14 UStG vorhanden sind, die du für den Vorsteuerabzug brauchst, und ob die Summen zusammenpassen. Fehlt etwas, fordere beim Absender eine korrigierte Rechnung an. Eine technische Voll-Validierung ersetzt der Check nicht."),
- ("Wird meine Rechnung hochgeladen?",
-  "Nein. Die Datei wird nur in deinem Browser gelesen und nirgendwohin übertragen."),
+vbody = vbody.replace('<div class="card" id="drop"', '<div id="drop"').replace('<div class="card" id="checkCard">', '<div class="ik-card" id="checkCard">')
+tool2 = '<p class="ik-links"><a href="./">Eigene Rechnung schreiben</a></p>' + vbody
+faq = [
+    ("Wo bleiben meine Daten?", "Rechnungsdaten werden ausschließlich lokal im Browser verarbeitet. Du kannst den Entwurf auf diesem Gerät speichern oder als JSON herunterladen. Auf gemeinsam genutzten Geräten können gespeicherte Daten für andere sichtbar bleiben. Die Löschfunktion entfernt lokale Invoice-Kit-Entwürfe und Einstellungen. Heruntergeladene Dateien musst du separat löschen."),
+    ("Was prüft Invoice Kit?", "Das Formular prüft Eingaben und berechnet Beträge. Der Viewer führt eine Plausibilitätsprüfung durch. Eine vollständige Validierung nach XML-Schema, Schematron, EN 16931 oder PDF/A findet im Browser nicht statt."),
+    ("Wie prüfe ich die erzeugte Rechnung?", "Prüfe XRechnung mit dem KoSIT-Validator und passender Konfiguration. Mustang prüft ZUGFeRD/Factur-X und die eingebettete XML, veraPDF das PDF/A-Profil. Verwende die Programme lokal und bewahre Prüfberichte zusammen mit der geprüften Datei auf."),
+    ("Welcher Steuerfall passt?", "Das Tool bietet Regelbesteuerung, Kleinunternehmer, steuerfreie Leistungen, Reverse Charge, innergemeinschaftliche Lieferung, Ausfuhr und nicht steuerbare Leistungen. Welcher Fall zutrifft, hängt von der konkreten Leistung und den beteiligten Parteien ab. Kläre Unsicherheiten mit einer Steuerberatung."),
 ]
-after2 = f"""    <section class="section">
-      <div class="wrap">
-        <h2>Häufige Fragen</h2>
-{faq_html(faq2)}
-        <aside class="med-disclaimer"><span class="callout-eyebrow">Wichtig</span><p>Der Check ist eine Plausibilitätsprüfung und keine Steuerberatung. Basis ist das Open-Source-Projekt <a href="https://github.com/ghostfanman/invoice-kit" target="_blank" rel="noopener">Invoice Kit</a> (MIT-Lizenz).</p></aside>
-      </div>
-    </section>"""
-title2 = "E-Rechnung öffnen und prüfen: XRechnung & ZUGFeRD kostenlos | Wambur"
-desc2 = "XRechnung und ZUGFeRD kostenlos öffnen, lesen und drucken. Prüft die Pflichtangaben für den Vorsteuerabzug. Keine Datei verlässt dein Gerät."
-crumb2 = '<a href="/">Start</a> › <a href="/ortsunabhaengig-arbeiten">Ortsunabhängig arbeiten</a> › <a href="./">E-Rechnung schreiben</a> › E-Rechnung öffnen'
-jsonld2 = "\n".join([
-    ld(crumbs_ld([("Start", "https://wambur.com/"), ("Ortsunabhängig arbeiten", "https://wambur.com/ortsunabhaengig-arbeiten"),
-                  ("E-Rechnung schreiben", BASE), ("E-Rechnung öffnen", BASE + "anzeigen.html")])),
-    ld(faq_ld(faq2))])
-
-# ================================================================ Ausgabe
-if OUT.exists():
-    shutil.rmtree(OUT)
-(OUT / "vendor").mkdir(parents=True)
-(OUT / "index.html").write_text(page(title1, desc1, BASE, crumb1, "E-Rechnung schreiben: kostenlos, auch für Kunden im Ausland", lead1, tool1, after1, scripts1, jsonld1), encoding="utf-8")
-(OUT / "anzeigen.html").write_text(page(title2, desc2, BASE + "anzeigen.html", crumb2, "E-Rechnung öffnen und prüfen",
-    "XRechnung oder ZUGFeRD bekommen? Hier öffnen, lesen, drucken und auf Pflichtangaben prüfen. Die Datei bleibt auf deinem Gerät.",
-    tool2, after2, scripts2, jsonld2), encoding="utf-8")
-shutil.copy(ROOT / "zugferd.js", OUT / "zugferd.js")
-for f in ["pdf-lib.min.js", "fontkit.umd.min.js", "fonts.js", "qrcode.js", "LIZENZEN.txt"]:
-    shutil.copy(ROOT / "vendor" / f, OUT / "vendor" / f)
-shutil.copy(ROOT / "LICENSE", OUT / "LICENSE.txt") if (ROOT / "LICENSE").exists() else None
+after = '<section class="section"><div class="wrap"><h2>Hinweise zur Nutzung</h2>' + faq_html(faq) + '<p>Basis: <a href="https://github.com/ghostfanman/invoice-kit">Invoice Kit</a>, MIT-Lizenz. Keine Steuerberatung.</p></div></section>'
+common_ld = ld(faq_ld(faq))
+pages = {
+    "index.html": page("E-Rechnung erstellen | Wambur", "Rechnungen lokal im Browser erstellen: CII-XML, ZUGFeRD-PDF, mehrere Sprachen und Zahlungsarten.", BASE,
+        '<a href="/">Start</a> › E-Rechnung erstellen', "E-Rechnung erstellen", "Rechnungen schreiben und lokal als XML oder PDF speichern.", tool1, after,
+        '<script src="vendor/qrcode.js"></script>\n<script type="module" src="generator.js"></script><script type="module" src="wambur.js"></script>', common_ld),
+    "anzeigen.html": page("E-Rechnung öffnen | Wambur", "CII, UBL und eingebettete XML in ZUGFeRD-PDFs lokal anzeigen und auf Plausibilität prüfen.", BASE + "anzeigen.html",
+        '<a href="/">Start</a> › <a href="./">E-Rechnung erstellen</a> › E-Rechnung öffnen', "E-Rechnung öffnen", "Die Datei bleibt auf deinem Gerät. Der Viewer führt eine Plausibilitätsprüfung durch.", tool2, after,
+        '<script type="module" src="viewer.js"></script>', common_ld),
+}
+# Nur bekannte Ausgabedateien überschreiben, keine fremden Zielordner löschen.
+(OUT / "vendor").mkdir(parents=True, exist_ok=True)
+assets = ["generator.js", "viewer.js", "core.js", "viewer-check.js", "storage.js", "zugferd.js", "accessibility.css"]
+for name, content in pages.items():
+    (OUT / name).write_text(content, encoding="utf-8")
+    preview = content
+    # Dynamisch nachgeladene Bibliotheken werden relativ zur Dokumentbasis aufgelöst.
+    preview = preview.replace('<head>', '<head>\n<base href="../">')
+    preview = preview.replace('src="wambur.js"', 'src="integration/wambur.js"')
+    (ROOT / "integration" / ("wambur-vorschau-" + name)).write_text(preview, encoding="utf-8")
+shutil.copy(ROOT / "integration" / "wambur.js", OUT / "wambur.js")
+for name in assets:
+    shutil.copy(ROOT / name, OUT / name)
+for name in ["pdf-lib.min.js", "fontkit.umd.min.js", "fonts.js", "qrcode.js", "LIZENZEN.txt"]:
+    shutil.copy(ROOT / "vendor" / name, OUT / "vendor" / name)
+shutil.copy(ROOT / "LICENSE", OUT / "LICENSE.txt")
 print("Fertig:", OUT)
-for p in sorted(OUT.rglob("*")):
-    if p.is_file():
-        print(f"  {p.relative_to(OUT.parent)}  {p.stat().st_size:,} B")
+print("Wambur-Vorschauen in integration/ aktualisiert.")

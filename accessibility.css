@@ -1,0 +1,16 @@
+/* Gemeinsame Bedienhilfen für Hauptseiten und Wambur. */
+:focus-visible{outline:3px solid #1d4ed8;outline-offset:3px}
+.ik :focus-visible{outline-color:#25f4ee}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip-path:inset(50%);white-space:nowrap!important;border:0!important}
+.field-error{display:block;color:#b91c1c;font-size:13px;margin:4px 0;white-space:normal}
+.ik .field-error{color:#ff8fa0}
+.table-scroll{overflow-x:auto}
+button{min-height:36px}
+#clearData{margin-top:12px;text-align:left}
+#preview .tot{max-width:100%}
+.ik .hint,.ik label{color:#b8b8c0}
+.ik #preview label{color:inherit}
+@media(max-width:600px){.row3{grid-template-columns:1fr!important}#preview{padding:18px!important}.items{min-width:580px}}
+main>section,.ik-grid>section,.row>div,.row3>div{min-width:0}
+#preview{overflow-wrap:anywhere}
+.table-scroll{position:relative}

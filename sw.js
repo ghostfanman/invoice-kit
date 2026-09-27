@@ -1,12 +1,20 @@
-/* Invoice Kit – Offline-Unterstützung. Speichert nur die App-Dateien, niemals Rechnungsdaten. */
-const CACHE="invoice-kit-v4";
-const CORE=["./","index.html","anzeigen.html","zugferd.js","manifest.webmanifest","icon.svg","vendor/qrcode.js"];
-const LAZY=["vendor/pdf-lib.min.js","vendor/fontkit.umd.min.js","vendor/fonts.js"];
-self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting())));
-self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(n=>n!==CACHE).map(n=>caches.delete(n)))).then(()=>self.clients.claim()).then(()=>caches.open(CACHE).then(c=>c.addAll(LAZY)).catch(()=>{}))));
-self.addEventListener("fetch",e=>{
-  const u=new URL(e.request.url);
-  if(e.request.method!=="GET"||u.origin!==location.origin)return;
-  /* Netzwerk zuerst (immer aktuell), Cache als Offline-Rückfall */
-  e.respondWith(fetch(e.request).then(r=>{if(r.ok){const c=r.clone();caches.open(CACHE).then(x=>x.put(e.request,c))}return r}).catch(()=>caches.match(e.request,{ignoreSearch:true})));
+/* Speichert ausschließlich lokale App-Dateien, keine Rechnungen oder Fremdseiten. */
+const CACHE_PREFIX = 'invoice-kit-';
+const CACHE = `${CACHE_PREFIX}v5`;
+const CORE = ['./', 'index.html', 'anzeigen.html', 'generator.js', 'viewer.js', 'core.js',
+  'viewer-check.js', 'storage.js', 'zugferd.js', 'accessibility.css', 'manifest.webmanifest',
+  'icon.svg', 'vendor/qrcode.js', 'vendor/pdf-lib.min.js', 'vendor/fontkit.umd.min.js', 'vendor/fonts.js'];
+const allowed = new Set(CORE.map(path => new URL(path, self.registration.scope).href));
+self.addEventListener('install', event => event.waitUntil(
+  caches.open(CACHE).then(cache => cache.addAll(CORE)).then(() => self.skipWaiting())
+));
+self.addEventListener('activate', event => event.waitUntil(
+  caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE)
+    .map(key => caches.delete(key)))).then(() => self.clients.claim())
+));
+self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  if (event.request.method !== 'GET' || url.search || !allowed.has(url.href)) return;
+  // Zusammengehörige Versionen bleiben konsistent. Neue Versionen kommen mit neuem Cache-Namen.
+  event.respondWith(caches.open(CACHE).then(async cache => (await cache.match(event.request)) || fetch(event.request)));
 });

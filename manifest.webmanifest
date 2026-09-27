@@ -1,7 +1,7 @@
 {
-  "name": "Invoice Kit – E-Rechnung ohne Abo",
+  "name": "Invoice Kit: E-Rechnung ohne Abo",
   "short_name": "Invoice Kit",
-  "description": "E-Rechnungen (XRechnung, ZUGFeRD) erstellen, öffnen und prüfen – offline, ohne Konto, ohne Abo.",
+  "description": "E-Rechnungen (XRechnung, ZUGFeRD) erstellen, öffnen und prüfen: offline, ohne Konto, ohne Abo.",
   "lang": "de",
   "start_url": "./",
   "scope": "./",

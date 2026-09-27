@@ -1,91 +1,73 @@
-# 🧾 Invoice Kit – E-Rechnung ohne Abo, ohne Cloud
+# Invoice Kit: Rechnungen lokal im Browser
 
-**XRechnung und PDF-Rechnung in 60 Sekunden. Unbegrenzt, kostenlos, Open Source.**
-Läuft komplett in deinem Browser – keine Anmeldung, kein Server, deine Daten bleiben bei dir.
+Invoice Kit erstellt CII-XML für XRechnung und ZUGFeRD-/Factur-X-PDFs mit eingebetteter XML. Der Viewer liest CII, UBL und XML-Anhänge in PDFs. Alle Rechnungsdaten werden ausschließlich lokal im Browser verarbeitet. Es gibt kein Benutzerkonto und keinen Server für Rechnungsdaten.
 
-👉 **Direkt loslegen:** https://ghostfanman.github.io/invoice-kit/
-
-## Warum Invoice Kit?
-
-Ab **1. Januar 2027** müssen Unternehmen mit über 800.000 € Vorjahresumsatz E-Rechnungen ausstellen, ab **1. Januar 2028** alle Unternehmen im deutschen B2B-Geschäft. Ein normales PDF gilt dann nicht mehr als ordnungsgemäße Rechnung.
-
-Die meisten Anbieter lösen das mit einem Cloud-Abo oder einer Gratis-Version mit 3 Rechnungen pro Monat. Invoice Kit geht einen anderen Weg:
-
-| | Invoice Kit | typische Rechnungssoftware |
-| --- | --- | --- |
-| Preis | kostenlos, Pro als Einmalkauf | Abo, 8–50 € pro Monat |
-| Rechnungen | unbegrenzt | oft 3 pro Monat gratis |
-| Konto | nicht nötig | Pflicht |
-| Deine Daten | nur in deinem Browser | auf fremden Servern |
-| Quellcode | offen einsehbar | geschlossen |
+[Generator öffnen](https://ghostfanman.github.io/invoice-kit/) · [Viewer öffnen](https://ghostfanman.github.io/invoice-kit/anzeigen.html)
 
 ## Funktionen
 
-**Rechnungen schreiben**
-- **ZUGFeRD 2.3 / Factur-X** (Profil EN 16931): PDF/A-3b mit eingebetteter E-Rechnung – für Menschen lesbar, für Buchhaltungssoftware auslesbar
-- **XRechnung 3.0** (UN/CEFACT CII) als reine XML-Datei, z. B. für Behörden
-- **GiroCode** (EPC-QR-Code): Kunde scannt mit der Banking-App und überweist ohne Tippfehler
-- Rechnungssprachen: **Deutsch, Englisch, Französisch, Italienisch, Spanisch, Niederländisch, Polnisch** – inklusive der gesetzlichen Hinweise in der jeweiligen Sprache
-- Sieben Steuerfälle mit automatisch gedrucktem Pflichthinweis (siehe unten)
-- Unterschiedliche Steuersätze pro Position, Voreinstellungen für DE, AT, CH, GB, FR, IT, ES, NL, BE, PL, LU
-- Rechnungskorrektur / Storno, Leistungszeitraum, Skonto, Firmenangaben, Fremdwährung
-- Pflichtfeld-Prüfung vor jedem Export, mehrseitige PDFs mit Seitenzahlen
+- Rechnungsvorschau, XML-Export, PDF-Export, Drucken sowie JSON-Sicherung und Import.
+- Sieben Rechnungssprachen, mehrere Steuersätze, steuerfreie Fälle, Rechnungskorrekturen, Leistungszeiträume, Skonto und Fremdwährungen.
+- SEPA-Überweisung (Code 58), Überweisung mit IBAN einschließlich Fremdwährung (30), Kartenzahlung (48) und Barzahlung (10).
+- Bei Kartenzahlung werden ausschließlich die letzten vier Kartenziffern erfasst. Lastschriften sind mangels Mandatsdaten nicht vorgesehen.
+- Ein GiroCode erscheint nur für eine positive EUR-SEPA-Überweisung mit gültiger IBAN-Prüfziffer.
+- Eingabeprüfung mit deutschen Meldungen an den betroffenen Feldern, zugeordneten Labels und sichtbarem Tastaturfokus.
+- Installierbare Offline-App. Nach erfolgreicher Service-Worker-Installation stehen auch die PDF-Bibliotheken offline bereit. Ein neuer Cache-Name liefert eine zusammengehörige neue App-Version aus.
 
-**E-Rechnungen empfangen** ([anzeigen.html](https://ghostfanman.github.io/invoice-kit/anzeigen.html))
-- Öffnet XRechnung (CII und UBL) sowie ZUGFeRD-/Factur-X-PDFs und zeigt sie lesbar an
-- Prüft die Pflichtangaben für den Vorsteuerabzug und ob die Summen stimmen
-- Drucken und eingebettete XML speichern
+Die Auswahl des Steuerfalls und die sachliche Richtigkeit einer Rechnung bleiben beim Nutzer. Das Projekt ersetzt keine Steuerberatung.
 
-**Als App**
-- Installierbar („Zum Startbildschirm hinzufügen“), funktioniert danach auch offline
-- Keine Anmeldung, keine Cloud: alle Daten bleiben im Browser
+## Datenschutz und Entwürfe
 
-## Rechtliche Pflichtangaben
+Standardmäßig speichert das Tool neue Rechnungen nur im Arbeitsspeicher des geöffneten Tabs. Mit „Entwurf auf diesem Gerät speichern“ werden Änderungen im localStorage gespeichert. Auf gemeinsam genutzten Geräten können andere Personen diese Daten sehen.
 
-| Rechtsgrundlage | Abgedeckt |
-| --- | --- |
-| § 14 Abs. 4 UStG (Deutschland): Name und Anschrift beider Parteien, Steuernummer oder USt-IdNr., Datum, fortlaufende Nummer, Menge und Art, Leistungszeitpunkt oder -zeitraum, Entgelt nach Steuersätzen, Skonto, Steuersatz und -betrag bzw. Befreiungshinweis, Aufbewahrungshinweis bei Grundstücksleistungen an Privatpersonen | ✅ |
-| § 14a UStG / Art. 226 MwSt-Richtlinie (EU): Reverse Charge, innergemeinschaftliche Lieferung (beide USt-IdNrn.), Steuerbefreiungen, Ausfuhr | ✅ |
-| Art. 230 MwSt-Richtlinie: Umsatzsteuer bei Fremdwährung in Landeswährung | ✅ |
-| § 35a GmbHG, § 80 AktG, § 37a HGB: Registergericht, Registernummer, Geschäftsführung | ✅ |
-| Österreich (§ 11 UStG): UID des Kunden ab 10.000 € brutto | ✅ Warnhinweis |
-| Schweiz (Art. 26 MWSTG), Vereinigtes Königreich (VAT Notice 700): allgemeine Pflichtangaben | ✅ im PDF |
-| Differenzbesteuerung, Reiseleistungen, Gutschriftverfahren, neue Fahrzeuge | ❌ noch nicht |
-| Länder mit staatlicher Echtzeit-Freigabe (z. B. Italien SDI, Polen KSeF, Mexiko CFDI, Indien, Saudi-Arabien) | ❌ nicht möglich ohne Anbindung an das staatliche System |
+Bestehende Entwürfe aus den Versionen 2 und 3 sowie der Wambur-Version bleiben lesbar. Ein alter Entwurf wird geladen, aber erst nach ausdrücklicher Speicherwahl weitergeschrieben. Das Abwählen entfernt die gespeicherten Entwürfe und Einstellungen. „Alle lokal gespeicherten Invoice-Kit-Daten löschen“ entfernt ebenfalls diese Daten, ohne fremde Website-Daten zu löschen. Die aktuell geöffnete Rechnung bleibt bis zum Schließen im Arbeitsspeicher. Bereits heruntergeladene Dateien musst du separat löschen.
 
-## Geprüfte Qualität
+Der Service Worker speichert ausschließlich bekannte lokale App-Dateien. Er löscht nur alte Caches mit dem Präfix `invoice-kit-`. Rechnungsdateien, eingegebene Daten und fremde Seiten werden nicht gecacht oder übertragen.
 
-Alle ZUGFeRD-PDFs bestehen die PDF/A-3b-Prüfung (veraPDF, über 42.000 Einzelprüfungen) und die EN-16931-Regeln – getestet in allen sieben Steuerfällen und fünf Sprachen, mit Korrektur, Fremdwährung und 30-Positionen-Rechnungen über mehrere Seiten.
+## Lokal starten und testen
 
-Die erzeugten XRechnungen werden mit dem [Mustang-Validator](https://www.mustangproject.org/) gegen die offiziellen Schematron-Regeln von EN 16931 und XRechnung (KoSIT) geprüft. Getestet sind alle sieben Steuerfälle (Regelbesteuerung mit 19 % und 7 % gemischt, Kleinunternehmer, steuerfrei, Reverse Charge, innergemeinschaftliche Lieferung, Ausfuhr, nicht steuerbar), Rechnungskorrektur, Fremdwährung, Leistungszeitraum, Skonto und Firmenangaben. Eine Beispieldatei liegt bei: [`beispiel-xrechnung.xml`](beispiel-xrechnung.xml).
+Voraussetzungen: Node.js ab Version 22 und Python 3. Es sind keine npm-Abhängigkeiten erforderlich.
 
-Tipp: Jede Datei lässt sich zusätzlich kostenlos mit dem offiziellen [KoSIT-Validator](https://github.com/itplr-kosit/validator) prüfen.
+```sh
+python3 -m http.server 8765 --bind 127.0.0.1
+```
 
-## Invoice Kit Pro (in Vorbereitung)
+Öffne anschließend `http://127.0.0.1:8765/`. JavaScript-Module benötigen einen HTTP-Server; direktes Öffnen per `file://` reicht nicht.
 
-Einmal zahlen, für immer nutzen – kein Abo.
+```sh
+node --test test/*.test.js
+node test/static-check.mjs
+python3 -m py_compile integration/build-wambur.py
+python3 integration/build-wambur.py
+git diff --check
+```
 
-- Kunden- und Artikelstamm
-- Eigenes Logo und Rechnungsdesigns
-- Angebote, Gutschriften und Mahnungen
-- Rechnungsarchiv mit Export für den Steuerberater
+`static-check.mjs` prüft die Syntax aller JavaScript-Dateien mit `node --check`, HTML-IDs, Labelziele, JSON-Metadaten, die vereinbarte Schreibweise und die Reproduzierbarkeit der Wambur-Vorschauen. Der Node-Test-Runner prüft unter anderem IBAN-Prüfziffern, E-Mail- und USt-ID-Formate, Cent-Rundung, gemischte Steuersätze, Skonto, Korrekturen, Fremdwährungen, Zahlungsarten, Viewer-Summen, Speicherlöschung und Service-Worker-Verhalten.
 
-👉 [Pro-Version vormerken](https://github.com/ghostfanman/invoice-kit/issues/new?title=Pro-Interesse) – wer sich einträgt, bekommt den Einführungspreis.
+Mit installiertem Chromium und laufendem lokalen HTTP-Server:
 
-## Für Steuerkanzleien, Verbände und Agenturen
+```sh
+node test/browser-check.mjs
+```
 
-Invoice Kit gibt es auch im eigenen Branding (White-Label) – ideal, um Mandanten oder Mitgliedern vor der E-Rechnungspflicht ein einfaches, datenschutzfreundliches Werkzeug an die Hand zu geben. Anfragen bitte über ein [Issue](https://github.com/ghostfanman/invoice-kit/issues/new?title=White-Label-Anfrage).
+Der Browsertest prüft Generator, Viewer, PDF mit eingebetteter XML, Offline-Betrieb, Speicherwahl, Tastaturzugang und das Escaping von XML-Inhalten. Screenshots und Testdateien liegen im ignorierten Ordner `.test-artifacts/`.
 
-## Unterstützen
+## Grenzen der Prüfung
 
-- ⭐ Gib dem Projekt einen Stern – das hilft anderen, es zu finden
-- Erzähl anderen Selbständigen davon
-- Fehler gefunden? [Issue eröffnen](https://github.com/ghostfanman/invoice-kit/issues)
+Die Formularvalidierung und der Viewer prüfen Eingaben und Plausibilität. Eine erfolgreiche Anzeige bestätigt weder Konformität noch einen Anspruch auf Vorsteuerabzug. Der Browser führt keine vollständige Prüfung nach XML-Schema, Schematron, EN 16931 oder PDF/A durch. USt-IdNrn. werden nur anhand lokaler Grundformate geprüft, ohne Online-Abfrage oder Bestätigung der Registrierung.
 
-## Hinweis
+Für konkrete Exportdateien sind getrennte lokale Prüfungen mit KoSIT, Mustang und veraPDF erforderlich. Umfang, Quellen und Vorgehen stehen in [docs/VALIDIERUNG.md](docs/VALIDIERUNG.md). Dieses Repository enthält keine aktuellen Prüfprotokolle dieser externen Validatoren und behauptet daher keine vollständige Konformität.
 
-Invoice Kit ist ein Hilfsmittel und keine Steuerberatung. Die Nutzung erfolgt ohne Gewähr; im Zweifel bitte eine Steuerberaterin oder einen Steuerberater fragen.
+## Projektstruktur und Wambur
+
+`core.js` enthält reine Berechnungs- und Validierungsfunktionen als ES-Modul für Browser und Node.js. `generator.js` bedient Formular, Vorschau und XML-Export; `zugferd.js` erhält das Rechnungsmodell und XML explizit. `viewer.js` liest und zeigt Rechnungen, `viewer-check.js` prüft die Summen. `storage.js` verwaltet ausschließlich eigene Entwurfschlüssel.
+
+```sh
+python3 integration/build-wambur.py
+```
+
+Das Skript erzeugt `dist-wambur/e-rechnung/` und aktualisiert die eingecheckten Vorschauen `integration/wambur-vorschau-index.html` und `integration/wambur-vorschau-anzeigen.html`. Die Vorschauen verwenden die Projektwurzel als Dokumentbasis. Der Strukturtest vergleicht sie mit der Buildausgabe. Hauptversion und Integration verwenden dieselben JavaScript-Module. Die Integration registriert keinen Service Worker auf der Wambur-Origin und benötigt dort die vorhandene Seitenhülle (`/styles.css`, `/site-layout.js`). Der Build überschreibt nur bekannte Ausgabedateien und löscht keine fremden Verzeichnisse.
 
 ## Lizenz
 
-MIT. Mitgelieferte Bibliotheken und Schriften: siehe [`vendor/LIZENZEN.txt`](vendor/LIZENZEN.txt).
+MIT. Mitgelieferte Bibliotheken und Schriften: [vendor/LIZENZEN.txt](vendor/LIZENZEN.txt).

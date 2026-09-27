@@ -1,10 +1,9 @@
-/* Invoice Kit – ZUGFeRD 2.3 / Factur-X 1.07 (Profil EN 16931) als PDF/A-3b
+/* Invoice Kit: ZUGFeRD 2.3 / Factur-X 1.07 (Profil EN 16931) als PDF/A-3b
    Benötigt: vendor/pdf-lib.min.js, vendor/fontkit.umd.min.js, vendor/fonts.js
-   Nutzt aus index.html: view(), buildXML(), state-Objekt s */
-async function buildZugferd(s){
+   Rechnungsmodell, XML und QR-Funktion werden explizit übergeben. */
+export async function buildZugferd(s,v,xml,qrMatrix){
   const {PDFDocument,PDFName,PDFString,PDFHexString,AFRelationship,rgb}=PDFLib;
   const b64=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
-  const v=view(s), xml=buildXML(s,"en16931");
   const now=new Date(Math.floor(Date.now()/1000)*1000);
 
   const doc=await PDFDocument.create({updateMetadata:false});
@@ -98,7 +97,7 @@ async function buildZugferd(s){
     text(`${i+1} / ${pages.length}`,M,M+FOOT-18,{sz:7.5,c:grey,align:"right",w:CW})});
 
   /* ---------- PDF/A-3b + Factur-X ---------- */
-  const title=`${v.title} ${s.num}`, author=s.from, subject=`${v.title} ${s.num} – ${s.to}`, producer="Invoice Kit (pdf-lib)", creator="Invoice Kit";
+  const title=`${v.title} ${s.num}`, author=s.from, subject=`${v.title} ${s.num}: ${s.to}`, producer="Invoice Kit (pdf-lib)", creator="Invoice Kit";
   doc.setTitle(title);doc.setAuthor(author);doc.setSubject(subject);doc.setProducer(producer);doc.setCreator(creator);
   doc.setCreationDate(now);doc.setModificationDate(now);doc.setLanguage(v.loc);
 

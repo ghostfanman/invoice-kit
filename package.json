@@ -1,0 +1,7 @@
+{
+  "name": "invoice-kit",
+  "private": true,
+  "type": "module",
+  "scripts": {"test": "node --test test/*.test.js", "check": "node test/static-check.mjs"},
+  "engines": {"node": ">=22"}
+}
