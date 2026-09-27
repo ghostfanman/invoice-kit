@@ -212,14 +212,14 @@ common_ld = ld(faq_ld(faq))
 pages = {
     "index.html": page("E-Rechnung erstellen | Wambur", "Rechnungen lokal im Browser erstellen: CII-XML, ZUGFeRD-PDF, mehrere Sprachen und Zahlungsarten.", BASE,
         '<a href="/">Start</a> › E-Rechnung erstellen', "E-Rechnung erstellen", "Rechnungen schreiben und lokal als XML oder PDF speichern.", tool1, after,
-        '<script src="vendor/qrcode.js"></script>\n<script type="module" src="generator.js"></script><script type="module" src="wambur.js"></script>', common_ld),
+        '<script src="vendor/qrcode.js"></script>\n<script type="module" src="generator.js"></script><script type="module" src="pro-app.js"></script><script type="module" src="wambur.js"></script>', common_ld),
     "anzeigen.html": page("E-Rechnung öffnen | Wambur", "CII, UBL und eingebettete XML in ZUGFeRD-PDFs lokal anzeigen und auf Plausibilität prüfen.", BASE + "anzeigen.html",
         '<a href="/">Start</a> › <a href="./">E-Rechnung erstellen</a> › E-Rechnung öffnen', "E-Rechnung öffnen", "Die Datei bleibt auf deinem Gerät. Der Viewer führt eine Plausibilitätsprüfung durch.", tool2, after,
         '<script type="module" src="viewer.js"></script>', common_ld),
 }
 # Nur bekannte Ausgabedateien überschreiben, keine fremden Zielordner löschen.
 (OUT / "vendor").mkdir(parents=True, exist_ok=True)
-assets = ["generator.js", "viewer.js", "core.js", "viewer-check.js", "storage.js", "zugferd.js", "accessibility.css"]
+assets = ["generator.js", "viewer.js", "core.js", "viewer-check.js", "storage.js", "zugferd.js", "accessibility.css", "pro-app.js", "pro-data.js", "pro-license.js", "pro-config.js", "admin.html", "admin.js", "admin.css"]
 for name, content in pages.items():
     (OUT / name).write_text(content, encoding="utf-8")
     preview = content

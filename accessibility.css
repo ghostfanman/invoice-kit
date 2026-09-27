@@ -14,3 +14,7 @@ button{min-height:36px}
 main>section,.ik-grid>section,.row>div,.row3>div{min-width:0}
 #preview{overflow-wrap:anywhere}
 .table-scroll{position:relative}
+[hidden]{display:none!important}
+#proPanel{margin:18px 0;padding:12px}
+#proPanel p{overflow-wrap:anywhere}
+#proPanel button{margin-top:6px;max-width:100%}

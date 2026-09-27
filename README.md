@@ -20,7 +20,7 @@ Die Auswahl des Steuerfalls und die sachliche Richtigkeit einer Rechnung bleiben
 
 Standardmäßig speichert das Tool neue Rechnungen nur im Arbeitsspeicher des geöffneten Tabs. Mit „Entwurf auf diesem Gerät speichern“ werden Änderungen im localStorage gespeichert. Auf gemeinsam genutzten Geräten können andere Personen diese Daten sehen.
 
-Bestehende Entwürfe aus den Versionen 2 und 3 sowie der Wambur-Version bleiben lesbar. Ein alter Entwurf wird geladen, aber erst nach ausdrücklicher Speicherwahl weitergeschrieben. Das Abwählen entfernt die gespeicherten Entwürfe und Einstellungen. „Alle lokal gespeicherten Invoice-Kit-Daten löschen“ entfernt ebenfalls diese Daten, ohne fremde Website-Daten zu löschen. Die aktuell geöffnete Rechnung bleibt bis zum Schließen im Arbeitsspeicher. Bereits heruntergeladene Dateien musst du separat löschen.
+Bestehende Entwürfe aus den Versionen 2 und 3 sowie der Wambur-Version bleiben lesbar. Ein alter Entwurf wird geladen, aber erst nach ausdrücklicher Speicherwahl weitergeschrieben. Das Abwählen entfernt die gespeicherten Entwürfe und deren Speicherwahl. „Alle lokal gespeicherten Invoice-Kit-Daten löschen“ entfernt ebenfalls diese Daten, ohne fremde Website-Daten zu löschen. Die aktuell geöffnete Rechnung bleibt bis zum Schließen im Arbeitsspeicher. Bereits heruntergeladene Dateien musst du separat löschen.
 
 Der Service Worker speichert ausschließlich bekannte lokale App-Dateien. Er löscht nur alte Caches mit dem Präfix `invoice-kit-`. Rechnungsdateien, eingegebene Daten und fremde Seiten werden nicht gecacht oder übertragen.
 
@@ -71,3 +71,13 @@ Das Skript erzeugt `dist-wambur/e-rechnung/` und aktualisiert die eingecheckten 
 ## Lizenz
 
 MIT. Mitgelieferte Bibliotheken und Schriften: [vendor/LIZENZEN.txt](vendor/LIZENZEN.txt).
+
+## Pro für Admin und beschenkte Kunden
+
+Pro bietet einen lokalen Kundenstamm, wiederverwendbare Artikel und ein Archiv bearbeitbarer Rechnungskopien. Das Archiv ist keine unveränderbare oder revisionssichere Aufbewahrung. Die bisherigen Basisfunktionen bleiben ohne Lizenz nutzbar. Logos, Angebote und Mahnungen gehören derzeit nicht zum Funktionsumfang.
+
+Im Generator unter „Pro aktivieren“ eine `.invoicekit-license`-Datei auswählen. Eine Admin-Lizenz schaltet die gleichen Pro-Funktionen frei wie eine Geschenk-Lizenz und zeigt zusätzlich den Verwaltungslink. Das Ausstellen weiterer Lizenzen erfordert den separaten privaten Admin-Schlüssel. Eine Lizenz allein berechtigt nicht zum Signieren.
+
+Lizenzen und Pro-Daten werden nur nach eigener Auswahl auf dem Gerät gespeichert. Die Funktion zum Löschen aller Invoice-Kit-Daten entfernt auch gemerkte Lizenzen, Kunden, Artikel und Archivkopien. Das Abwählen der normalen Entwurfsspeicherung betrifft nur Rechnungsentwürfe. Pro-Sicherungen lassen sich als JSON exportieren und ergänzend importieren.
+
+Einrichtung, Geschenkvergabe und Grenzen des Offline-Verfahrens: [docs/PRO-ADMIN.md](docs/PRO-ADMIN.md).

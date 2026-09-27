@@ -1,8 +1,8 @@
 /* Speichert ausschließlich lokale App-Dateien, keine Rechnungen oder Fremdseiten. */
 const CACHE_PREFIX = 'invoice-kit-';
-const CACHE = `${CACHE_PREFIX}v5`;
+const CACHE = `${CACHE_PREFIX}v6`;
 const CORE = ['./', 'index.html', 'anzeigen.html', 'generator.js', 'viewer.js', 'core.js',
-  'viewer-check.js', 'storage.js', 'zugferd.js', 'accessibility.css', 'manifest.webmanifest',
+  'viewer-check.js', 'storage.js', 'pro-app.js', 'pro-data.js', 'pro-license.js', 'pro-config.js', 'admin.html', 'admin.js', 'admin.css', 'zugferd.js', 'accessibility.css', 'manifest.webmanifest',
   'icon.svg', 'vendor/qrcode.js', 'vendor/pdf-lib.min.js', 'vendor/fontkit.umd.min.js', 'vendor/fonts.js'];
 const allowed = new Set(CORE.map(path => new URL(path, self.registration.scope).href));
 self.addEventListener('install', event => event.waitUntil(

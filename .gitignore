@@ -3,3 +3,8 @@ dist-wambur/
 __pycache__/
 *.py[cod]
 .test-artifacts/
+
+# Private Lizenzschlüssel und persönliche Freischaltungen gehören nicht ins Repository.
+*.jwk
+*.invoicekit-license
+.invoice-kit-private/

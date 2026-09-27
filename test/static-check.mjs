@@ -20,9 +20,9 @@ try {
   for(const file of files.filter(f=>!f.startsWith('vendor/')&&/\.(?:html|js|mjs|md|py|webmanifest)$/.test(f))){
     const text=readFileSync(file,'utf8');assert.ok(!/[\u2013\u2014]|&(?:mdash|ndash);|&#(?:8211|8212);|&#x201[34];/i.test(text),`Gedankenstrich in ${file}`);
   }
-  const before=pages.slice(2).map(readPage);
+  const before=pages.filter(p=>p.startsWith("integration/")).map(readPage);
   execFileSync('python3',['integration/build-wambur.py',join(scratch,'build')]);
-  assert.deepEqual(pages.slice(2).map(readPage),before,'Wambur-Vorschauen passen nicht zum Buildskript');
+  assert.deepEqual(pages.filter(p=>p.startsWith("integration/")).map(readPage),before,'Wambur-Vorschauen passen nicht zum Buildskript');
   for(const page of ['index.html','anzeigen.html']){
     const built=readFileSync(join(scratch,'build/e-rechnung',page),'utf8');
     assert.equal(readPage('integration/wambur-vorschau-'+page),built.replace('<head>','<head>\n<base href="../">').replace('src="wambur.js"','src="integration/wambur.js"'));

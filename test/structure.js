@@ -1,5 +1,5 @@
 import {readFileSync} from 'node:fs';
-export const pages=['index.html','anzeigen.html','integration/wambur-vorschau-index.html','integration/wambur-vorschau-anzeigen.html'];
+export const pages=['index.html','anzeigen.html','admin.html','integration/wambur-vorschau-index.html','integration/wambur-vorschau-anzeigen.html'];
 export function structureErrors(html){
   // Statische HTML-Struktur, Skriptinhalte und Kommentare sind keine DOM-Knoten.
   html=html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<!--[\s\S]*?-->/g,'');

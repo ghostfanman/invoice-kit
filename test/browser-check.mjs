@@ -1,6 +1,6 @@
 // Chromium-Integration ohne npm-Pakete. Vorher den lokalen HTTP-Server starten.
 import {spawn} from 'node:child_process';
-import {mkdtempSync,mkdirSync,writeFileSync,rmSync} from 'node:fs';
+import {mkdtempSync,mkdirSync,writeFileSync,rmSync,readFileSync,readdirSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import assert from 'node:assert/strict';
@@ -85,10 +85,47 @@ try {
   const ubl=`<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"><cbc:ID>UBL-1</cbc:ID><cbc:IssueDate>2026-09-27</cbc:IssueDate><cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode><cac:LegalMonetaryTotal><cbc:LineExtensionAmount>0</cbc:LineExtensionAmount><cbc:TaxExclusiveAmount>0</cbc:TaxExclusiveAmount><cbc:TaxInclusiveAmount>0</cbc:TaxInclusiveAmount><cbc:PayableAmount>0</cbc:PayableAmount></cac:LegalMonetaryTotal><cac:InvoiceLine><cbc:ID>1</cbc:ID><cbc:InvoicedQuantity unitCode="C62">1</cbc:InvoicedQuantity><cbc:LineExtensionAmount>0</cbc:LineExtensionAmount><cac:Item><cbc:Name>Test</cbc:Name></cac:Item><cac:Price><cbc:PriceAmount>0</cbc:PriceAmount></cac:Price></cac:InvoiceLine></Invoice>`;
   assert.deepEqual(await evaluate(`(()=>{const x=v.parseXml(${JSON.stringify(ubl)});v.render(x);return [x.syntax,x.id,x.lines[0].price,x.totals.gross,x.totals.tax]})()`),['UBL','UBL-1',0,0,null]);
   await evaluate('document.getElementById("drop").focus()');assert.equal(await evaluate('document.activeElement.getAttribute("role")'),'button');
+  // Optionale Admin-Prüfung: private Dateien bleiben außerhalb des Web-Roots.
+  if(process.env.INVOICE_KIT_ADMIN_DIR){
+    const adminDir=process.env.INVOICE_KIT_ADMIN_DIR,downloads=join(profile,'downloads');mkdirSync(downloads);
+    await cmd('Page.setDownloadBehavior',{behavior:'allow',downloadPath:downloads});
+    const waitFor=async expression=>{for(let i=0;i<100;i++){if(await evaluate(expression))return;await pause(50)}throw new Error('Pro-Bedingung nicht erfüllt: '+expression)};
+    const upload=async(selector,path)=>{const {root}=await cmd('DOM.getDocument');const {nodeId}=await cmd('DOM.querySelector',{nodeId:root.nodeId,selector});await cmd('DOM.setFileInputFiles',{nodeId,files:[path]})};
+    await go('/admin.html');await waitFor('document.getElementById("adminKey").onchange!==null');
+    assert.equal(await evaluate('document.getElementById("adminTools").hidden'),true);
+    await upload('#adminKey',join(adminDir,'admin-private.jwk'));await waitFor('!document.getElementById("adminTools").hidden');
+    assert.equal(await evaluate(`Object.keys(localStorage).some(k=>/private|issuer/.test(k))`),false);
+    await evaluate(`document.getElementById('giftRecipient').value='Geschenkkunde Test';document.querySelector('#giftForm button').click()`);
+    let giftPath;
+    for(let i=0;i<100;i++){const name=readdirSync(downloads).find(n=>n.endsWith('.invoicekit-license'));if(name){giftPath=join(downloads,name);break}await pause(50)}
+    assert.ok(giftPath,'Geschenk-Lizenz wurde heruntergeladen');
+    const gift=readFileSync(giftPath,'utf8');
+    assert.equal(await evaluate(`(await (await import('./pro-license.js')).verifyLicense(${JSON.stringify(gift)},(await import('./pro-config.js')).publicJwk)).role`),'gift');
+    await evaluate(`document.getElementById('adminLock').click()`);assert.equal(await evaluate('document.getElementById("adminTools").hidden'),true);
+    await go('/#proPanel');await evaluate('window.g=await import("./generator.js");await import("./pro-app.js")');
+    await upload('#proLicenseFile',giftPath);await waitFor('!document.getElementById("proFeatures").hidden');
+    assert.equal(await evaluate('document.getElementById("proAdminLink").hidden'),true);
+    assert.equal(await evaluate('localStorage.getItem("invoice-kit-pro-license")'),null);
+    await evaluate(`g.load(${JSON.stringify(invoice())});document.getElementById('proSaveCustomer').click()`);await waitFor('document.getElementById("proCustomers").options.length===2');
+    await evaluate(`document.getElementById('proSaveArticle').click()`);await waitFor('document.getElementById("proArticles").options.length===2');
+    await evaluate(`document.getElementById('proSaveInvoice').click()`);await waitFor('document.getElementById("proArchive").options.length===2');
+    assert.equal(await evaluate('localStorage.getItem("invoice-kit-pro-data")'),null);
+    await evaluate(`document.getElementById('proSaveData').click();document.getElementById('proRemember').click()`);
+    assert.equal(await evaluate('JSON.parse(localStorage.getItem("invoice-kit-pro-data")).archive.length'),1);
+    await go('/#proPanel');await evaluate('window.g=await import("./generator.js");await import("./pro-app.js")');await waitFor('!document.getElementById("proFeatures").hidden');
+    await evaluate(`document.getElementById('proArticles').selectedIndex=1;document.getElementById('proUseArticle').click()`);await waitFor('g.state().items.length===2');
+    await upload('#proLicenseFile',join(adminDir,'admin.invoicekit-license'));await waitFor('!document.getElementById("proAdminLink").hidden');
+    writeFileSync('.test-artifacts/pro.png',Buffer.from((await cmd('Page.captureScreenshot',{format:'png'})).data,'base64'));
+    await evaluate(`document.getElementById('clearData').click()`);assert.equal(await evaluate('document.getElementById("proFeatures").hidden'),true);
+    assert.equal(await evaluate('localStorage.getItem("invoice-kit-pro-data")'),null);assert.equal(await evaluate('localStorage.getItem("invoice-kit-pro-license")'),null);
+    await upload('#proLicenseFile',giftPath);await evaluate(`document.getElementById('clearData').click()`);await pause(100);
+    assert.equal(await evaluate('document.getElementById("proFeatures").hidden'),true,'Gesamtlöschung beendet auch eine laufende Aktivierung');
+    console.log('Pro-Browsertest bestanden: Admin-Schlüssel, Geschenkdatei, Rollen, Freischaltung, Kunden, Artikel, Archiv, Speicherwahl, Wiederherstellung und Löschung.');
+  }
   // App-Dateien einschließlich PDF-Bibliotheken sind auch ohne Netzwerk verfügbar.
   await cmd('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});
   await go('/');await evaluate('window.g=await import("./generator.js")');assert.ok(await evaluate('document.querySelector("#preview h1").textContent'));
-  assert.ok(await evaluate(`await (async()=>{for(const f of ['vendor/fonts.js','vendor/pdf-lib.min.js','vendor/fontkit.umd.min.js','zugferd.js','viewer.js']){const r=await fetch(f);if(!r.ok)return false}return true})()`));
+  assert.ok(await evaluate(`await (async()=>{for(const f of ['vendor/fonts.js','vendor/pdf-lib.min.js','vendor/fontkit.umd.min.js','zugferd.js','viewer.js','pro-app.js','pro-config.js','pro-license.js','pro-data.js']){const r=await fetch(f);if(!r.ok)return false}return true})()`));
   await cmd('Network.emulateNetworkConditions',{offline:false,latency:0,downloadThroughput:-1,uploadThroughput:-1});
   await go('/integration/wambur-vorschau-index.html');assert.ok(await evaluate('document.querySelector("#preview h1").textContent'));
   await go('/integration/wambur-vorschau-anzeigen.html');assert.equal(await evaluate('document.querySelector("#drop").tabIndex'),0);

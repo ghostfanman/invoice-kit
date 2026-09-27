@@ -10,3 +10,5 @@ export function clearInvoiceData(storage) {
   const keys = Array.from({length:storage.length},(_,i) => storage.key(i));
   for (const key of keys) if (key?.startsWith('invoice-kit-') || /^wambur-rechnung-v\d+$/.test(key || '')) storage.removeItem(key);
 }
+
+export function clearDrafts(storage){for(const key of DRAFT_KEYS)storage.removeItem(key);storage.removeItem(STORAGE_CHOICE);}

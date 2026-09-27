@@ -1,5 +1,5 @@
 import {decimalText, num, home, totals, validateInvoice, PAYMENT, needsIBAN, canGiroCode, normalizeVAT} from './core.js';
-import {STORAGE_CHOICE, readDraft, clearInvoiceData} from './storage.js';
+import {STORAGE_CHOICE, readDraft, clearInvoiceData, clearDrafts} from './storage.js';
 
 const $=id=>document.getElementById(id);
 const fields=["from","fromStreet","fromZip","fromCity","fromCountry","fromMail","fromPhone","vatId","taxNo","iban","bic","register","managers",
@@ -394,7 +394,7 @@ if(!document.body.dataset.noServiceWorker&&"serviceWorker" in navigator&&(locati
 $("saveDraft").onchange=()=>{
   try {
     if($("saveDraft").checked){localStorage.setItem(STORAGE_CHOICE,"yes");update();$("storageStatus").textContent="Der Entwurf wird auf diesem Gerät gespeichert.";}
-    else {clearInvoiceData(localStorage);$("storageStatus").textContent="Gespeicherte Entwürfe wurden entfernt. Die aktuelle Rechnung bleibt bis zum Schließen geöffnet.";}
+    else {clearDrafts(localStorage);$("storageStatus").textContent="Gespeicherte Entwürfe wurden entfernt. Die aktuelle Rechnung bleibt bis zum Schließen geöffnet.";}
   }catch{$("storageStatus").textContent="Der Browser erlaubt keinen Zugriff auf den lokalen Speicher.";}
 };
 $("clearData").onclick=()=>{

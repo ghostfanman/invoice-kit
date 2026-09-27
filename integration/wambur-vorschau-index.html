@@ -185,6 +185,41 @@
     <button class="ghost" id="clearData">Alle lokal gespeicherten Invoice-Kit-Daten löschen</button>
     <p id="storageStatus" class="hint" role="status"></p>
 
+    <details id="proPanel">
+      <summary>Invoice Kit Pro: aktivieren und verwenden</summary>
+      <p>Kunden und Artikel wiederverwenden, Rechnungen lokal als bearbeitbare Kopien archivieren. Die Basisfunktionen bleiben kostenlos verfügbar.</p>
+      <label for="proLicenseFile">Admin- oder Geschenk-Lizenz laden</label>
+      <input id="proLicenseFile" type="file" accept=".invoicekit-license,text/plain" aria-describedby="proLicenseHint">
+      <p id="proLicenseHint" class="hint">Lade die persönlich ausgestellte Lizenzdatei. Die Prüfung findet lokal statt, ohne Benutzerkonto.</p>
+      <label class="check" for="proRemember"><input id="proRemember" type="checkbox"> Lizenz auf diesem Gerät merken</label>
+      <p id="proLicenseStatus" role="status">Pro ist nicht aktiviert.</p>
+      <button class="ghost" id="proDeactivate" type="button">Pro auf diesem Gerät deaktivieren</button>
+      <p><a id="proAdminLink" href="admin.html" hidden>Admin: Pro als Geschenk ausstellen</a></p>
+      <div id="proFeatures" hidden>
+        <label class="check" for="proSaveData"><input id="proSaveData" type="checkbox" aria-describedby="proDataHint"> Pro-Daten auf diesem Gerät speichern</label>
+        <p id="proDataHint" class="hint">Ohne Auswahl bleiben die Einträge nur bis zum Schließen geöffnet. Auf gemeinsam genutzten Geräten können gespeicherte Kunden- und Rechnungsdaten sichtbar bleiben. Sichere wichtige Daten zusätzlich als Datei.</p>
+        <h2>Kundenstamm</h2>
+        <button class="ghost" id="proSaveCustomer" type="button">Kunden aus der Rechnung übernehmen</button>
+        <label for="proCustomers">Gespeicherter Kunde</label><select id="proCustomers"><option value="">Bitte auswählen</option></select>
+        <div class="actions"><button class="ghost" id="proUseCustomer" type="button">Kunden einsetzen</button><button class="ghost" id="proDeleteCustomer" type="button">Kunden löschen</button></div>
+        <h2>Artikelstamm</h2>
+        <label for="proItemNumber">Positionsnummer aus der geöffneten Rechnung</label><input id="proItemNumber" type="number" min="1" step="1" value="1">
+        <button class="ghost" id="proSaveArticle" type="button">Position als Artikel übernehmen</button>
+        <label for="proArticles">Gespeicherter Artikel</label><select id="proArticles"><option value="">Bitte auswählen</option></select>
+        <div class="actions"><button class="ghost" id="proUseArticle" type="button">Artikel hinzufügen</button><button class="ghost" id="proDeleteArticle" type="button">Artikel löschen</button></div>
+        <h2>Lokales Rechnungsarchiv</h2>
+        <p class="hint">Bearbeitbare Rechnungskopien. Dies ist kein unveränderbares oder revisionssicheres Archiv. Bewahre exportierte Originaldateien separat auf.</p>
+        <button class="ghost" id="proSaveInvoice" type="button">Geöffnete Rechnung archivieren</button>
+        <label for="proArchive">Archivierte Rechnung</label><select id="proArchive"><option value="">Bitte auswählen</option></select>
+        <div class="actions"><button class="ghost" id="proUseInvoice" type="button">Rechnung laden</button><button class="ghost" id="proDeleteInvoice" type="button">Archivkopie löschen</button></div>
+        <h2>Pro-Daten sichern</h2>
+        <label for="proRestore">Pro-Sicherung ergänzend laden</label><input id="proRestore" type="file" accept=".json,application/json">
+      </div>
+      <button class="ghost" id="proBackup" type="button">Alle Pro-Daten als JSON sichern</button>
+      <p class="hint">Deine Pro-Daten kannst du auch nach Ablauf oder Deaktivierung der Lizenz sichern.</p>
+      <p id="proStatus" class="hint" role="status" aria-live="polite"></p>
+    </details>
+
     <h2>Absender (du)</h2>
     <div><label for="from">Name / Firma *</label><input id="from" placeholder="Name / Firma *" autocomplete="section-seller organization"></div>
     <div><label for="fromStreet">Straße und Hausnummer *</label><input id="fromStreet" class="mt" placeholder="Straße und Hausnummer *" autocomplete="section-seller street-address"></div>
@@ -314,6 +349,6 @@
   </main>
   <script src="/site-layout.js"></script>
 <script src="vendor/qrcode.js"></script>
-<script type="module" src="generator.js"></script><script type="module" src="integration/wambur.js"></script>
+<script type="module" src="generator.js"></script><script type="module" src="pro-app.js"></script><script type="module" src="integration/wambur.js"></script>
 </body>
 </html>
