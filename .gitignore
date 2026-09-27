@@ -8,3 +8,4 @@ __pycache__/
 *.jwk
 *.invoicekit-license
 .invoice-kit-private/
+Admin-Lizenz.txt
