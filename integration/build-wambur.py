@@ -52,6 +52,7 @@ CSS = """
 .ik #proPanel.active{border-color:#f59e0b;border-style:solid}
 .ik #proPanel a{color:var(--ik-accent)}
 .ik .pro-state{margin:10px 0;font-size:14px}
+.ik .pro-state p{margin:0}
 .ik .pro-state.active{padding:10px 14px;border-radius:8px;background:rgba(74,222,128,.12);border:1px solid var(--ik-ok);color:var(--ik-text)}
 .ik .pro-state.active strong{color:var(--ik-ok)}
 .ik .pro-state.active strong::before{content:"✓ "}

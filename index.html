@@ -30,6 +30,7 @@ header nav a.pro{background:#f59e0b;border-color:#f59e0b;color:#1c2230}
 .pro-badge+h2{margin-top:0}
 #proPanel.active{border-color:#f59e0b;border-style:solid}
 .pro-state{margin:10px 0;font-size:14px}
+.pro-state p{margin:0}
 .pro-state.active{padding:10px 14px;border-radius:8px;background:#dcfce7;border:1px solid var(--ok);color:#14532d}
 .pro-state.active strong::before{content:"✓ "}
 main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;max-width:1300px;margin:20px auto;padding:0 16px}
@@ -107,7 +108,10 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 
     <details id="proPanel">
       <summary id="proSummary">Invoice Kit Pro: aktivieren und verwenden</summary>
-      <p id="proLicenseStatus" class="pro-state" role="status" tabindex="-1">Pro ist nicht aktiviert.</p>
+      <div id="proState" class="pro-state">
+        <p id="proLicenseStatus" role="status" tabindex="-1">Pro ist nicht aktiviert.</p>
+        <label class="check" for="proRemember"><input id="proRemember" type="checkbox"> Lizenz auf diesem Gerät merken</label>
+      </div>
       <p>Kunden und Artikel wiederverwenden, Rechnungen lokal als bearbeitbare Kopien archivieren. Die Basisfunktionen bleiben kostenlos verfügbar.</p>
       <div id="proActivation">
       <label for="proLicenseCode">Admin- oder Geschenk-Lizenzcode</label>
@@ -119,7 +123,6 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
       <input id="proLicenseFile" type="file" accept=".txt,.invoicekit-license,text/plain" aria-describedby="proLicenseHint">
       <p id="proLicenseHint" class="hint">TXT-Dateien und bisherige .invoicekit-license-Dateien werden unterstützt. Unter Linux zeigt Strg+H im Dateidialog auch versteckte Ordner wie .local an.</p>
       </div>
-      <label class="check" for="proRemember"><input id="proRemember" type="checkbox"> Lizenz auf diesem Gerät merken</label>
       <button class="ghost" id="proDeactivate" type="button" hidden>Pro auf diesem Gerät deaktivieren</button>
       <p><a id="proAdminLink" href="admin.html" hidden>Admin: Pro als Geschenk ausstellen</a></p>
       <div id="proFeatures" hidden>

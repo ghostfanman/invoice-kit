@@ -52,3 +52,9 @@ Prüflauf am 27. September 2026 nach Ergänzung der Berechnung „Unentgeltlich:
 Der Browsertest bestand mit 60 statt 56 CII-Varianten. Die vier neuen Varianten (Geschenk mit zwei Steuersätzen, Werbezweck als Kleinunternehmer, nicht steuerbar in Englisch, innergemeinschaftliche Lieferung) bestehen alle Plausibilitätsprüfungen des Viewers. Zusätzlich geprüft: Export ohne IBAN und Zahlungsziel möglich, Zahlungsangaben ausgeblendet, kein QR-Code, Vorschau mit Summe der Positionen, Nachlass, „Zu zahlen“ und Hinweis, ohne Fälligkeit und Bankverbindung, XML mit Zahlungsart 1, zwei Nachlässen und passenden Summen, einseitiges PDF (`.test-artifacts/rechnung-geschenk.pdf`) und Anzeige von Summe der Positionen, Nachlässen und Zahlungsart im Viewer. Screenshot der Vorschau: `.test-artifacts/geschenk.png`.
 
 Eine externe Prüfung mit KoSIT, Mustang oder veraPDF fand für unentgeltliche Rechnungen nicht statt.
+
+## Lizenz merken
+
+Anlass: Nach dem Neuladen war Pro wieder deaktiviert. Ein Browsertest lokal und auf wambur.com bestätigte, dass das nur ohne Haken bei „Lizenz auf diesem Gerät merken“ geschieht. Mit Haken blieb die Lizenz in beiden Umgebungen aktiv. Der Haken lag aber unauffällig unter dem Codefeld. Jetzt sitzt er im Statusfeld, und das Feld nennt bei aktiver Lizenz „Gilt nur bis zum Neuladen der Seite.“ oder „Auf diesem Gerät gespeichert.“ Schlägt das Speichern fehl, wird der Haken wieder entfernt.
+
+Prüflauf am 27. September 2026: 42 Node-Tests und die statische Prüfung bestanden, Service-Worker-Cache `invoice-kit-v11`. Der Browsertest bestand ohne und mit Admin-Teil (Kopie mit eigens erzeugtem Testschlüssel). Neu geprüft: Haken im Statusfeld, Wechsel des Hinweises beim Setzen und Entfernen ohne Neuladen, Speichern und Entfernen der Lizenz im Browser, Hinweis „Auf diesem Gerät gespeichert.“ nach dem Neuladen mit gemerkter Lizenz.

@@ -17,12 +17,14 @@ function showActive(label){
   }
 }
 // Nur bei geändertem Stand neu schreiben, damit Screenreader den Status nicht bei jeder Speicherung wiederholen.
+// Ohne Haken bei „merken“ lebt die Lizenz nur im Arbeitsspeicher. Das Statusfeld sagt das ausdrücklich.
 function showLicense(details){
-  const status=$('proLicenseStatus'),text=details?'Pro-Version aktiv. '+details:'Pro ist nicht aktiviert.';
-  status.classList.toggle('active',!!details);
+  const rest=details&&details+($('proRemember').checked?' Auf diesem Gerät gespeichert.':' Gilt nur bis zum Neuladen der Seite.');
+  const status=$('proLicenseStatus'),text=details?'Pro-Version aktiv. '+rest:'Pro ist nicht aktiviert.';
+  $('proState').classList.toggle('active',!!details);
   if(status.textContent===text)return;
   if(!details){status.textContent=text;return}
-  const title=document.createElement('strong');title.textContent='Pro-Version aktiv.';status.replaceChildren(title,' '+details);
+  const title=document.createElement('strong');title.textContent='Pro-Version aktiv.';status.replaceChildren(title,' '+rest);
 }
 function render(){
   const enabled=!!claims&&(claims.expiresAt===null||Date.now()<claims.expiresAt);
@@ -52,7 +54,7 @@ async function activate(text,current=++sequence){
   if(current!==sequence)return;
   token=text.trim();claims=verified;
   clearCode();
-  if($('proRemember').checked)localStorage.setItem(keys.license,token);
+  if($('proRemember').checked)try{localStorage.setItem(keys.license,token)}catch{$('proRemember').checked=false}
   render();message('Pro wurde freigeschaltet. Deine Rechnung bleibt unverändert.');
 }
 $('proActivateCode').onclick=async()=>{
@@ -70,7 +72,8 @@ $('proLicenseFile').onchange=async()=>{
   try{if(file.size>8000)throw new Error('Die Lizenzdatei ist zu groß.');await activate(await file.text(),current);if(current===sequence)$('proLicenseStatus').focus()}catch(error){if(current===sequence)message(error.message)}
 };
 $('proRemember').onchange=()=>{
-  try{if($('proRemember').checked&&token)localStorage.setItem(keys.license,token);else localStorage.removeItem(keys.license)}catch{message('Die Lizenz konnte nicht gespeichert werden. Sie bleibt in dieser Sitzung aktiv.');}
+  try{if($('proRemember').checked&&token)localStorage.setItem(keys.license,token);else localStorage.removeItem(keys.license)}catch{$('proRemember').checked=false;message('Die Lizenz konnte nicht gespeichert werden. Sie bleibt in dieser Sitzung aktiv.');}
+  render();
 };
 $('proDeactivate').onclick=()=>{sequence++;token='';claims=null;clearCode();$('proRemember').checked=false;try{localStorage.removeItem(keys.license)}catch{}render();$('proLicenseCode').focus();message('Pro deaktiviert. Gespeicherte Pro-Daten bleiben erhalten und lassen sich nach erneuter Aktivierung öffnen.');};
 $('proSaveData').onchange=()=>{

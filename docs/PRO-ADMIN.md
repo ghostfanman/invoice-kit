@@ -10,7 +10,7 @@ Deine private Einrichtung liegt außerhalb des veröffentlichten Projekts:
 Die Dateien erhalten beim Anlegen Dateirechte 600, ein neuer Verwaltungsordner Dateirechte 700. Bewahre eine geschützte Sicherung des Schlüssels auf. Der Browser speichert den Signierschlüssel weder im localStorage noch im App-Cache. Nach Auswahl bleibt er als nicht exportierbarer CryptoKey nur in der Sitzung der Admin-Seite. „Admin sperren“ und das Verlassen der Seite entfernen diesen Zugriff.
 
 1. Öffne den Generator und klicke auf „Pro aktivieren“.
-2. Wähle deine Lizenzdatei im Pro-Bereich. Akzeptiert werden `.txt` und `.invoicekit-license`. Alternativ öffne die Datei in einem Texteditor, kopiere ihren vollständigen Inhalt in „Admin- oder Geschenk-Lizenzcode“ und klicke auf „Lizenzcode aktivieren“. Mit „Lizenz auf diesem Gerät merken“ kannst du die Freischaltung lokal behalten.
+2. Wähle deine Lizenzdatei im Pro-Bereich. Akzeptiert werden `.txt` und `.invoicekit-license`. Alternativ öffne die Datei in einem Texteditor, kopiere ihren vollständigen Inhalt in „Admin- oder Geschenk-Lizenzcode“ und klicke auf „Lizenzcode aktivieren“. Mit „Lizenz auf diesem Gerät merken“ kannst du die Freischaltung lokal behalten. Ohne diesen Haken endet sie beim Neuladen der Seite. Der Haken sitzt oben im Pro-Bereich im Statusfeld und lässt sich auch nach der Aktivierung noch setzen.
 3. Im Pro-Bereich stehen Kundenstamm, Artikelstamm und Rechnungsarchiv bereit.
 4. Öffne [die Admin-Seite](https://ghostfanman.github.io/invoice-kit/admin.html) und wähle `admin-private.jwk`, wenn du eine Lizenz ausstellen möchtest.
 

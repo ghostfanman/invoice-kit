@@ -29,7 +29,7 @@ try {
   await evaluate('await import("./pro-app.js")');
   assert.deepEqual(await evaluate('[document.getElementById("proBadge").hidden,document.getElementById("proNav").textContent,document.getElementById("proSummary").textContent]'),
     [true,'Pro aktivieren','Invoice Kit Pro: aktivieren und verwenden'],'Ohne Lizenz keine Pro-Anzeige');
-  assert.deepEqual(await evaluate('[document.getElementById("proActivation").hidden,document.getElementById("proDeactivate").hidden,document.getElementById("proLicenseStatus").textContent,document.getElementById("proLicenseStatus").classList.contains("active")]'),
+  assert.deepEqual(await evaluate('[document.getElementById("proActivation").hidden,document.getElementById("proDeactivate").hidden,document.getElementById("proLicenseStatus").textContent,document.getElementById("proState").classList.contains("active")]'),
     [false,true,'Pro ist nicht aktiviert.',false],'Ohne Lizenz Codefeld statt Aktiv-Status');
   await evaluate(`g.load(${JSON.stringify(invoice())})`);
   assert.equal(await evaluate('g.check()'),true);
@@ -145,8 +145,13 @@ try {
     await cmd('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
     await waitFor('!document.getElementById("proAdminLink").hidden');
     // Nach der Aktivierung ersetzt der Aktiv-Status das Codefeld und erhält den Fokus.
-    assert.deepEqual(await evaluate('[document.activeElement.id,document.getElementById("proActivation").hidden,document.getElementById("proDeactivate").hidden,document.getElementById("proLicenseStatus").textContent,document.getElementById("proLicenseStatus").classList.contains("active")]'),
-      ['proLicenseStatus',true,false,'Pro-Version aktiv. Lizenzcode aktiv für Invoice Kit Admin (Admin-Lizenz), unbefristet.',true]);
+    assert.deepEqual(await evaluate('[document.activeElement.id,document.getElementById("proActivation").hidden,document.getElementById("proDeactivate").hidden,document.getElementById("proLicenseStatus").textContent,document.getElementById("proState").classList.contains("active")]'),
+      ['proLicenseStatus',true,false,'Pro-Version aktiv. Lizenzcode aktiv für Invoice Kit Admin (Admin-Lizenz), unbefristet. Gilt nur bis zum Neuladen der Seite.',true]);
+    // Der Haken zum Merken sitzt im Statusfeld und ändert den Hinweis sofort, ohne Neuladen.
+    await evaluate(`document.getElementById('proRemember').click()`);
+    assert.deepEqual(await evaluate('[document.getElementById("proState").contains(document.getElementById("proRemember")),document.getElementById("proLicenseStatus").textContent.endsWith("Auf diesem Gerät gespeichert."),localStorage.getItem("invoice-kit-pro-license")!==null]'),[true,true,true]);
+    await evaluate(`document.getElementById('proRemember').click()`);
+    assert.deepEqual(await evaluate('[document.getElementById("proLicenseStatus").textContent.endsWith("Gilt nur bis zum Neuladen der Seite."),localStorage.getItem("invoice-kit-pro-license")]'),[true,null]);
     // Aktives Pro ist auch bei zugeklapptem Bereich sichtbar, ein Klick auf den Hinweis öffnet ihn.
     await evaluate('document.getElementById("proPanel").open=false');
     assert.deepEqual(await evaluate('[document.getElementById("proBadge").hidden,document.getElementById("proBadge").textContent,document.getElementById("proNav").textContent,document.getElementById("proSummary").textContent.includes("ist aktiv")]'),
@@ -174,7 +179,7 @@ try {
     assert.equal(await evaluate('JSON.parse(localStorage.getItem("invoice-kit-pro-data")).archive.length'),1);
     await go('/#proPanel');await evaluate('window.g=await import("./generator.js");await import("./pro-app.js")');await waitFor('!document.getElementById("proFeatures").hidden');
     await evaluate(`document.getElementById('proArticles').selectedIndex=1;document.getElementById('proUseArticle').click()`);await waitFor('g.state().items.length===2');
-    assert.equal(await evaluate('document.getElementById("proLicenseStatus").textContent'),'Pro-Version aktiv. Lizenzcode aktiv für Geschenkkunde Test (Geschenk-Lizenz), unbefristet.');
+    assert.equal(await evaluate('document.getElementById("proLicenseStatus").textContent'),'Pro-Version aktiv. Lizenzcode aktiv für Geschenkkunde Test (Geschenk-Lizenz), unbefristet. Auf diesem Gerät gespeichert.','Gemerkte Lizenz übersteht das Neuladen');
     await evaluate(`document.getElementById('proDeactivate').click()`);await upload('#proLicenseFile',join(adminDir,'admin.invoicekit-license'));await waitFor('!document.getElementById("proAdminLink").hidden');
     writeFileSync('.test-artifacts/pro.png',Buffer.from((await cmd('Page.captureScreenshot',{format:'png'})).data,'base64'));
     await evaluate(`document.getElementById('clearData').click()`);assert.equal(await evaluate('document.getElementById("proFeatures").hidden'),true);
