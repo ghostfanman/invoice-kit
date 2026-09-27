@@ -45,6 +45,10 @@
 .ik .check input{width:auto;margin-top:3px;accent-color:var(--ik-accent)}
 .ik details{margin-top:10px;border:1px dashed var(--ik-line);border-radius:8px;padding:6px 10px}
 .ik summary{cursor:pointer;font-size:13px;color:var(--ik-accent);font-weight:600}
+.ik .pro-badge{display:inline-flex;align-items:center;gap:8px;margin:0 0 14px;padding:6px 14px;border-radius:999px;background:#f59e0b;color:#1c2230;font-weight:700;font-size:13px;text-decoration:none;max-width:100%;overflow-wrap:anywhere}
+.ik .pro-badge::before{content:"✓"}
+.ik .pro-badge+h2{margin-top:0}
+.ik #proPanel.active{border-color:#f59e0b;border-style:solid}
 .ik table.items{width:100%;border-collapse:collapse;margin:0}
 .ik table.items th{font-size:12px;color:var(--ik-muted);text-align:left;font-weight:500;padding:2px 3px;border:0;background:none}
 .ik table.items td{padding:3px;border:0}

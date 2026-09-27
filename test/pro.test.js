@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {generateKeyPairSync} from 'node:crypto';
 import {readFileSync} from 'node:fs';
-import {importIssuer,issueLicense,verifyLicense} from '../pro-license.js';
+import {importIssuer,issueLicense,verifyLicense,activeLabel} from '../pro-license.js';
 import {emptyLibrary,addEntry,validateLibrary,customerFromInvoice} from '../pro-data.js';
 import {clearDrafts,clearInvoiceData} from '../storage.js';
 import {invoice} from './fixture.js';
@@ -18,6 +18,15 @@ test('Pro: Manipulation, fremder Herausgeber und Rollenänderung werden abgelehn
   await assert.rejects(verifyLicense(token,pair().publicJwk));
   await assert.rejects(importIssuer(pair().privateJwk,keys.publicJwk));
   for(const invalid of ['', 'true', 'IKPRO1.a.a', 'x'.repeat(9000),token+'.extra'])await assert.rejects(verifyLicense(invalid,keys.publicJwk));
+});
+test('Pro: Anzeigetext für aktives Pro',()=>{
+  const claims={recipient:'Kunde Ä',expiresAt:null};
+  assert.equal(activeLabel(claims),'Pro aktiv für Kunde Ä');
+  // Ablaufdatum wie in admin.js: Mitternacht UTC nach dem gewählten Tag, angezeigt wird der gewählte Tag.
+  const expiresAt=Date.parse('2026-10-01T00:00:00Z');
+  assert.equal(activeLabel({...claims,expiresAt},expiresAt-1),'Pro aktiv für Kunde Ä, gültig bis 30.9.2026');
+  assert.equal(activeLabel({...claims,expiresAt},expiresAt),null);
+  assert.equal(activeLabel(null),null);
 });
 test('Pro: Ablauf und zukünftiges Ausstellungsdatum',async()=>{
   const now=Date.now(),token=await issueLicense(issuer,{recipient:'Kunde',expiresAt:now+1000},now);

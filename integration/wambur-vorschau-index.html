@@ -45,6 +45,10 @@
 .ik .check input{width:auto;margin-top:3px;accent-color:var(--ik-accent)}
 .ik details{margin-top:10px;border:1px dashed var(--ik-line);border-radius:8px;padding:6px 10px}
 .ik summary{cursor:pointer;font-size:13px;color:var(--ik-accent);font-weight:600}
+.ik .pro-badge{display:inline-flex;align-items:center;gap:8px;margin:0 0 14px;padding:6px 14px;border-radius:999px;background:#f59e0b;color:#1c2230;font-weight:700;font-size:13px;text-decoration:none;max-width:100%;overflow-wrap:anywhere}
+.ik .pro-badge::before{content:"✓"}
+.ik .pro-badge+h2{margin-top:0}
+.ik #proPanel.active{border-color:#f59e0b;border-style:solid}
 .ik table.items{width:100%;border-collapse:collapse;margin:0}
 .ik table.items th{font-size:12px;color:var(--ik-muted);text-align:left;font-weight:500;padding:2px 3px;border:0;background:none}
 .ik table.items td{padding:3px;border:0}
@@ -179,6 +183,7 @@
       <div class="ik">
 <p class="ik-links"><a href="anzeigen.html">E-Rechnung öffnen und auf Plausibilität prüfen</a></p><div class="ik-grid">
   <section class="ik-card ik-form">
+    <a class="pro-badge" id="proBadge" href="#proPanel" hidden></a>
     <h2>Lokale Daten</h2>
     <label class="check" for="saveDraft"><input id="saveDraft" type="checkbox" aria-describedby="storageHint"> Entwurf auf diesem Gerät speichern</label>
     <p id="storageHint" class="hint">Ohne Auswahl bleibt die Rechnung nur bis zum Schließen geöffnet. Gespeicherte Rechnungsdaten können auf gemeinsam genutzten Geräten für andere sichtbar bleiben. JSON-Sicherungen und Downloads musst du separat löschen.</p>
@@ -186,7 +191,7 @@
     <p id="storageStatus" class="hint" role="status"></p>
 
     <details id="proPanel">
-      <summary>Invoice Kit Pro: aktivieren und verwenden</summary>
+      <summary id="proSummary">Invoice Kit Pro: aktivieren und verwenden</summary>
       <p>Kunden und Artikel wiederverwenden, Rechnungen lokal als bearbeitbare Kopien archivieren. Die Basisfunktionen bleiben kostenlos verfügbar.</p>
       <label for="proLicenseCode">Admin- oder Geschenk-Lizenzcode</label>
       <textarea id="proLicenseCode" rows="3" maxlength="8000" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="proCodeHint proCodeError"></textarea>

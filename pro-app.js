@@ -1,5 +1,5 @@
 import {publicJwk} from './pro-config.js';
-import {verifyLicense} from './pro-license.js';
+import {verifyLicense,activeLabel} from './pro-license.js';
 import {emptyLibrary,validateLibrary,addEntry,customerFromInvoice} from './pro-data.js';
 import {state,load,check} from './generator.js';
 const $=id=>document.getElementById(id);
@@ -8,9 +8,18 @@ let token='',claims=null,library=emptyLibrary(),sequence=0;
 const message=text=>{$('proStatus').textContent=text};
 function clearCode(){ $('proLicenseCode').value='';$('proLicenseCode').removeAttribute('aria-invalid');$('proCodeError').textContent=''; }
 const saveMessage=()=> $('proSaveData').checked?'Auf diesem Gerät gespeichert.':'Nur für diese Sitzung gespeichert. Für später bitte die Pro-Daten sichern.';
+// Aktives Pro bleibt sichtbar, auch wenn der Pro-Bereich zugeklappt ist.
+function showActive(label){
+  $('proBadge').hidden=!label;$('proBadge').textContent=label||'';
+  $('proPanel').classList.toggle('active',!!label);
+  for(const [element,text] of [[$('proSummary'),'Invoice Kit Pro ist aktiv: Kunden, Artikel und Archiv'],[$('proNav'),'Pro aktiv']]){
+    if(!element)continue;element.dataset.inactive??=element.textContent;element.textContent=label?text:element.dataset.inactive;
+  }
+}
 function render(){
   const enabled=!!claims&&(claims.expiresAt===null||Date.now()<claims.expiresAt);
   $('proFeatures').hidden=!enabled;
+  showActive(enabled?activeLabel(claims):null);
   $('proAdminLink').hidden=claims?.role!=='admin';
   $('proLicenseStatus').textContent=enabled?`Pro aktiv für ${claims.recipient} (${claims.role==='admin'?'Admin':'Geschenk'}). ${claims.expiresAt===null?'Unbefristet.':'Gültig bis '+new Date(claims.expiresAt-1).toLocaleDateString('de-DE',{timeZone:'UTC'})+'.'}`:'Pro ist nicht aktiviert.';
   for(const [type,id] of [['customers','proCustomers'],['articles','proArticles'],['archive','proArchive']]){
@@ -105,5 +114,7 @@ try{
 render();
 // Hash-Link öffnet den Pro-Bereich auch nach einer Navigation innerhalb der Seite.
 function openPanel(){if(location.hash==='#proPanel')$('proPanel').open=true}
+// Bei unverändertem Hash gibt es kein hashchange, deshalb öffnet der Klick den Bereich direkt.
+$('proBadge').addEventListener('click',()=>{$('proPanel').open=true});
 window.addEventListener('hashchange',openPanel);openPanel();
 setInterval(()=>{if(claims?.expiresAt!==null&&claims&&Date.now()>=claims.expiresAt){claims=null;render();message('Die Pro-Lizenz ist abgelaufen. Die Basisfunktionen bleiben verfügbar.')}},30000);

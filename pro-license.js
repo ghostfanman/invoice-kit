@@ -29,6 +29,11 @@ export async function verifyLicense(token, publicJwk, now=Date.now()) {
     throw new Error('Die Lizenz ist ungültig oder stammt nicht von diesem Herausgeber.');
   }
 }
+// Kurztext für die sichtbare Pro-Anzeige. null, solange keine gültige Lizenz aktiv ist.
+export function activeLabel(claims, now=Date.now()) {
+  if(!claims || claims.expiresAt!==null && now>=claims.expiresAt) return null;
+  return `Pro aktiv für ${claims.recipient}`+(claims.expiresAt===null?'':`, gültig bis ${new Date(claims.expiresAt-1).toLocaleDateString('de-DE',{timeZone:'UTC'})}`);
+}
 export async function importIssuer(privateJwk, publicJwk) {
   const key=await crypto.subtle.importKey('jwk',privateJwk,algorithm,false,['sign']);
   const verifier=await crypto.subtle.importKey('jwk',publicJwk,algorithm,false,['verify']);

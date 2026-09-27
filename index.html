@@ -25,6 +25,10 @@ header .brand small{font-weight:400;opacity:.75;margin-left:8px}
 header nav{display:flex;gap:8px;flex-wrap:wrap}
 header nav a{color:#fff;text-decoration:none;font-weight:600;padding:6px 12px;border-radius:6px;font-size:13px;border:1px solid rgba(255,255,255,.3)}
 header nav a.pro{background:#f59e0b;border-color:#f59e0b;color:#1c2230}
+.pro-badge{display:inline-flex;align-items:center;gap:8px;margin:0 0 14px;padding:6px 14px;border-radius:999px;background:#f59e0b;color:#1c2230;font-weight:700;font-size:13px;text-decoration:none;max-width:100%;overflow-wrap:anywhere}
+.pro-badge::before{content:"✓"}
+.pro-badge+h2{margin-top:0}
+#proPanel.active{border-color:#f59e0b;border-style:solid}
 main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;max-width:1300px;margin:20px auto;padding:0 16px}
 @media(max-width:900px){main{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
@@ -83,7 +87,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 <header>
   <div class="brand">🧾 Invoice Kit <small>E-Rechnung ohne Abo, ohne Cloud</small></div>
   <nav>
-    <a class="pro" href="#proPanel">Pro aktivieren</a>
+    <a class="pro" id="proNav" href="#proPanel">Pro aktivieren</a>
     <a href="anzeigen.html">E-Rechnung öffnen</a>
     <a href="https://github.com/ghostfanman/invoice-kit" target="_blank" rel="noopener">★ GitHub</a>
   </nav>
@@ -91,6 +95,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 
 <main>
   <section class="card form">
+    <a class="pro-badge" id="proBadge" href="#proPanel" hidden></a>
     <h2>Lokale Daten</h2>
     <label class="check" for="saveDraft"><input id="saveDraft" type="checkbox" aria-describedby="storageHint"> Entwurf auf diesem Gerät speichern</label>
     <p id="storageHint" class="hint">Ohne Auswahl bleibt die Rechnung nur bis zum Schließen geöffnet. Gespeicherte Rechnungsdaten können auf gemeinsam genutzten Geräten für andere sichtbar bleiben. JSON-Sicherungen und Downloads musst du separat löschen.</p>
@@ -98,7 +103,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
     <p id="storageStatus" class="hint" role="status"></p>
 
     <details id="proPanel">
-      <summary>Invoice Kit Pro: aktivieren und verwenden</summary>
+      <summary id="proSummary">Invoice Kit Pro: aktivieren und verwenden</summary>
       <p>Kunden und Artikel wiederverwenden, Rechnungen lokal als bearbeitbare Kopien archivieren. Die Basisfunktionen bleiben kostenlos verfügbar.</p>
       <label for="proLicenseCode">Admin- oder Geschenk-Lizenzcode</label>
       <textarea id="proLicenseCode" rows="3" maxlength="8000" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="proCodeHint proCodeError"></textarea>

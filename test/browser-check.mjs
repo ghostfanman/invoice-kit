@@ -26,6 +26,9 @@ try {
   await go('/');
   await evaluate('window.g=await import("./generator.js")');
   assert.equal(await evaluate('localStorage.getItem("invoice-kit-v3")'),null,'Standardmäßig kein Entwurf im Speicher');
+  await evaluate('await import("./pro-app.js")');
+  assert.deepEqual(await evaluate('[document.getElementById("proBadge").hidden,document.getElementById("proNav").textContent,document.getElementById("proSummary").textContent]'),
+    [true,'Pro aktivieren','Invoice Kit Pro: aktivieren und verwenden'],'Ohne Lizenz keine Pro-Anzeige');
   await evaluate(`g.load(${JSON.stringify(invoice())})`);
   assert.equal(await evaluate('g.check()'),true);
   assert.equal(await evaluate('document.querySelectorAll("#preview svg").length'),1);
@@ -119,6 +122,11 @@ try {
     await cmd('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13,text:'\r',unmodifiedText:'\r'});
     await cmd('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
     await waitFor('!document.getElementById("proAdminLink").hidden');
+    // Aktives Pro ist auch bei zugeklapptem Bereich sichtbar, ein Klick auf den Hinweis öffnet ihn.
+    await evaluate('document.getElementById("proPanel").open=false');
+    assert.deepEqual(await evaluate('[document.getElementById("proBadge").hidden,document.getElementById("proBadge").textContent,document.getElementById("proNav").textContent,document.getElementById("proSummary").textContent.includes("ist aktiv")]'),
+      [false,'Pro aktiv für Invoice Kit Admin','Pro aktiv',true]);
+    await evaluate('document.getElementById("proBadge").click()');assert.equal(await evaluate('document.getElementById("proPanel").open'),true);
     assert.equal(await evaluate('document.getElementById("proLicenseCode").value'),'', 'Code nach Aktivierung geleert');
     assert.equal(await evaluate('document.getElementById("proCodeError").textContent'),'');
     assert.equal(await evaluate('localStorage.getItem("invoice-kit-pro-license")'),null);
@@ -143,6 +151,7 @@ try {
     await upload('#proLicenseFile',join(adminDir,'admin.invoicekit-license'));await waitFor('!document.getElementById("proAdminLink").hidden');
     writeFileSync('.test-artifacts/pro.png',Buffer.from((await cmd('Page.captureScreenshot',{format:'png'})).data,'base64'));
     await evaluate(`document.getElementById('clearData').click()`);assert.equal(await evaluate('document.getElementById("proFeatures").hidden'),true);
+    assert.deepEqual(await evaluate('[document.getElementById("proBadge").hidden,document.getElementById("proNav").textContent]'),[true,'Pro aktivieren'],'Pro-Anzeige nach Gesamtlöschung entfernt');
     assert.equal(await evaluate('localStorage.getItem("invoice-kit-pro-data")'),null);assert.equal(await evaluate('localStorage.getItem("invoice-kit-pro-license")'),null);
     await upload('#proLicenseFile',giftPath);await evaluate(`document.getElementById('clearData').click()`);await pause(100);
     assert.equal(await evaluate('document.getElementById("proFeatures").hidden'),true,'Gesamtlöschung beendet auch eine laufende Aktivierung');

@@ -22,7 +22,7 @@ Die öffentliche Admin-Seite ist ohne passenden Schlüssel gesperrt. Es gibt kei
 
 Auf der Admin-Seite den Namen oder die Firma des Kunden eintragen. Optional ein Ablaufdatum wählen, ansonsten gilt das Geschenk unbefristet. „Geschenk-Lizenz herunterladen“ erzeugt eine signierte Datei. Übergib dem Kunden nur diese `.invoicekit-license`-Datei und den [Generator-Link](https://ghostfanman.github.io/invoice-kit/#proPanel). Der Versand erfolgt durch dich, nicht automatisch durch Invoice Kit.
 
-Der Kunde lädt die Datei unter „Pro aktivieren“ oder fügt ihren vollständigen Textinhalt als Lizenzcode ein. Es werden weder Rechnung noch Lizenz zu einem Prüfserver geschickt. Die Signaturprüfung erfolgt lokal mit dem veröffentlichten Prüfschlüssel. Das Ablaufdatum gilt einschließlich des gewählten Tages in UTC.
+Der Kunde lädt die Datei unter „Pro aktivieren“ oder fügt ihren vollständigen Textinhalt als Lizenzcode ein. Danach steht oben im Formular „Pro aktiv für“ mit dem eingetragenen Namen, bei befristeten Geschenken mit dem letzten gültigen Tag. Es werden weder Rechnung noch Lizenz zu einem Prüfserver geschickt. Die Signaturprüfung erfolgt lokal mit dem veröffentlichten Prüfschlüssel. Das Ablaufdatum gilt einschließlich des gewählten Tages in UTC.
 
 Alternativ lassen sich Lizenzen lokal per Kommandozeile erstellen:
 
