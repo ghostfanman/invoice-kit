@@ -188,9 +188,14 @@
     <details id="proPanel">
       <summary>Invoice Kit Pro: aktivieren und verwenden</summary>
       <p>Kunden und Artikel wiederverwenden, Rechnungen lokal als bearbeitbare Kopien archivieren. Die Basisfunktionen bleiben kostenlos verfügbar.</p>
-      <label for="proLicenseFile">Admin- oder Geschenk-Lizenz laden</label>
-      <input id="proLicenseFile" type="file" accept=".invoicekit-license,text/plain" aria-describedby="proLicenseHint">
-      <p id="proLicenseHint" class="hint">Lade die persönlich ausgestellte Lizenzdatei. Die Prüfung findet lokal statt, ohne Benutzerkonto.</p>
+      <label for="proLicenseCode">Admin- oder Geschenk-Lizenzcode</label>
+      <textarea id="proLicenseCode" rows="3" maxlength="8000" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="proCodeHint proCodeError"></textarea>
+      <p id="proCodeHint" class="hint">Öffne deine Lizenzdatei in einem Texteditor und füge den vollständigen Inhalt hier ein. Der Code beginnt mit IKPRO1. Die Prüfung findet nur auf deinem Gerät statt.</p>
+      <p id="proCodeError" class="hint" role="alert"></p>
+      <button id="proActivateCode" type="button">Lizenzcode aktivieren</button>
+      <label for="proLicenseFile">Alternativ: Lizenzdatei auswählen</label>
+      <input id="proLicenseFile" type="file" accept=".txt,.invoicekit-license,text/plain" aria-describedby="proLicenseHint">
+      <p id="proLicenseHint" class="hint">TXT-Dateien und bisherige .invoicekit-license-Dateien werden unterstützt. Unter Linux zeigt Strg+H im Dateidialog auch versteckte Ordner wie .local an.</p>
       <label class="check" for="proRemember"><input id="proRemember" type="checkbox"> Lizenz auf diesem Gerät merken</label>
       <p id="proLicenseStatus" role="status">Pro ist nicht aktiviert.</p>
       <button class="ghost" id="proDeactivate" type="button">Pro auf diesem Gerät deaktivieren</button>

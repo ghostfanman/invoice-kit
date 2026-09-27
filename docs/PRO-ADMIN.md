@@ -10,9 +10,11 @@ Deine private Einrichtung liegt außerhalb des veröffentlichten Projekts:
 Die Dateien erhalten beim Anlegen Dateirechte 600, ein neuer Verwaltungsordner Dateirechte 700. Bewahre eine geschützte Sicherung des Schlüssels auf. Der Browser speichert den Signierschlüssel weder im localStorage noch im App-Cache. Nach Auswahl bleibt er als nicht exportierbarer CryptoKey nur in der Sitzung der Admin-Seite. „Admin sperren“ und das Verlassen der Seite entfernen diesen Zugriff.
 
 1. Öffne den Generator und klicke auf „Pro aktivieren“.
-2. Lade `admin.invoicekit-license`. Mit „Lizenz auf diesem Gerät merken“ kannst du die Freischaltung lokal behalten.
+2. Wähle deine Lizenzdatei im Pro-Bereich. Akzeptiert werden `.txt` und `.invoicekit-license`. Alternativ öffne die Datei in einem Texteditor, kopiere ihren vollständigen Inhalt in „Admin- oder Geschenk-Lizenzcode“ und klicke auf „Lizenzcode aktivieren“. Mit „Lizenz auf diesem Gerät merken“ kannst du die Freischaltung lokal behalten.
 3. Im Pro-Bereich stehen Kundenstamm, Artikelstamm und Rechnungsarchiv bereit.
 4. Öffne [die Admin-Seite](https://ghostfanman.github.io/invoice-kit/admin.html) und wähle `admin-private.jwk`, wenn du eine Lizenz ausstellen möchtest.
+
+Unter Linux ist `.local` ein versteckter Ordner. Strg+H blendet ihn im Dateidialog ein. Auf dem eingerichteten Linux-Mint-Rechner liegt zusätzlich eine TXT-Kopie der persönlichen Admin-Lizenz unter `~/Dokumente/Invoice-Kit/Admin-Lizenz.txt`. Sie lässt sich direkt auswählen oder im Texteditor öffnen. Neue Admin-Downloads heißen ebenfalls `Admin-Lizenz.txt`. Der private Signierschlüssel bleibt separat im privaten Verwaltungsordner.
 
 Die öffentliche Admin-Seite ist ohne passenden Schlüssel gesperrt. Es gibt kein im Quellcode verstecktes Admin-Passwort und keinen ungesicherten Admin-Schalter.
 
@@ -20,7 +22,7 @@ Die öffentliche Admin-Seite ist ohne passenden Schlüssel gesperrt. Es gibt kei
 
 Auf der Admin-Seite den Namen oder die Firma des Kunden eintragen. Optional ein Ablaufdatum wählen, ansonsten gilt das Geschenk unbefristet. „Geschenk-Lizenz herunterladen“ erzeugt eine signierte Datei. Übergib dem Kunden nur diese `.invoicekit-license`-Datei und den [Generator-Link](https://ghostfanman.github.io/invoice-kit/#proPanel). Der Versand erfolgt durch dich, nicht automatisch durch Invoice Kit.
 
-Der Kunde lädt die Datei unter „Pro aktivieren“. Es werden weder Rechnung noch Lizenz zu einem Prüfserver geschickt. Die Signaturprüfung erfolgt lokal mit dem veröffentlichten Prüfschlüssel. Das Ablaufdatum gilt einschließlich des gewählten Tages in UTC.
+Der Kunde lädt die Datei unter „Pro aktivieren“ oder fügt ihren vollständigen Textinhalt als Lizenzcode ein. Es werden weder Rechnung noch Lizenz zu einem Prüfserver geschickt. Die Signaturprüfung erfolgt lokal mit dem veröffentlichten Prüfschlüssel. Das Ablaufdatum gilt einschließlich des gewählten Tages in UTC.
 
 Alternativ lassen sich Lizenzen lokal per Kommandozeile erstellen:
 
@@ -64,5 +66,7 @@ Mit laufendem lokalen HTTP-Server und Chromium prüft dieser Befehl den vollstä
 ```sh
 INVOICE_KIT_ADMIN_DIR="$HOME/.local/share/invoice-kit-admin" node test/browser-check.mjs
 ```
+
+Der Test prüft außerdem TXT-Import, eingefügte Admin- und Geschenkcodes, leere und ungültige Eingaben, Tastaturaktivierung und das Leeren des Codefeldes.
 
 Der Test verwendet den Schlüssel lokal zur Ausstellung einer fiktiven Test-Geschenkdatei. Er veröffentlicht keine Lizenz und sendet keine Nachricht. Testdownloads und das temporäre Browserprofil werden anschließend entfernt.

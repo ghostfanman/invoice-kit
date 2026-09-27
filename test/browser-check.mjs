@@ -89,7 +89,7 @@ try {
   if(process.env.INVOICE_KIT_ADMIN_DIR){
     const adminDir=process.env.INVOICE_KIT_ADMIN_DIR,downloads=join(profile,'downloads');mkdirSync(downloads);
     await cmd('Page.setDownloadBehavior',{behavior:'allow',downloadPath:downloads});
-    const waitFor=async expression=>{for(let i=0;i<100;i++){if(await evaluate(expression))return;await pause(50)}throw new Error('Pro-Bedingung nicht erfüllt: '+expression)};
+    const waitFor=async expression=>{for(let i=0;i<100;i++){if(await evaluate(expression))return;await pause(50)}throw new Error('Pro-Bedingung nicht erfüllt: '+expression+'; '+JSON.stringify(await evaluate('({focus:document.activeElement.id,error:document.getElementById("proCodeError")?.textContent,status:document.getElementById("proStatus")?.textContent})'))) };
     const upload=async(selector,path)=>{const {root}=await cmd('DOM.getDocument');const {nodeId}=await cmd('DOM.querySelector',{nodeId:root.nodeId,selector});await cmd('DOM.setFileInputFiles',{nodeId,files:[path]})};
     await go('/admin.html');await waitFor('document.getElementById("adminKey").onchange!==null');
     assert.equal(await evaluate('document.getElementById("adminTools").hidden'),true);
@@ -101,8 +101,34 @@ try {
     assert.ok(giftPath,'Geschenk-Lizenz wurde heruntergeladen');
     const gift=readFileSync(giftPath,'utf8');
     assert.equal(await evaluate(`(await (await import('./pro-license.js')).verifyLicense(${JSON.stringify(gift)},(await import('./pro-config.js')).publicJwk)).role`),'gift');
+    await evaluate(`document.getElementById('ownLicense').click()`);
+    const adminTxt=join(downloads,'Admin-Lizenz.txt');
+    for(let i=0;i<100&&!readdirSync(downloads).includes('Admin-Lizenz.txt');i++)await pause(50);
+    const adminCode=readFileSync(adminTxt,'utf8');
     await evaluate(`document.getElementById('adminLock').click()`);assert.equal(await evaluate('document.getElementById("adminTools").hidden'),true);
     await go('/#proPanel');await evaluate('window.g=await import("./generator.js");await import("./pro-app.js")');
+    // Fehler direkt am Codefeld, ohne Freischaltung oder Speicherung.
+    for(const invalid of ['', 'IKPRO1.ungueltig.ungueltig']){
+      await evaluate(`document.getElementById('proLicenseCode').value=${JSON.stringify(invalid)};document.getElementById('proActivateCode').click()`);
+      await waitFor('document.getElementById("proLicenseCode").getAttribute("aria-invalid")==="true"');
+      assert.equal(await evaluate('document.activeElement.id'),'proLicenseCode');
+      assert.equal(await evaluate('document.getElementById("proFeatures").hidden'),true);
+      assert.ok(await evaluate('document.getElementById("proCodeError").textContent.length>0'));
+    }
+    await evaluate(`document.getElementById('proLicenseCode').value=${JSON.stringify(' \n'+adminCode+'\n ')};document.getElementById('proActivateCode').focus()`);
+    await cmd('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13,text:'\r',unmodifiedText:'\r'});
+    await cmd('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+    await waitFor('!document.getElementById("proAdminLink").hidden');
+    assert.equal(await evaluate('document.getElementById("proLicenseCode").value'),'', 'Code nach Aktivierung geleert');
+    assert.equal(await evaluate('document.getElementById("proCodeError").textContent'),'');
+    assert.equal(await evaluate('localStorage.getItem("invoice-kit-pro-license")'),null);
+    writeFileSync('.test-artifacts/pro-code.png',Buffer.from((await cmd('Page.captureScreenshot',{format:'png'})).data,'base64'));
+    await evaluate(`document.getElementById('proDeactivate').click()`);
+    await upload('#proLicenseFile',adminTxt);await waitFor('!document.getElementById("proAdminLink").hidden');
+    await evaluate(`document.getElementById('proDeactivate').click();document.getElementById('proLicenseCode').value=${JSON.stringify(gift)};document.getElementById('proActivateCode').click()`);
+    await waitFor('!document.getElementById("proFeatures").hidden');
+    assert.equal(await evaluate('document.getElementById("proAdminLink").hidden'),true);
+    await evaluate(`document.getElementById('proDeactivate').click()`);
     await upload('#proLicenseFile',giftPath);await waitFor('!document.getElementById("proFeatures").hidden');
     assert.equal(await evaluate('document.getElementById("proAdminLink").hidden'),true);
     assert.equal(await evaluate('localStorage.getItem("invoice-kit-pro-license")'),null);
@@ -120,7 +146,10 @@ try {
     assert.equal(await evaluate('localStorage.getItem("invoice-kit-pro-data")'),null);assert.equal(await evaluate('localStorage.getItem("invoice-kit-pro-license")'),null);
     await upload('#proLicenseFile',giftPath);await evaluate(`document.getElementById('clearData').click()`);await pause(100);
     assert.equal(await evaluate('document.getElementById("proFeatures").hidden'),true,'Gesamtlöschung beendet auch eine laufende Aktivierung');
-    console.log('Pro-Browsertest bestanden: Admin-Schlüssel, Geschenkdatei, Rollen, Freischaltung, Kunden, Artikel, Archiv, Speicherwahl, Wiederherstellung und Löschung.');
+    await evaluate(`document.getElementById('proLicenseCode').value=${JSON.stringify(adminCode)};document.getElementById('proActivateCode').click();document.getElementById('clearData').click()`);await pause(100);
+    assert.equal(await evaluate('document.getElementById("proFeatures").hidden'),true,'Gesamtlöschung beendet auch die Code-Aktivierung');
+    assert.equal(await evaluate('document.getElementById("proLicenseCode").value'),'');
+    console.log('Pro-Browsertest bestanden: Admin-Schlüssel, TXT- und Geschenkdatei, gültige und ungültige Lizenzcodes, Tastaturaktivierung, Rollen, Kunden, Artikel, Archiv, Speicherwahl, Wiederherstellung und Löschung.');
   }
   // App-Dateien einschließlich PDF-Bibliotheken sind auch ohne Netzwerk verfügbar.
   await cmd('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});

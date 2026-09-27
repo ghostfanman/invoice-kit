@@ -17,7 +17,7 @@ $('adminKey').onchange=async()=>{
 $('adminLock').onclick=lock;
 $('ownLicense').onclick=async()=>{
   const current=sequence;if(!issuer)return;
-  try{const token=await issueLicense(issuer,{recipient:'Invoice Kit Admin',role:'admin'});if(current===sequence){download(token,'admin.invoicekit-license');status('Admin-Lizenz erstellt. Öffne den Generator und lade sie im Pro-Bereich.');}}catch{status('Die Admin-Lizenz konnte nicht erstellt werden.');}
+  try{const token=await issueLicense(issuer,{recipient:'Invoice Kit Admin',role:'admin'});if(current===sequence){download(token,'Admin-Lizenz.txt');status('Admin-Lizenz als TXT-Datei erstellt. Lade sie im Pro-Bereich oder füge dort ihren Inhalt als Lizenzcode ein.');}}catch{status('Die Admin-Lizenz konnte nicht erstellt werden.');}
 };
 $('giftForm').onsubmit=async event=>{
   event.preventDefault();if(!issuer)return;const current=sequence;

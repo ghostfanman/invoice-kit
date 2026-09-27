@@ -6,6 +6,7 @@ const $=id=>document.getElementById(id);
 const keys={license:'invoice-kit-pro-license',data:'invoice-kit-pro-data',save:'invoice-kit-pro-save'};
 let token='',claims=null,library=emptyLibrary(),sequence=0;
 const message=text=>{$('proStatus').textContent=text};
+function clearCode(){ $('proLicenseCode').value='';$('proLicenseCode').removeAttribute('aria-invalid');$('proCodeError').textContent=''; }
 const saveMessage=()=> $('proSaveData').checked?'Auf diesem Gerät gespeichert.':'Nur für diese Sitzung gespeichert. Für später bitte die Pro-Daten sichern.';
 function render(){
   const enabled=!!claims&&(claims.expiresAt===null||Date.now()<claims.expiresAt);
@@ -31,9 +32,19 @@ async function activate(text,current=++sequence){
   const verified=await verifyLicense(text,publicJwk);
   if(current!==sequence)return;
   token=text.trim();claims=verified;
+  clearCode();
   if($('proRemember').checked)localStorage.setItem(keys.license,token);
   render();message('Pro wurde freigeschaltet. Deine Rechnung bleibt unverändert.');
 }
+$('proActivateCode').onclick=async()=>{
+  const current=++sequence;
+  $('proCodeError').textContent='';$('proLicenseCode').removeAttribute('aria-invalid');
+  try{
+    const code=$('proLicenseCode').value.trim();
+    if(!code)throw new Error('Bitte füge den vollständigen Lizenzcode aus deiner Lizenzdatei ein.');
+    await activate(code,current);
+  }catch(error){if(current===sequence){$('proCodeError').textContent=error.message;$('proLicenseCode').setAttribute('aria-invalid','true');$('proLicenseCode').focus();}}
+};
 $('proLicenseFile').onchange=async()=>{
   const file=$('proLicenseFile').files[0];$('proLicenseFile').value='';if(!file)return;const current=++sequence;
   try{if(file.size>8000)throw new Error('Die Lizenzdatei ist zu groß.');await activate(await file.text(),current)}catch(error){if(current===sequence)message(error.message)}
@@ -41,7 +52,7 @@ $('proLicenseFile').onchange=async()=>{
 $('proRemember').onchange=()=>{
   try{if($('proRemember').checked&&token)localStorage.setItem(keys.license,token);else localStorage.removeItem(keys.license)}catch{message('Die Lizenz konnte nicht gespeichert werden. Sie bleibt in dieser Sitzung aktiv.');}
 };
-$('proDeactivate').onclick=()=>{sequence++;token='';claims=null;$('proRemember').checked=false;try{localStorage.removeItem(keys.license)}catch{}render();message('Pro deaktiviert. Gespeicherte Pro-Daten bleiben erhalten und lassen sich nach erneuter Aktivierung öffnen.');};
+$('proDeactivate').onclick=()=>{sequence++;token='';claims=null;clearCode();$('proRemember').checked=false;try{localStorage.removeItem(keys.license)}catch{}render();message('Pro deaktiviert. Gespeicherte Pro-Daten bleiben erhalten und lassen sich nach erneuter Aktivierung öffnen.');};
 $('proSaveData').onchange=()=>{
   try{
     if($('proSaveData').checked){localStorage.setItem(keys.data,JSON.stringify(library));localStorage.setItem(keys.save,'yes')}
@@ -81,9 +92,9 @@ $('proRestore').onchange=async()=>{
     persist(validateLibrary(next));message('Sicherung ergänzt. Vorhandene Einträge bleiben erhalten. '+saveMessage());
   }catch(error){message(error.message)}
 };
-$('clearData').addEventListener('click',()=>{sequence++;token='';claims=null;library=emptyLibrary();$('proRemember').checked=false;$('proSaveData').checked=false;render();message('Pro-Lizenz und Pro-Daten wurden auch aus dieser Sitzung entfernt.');});
+$('clearData').addEventListener('click',()=>{sequence++;token='';claims=null;clearCode();library=emptyLibrary();$('proRemember').checked=false;$('proSaveData').checked=false;render();message('Pro-Lizenz und Pro-Daten wurden auch aus dieser Sitzung entfernt.');});
 window.addEventListener('storage',event=>{
-  if(event.key===null||event.key===keys.license&&event.newValue===null){sequence++;token='';claims=null;$('proRemember').checked=false;render()}
+  if(event.key===null||event.key===keys.license&&event.newValue===null){sequence++;token='';claims=null;clearCode();$('proRemember').checked=false;render()}
   if(event.key===null||event.key===keys.data&&event.newValue===null){library=emptyLibrary();$('proSaveData').checked=false;render()}
 });
 try{
