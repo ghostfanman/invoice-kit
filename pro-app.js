@@ -1,5 +1,5 @@
 import {publicJwk} from './pro-config.js';
-import {verifyLicense,activeLabel} from './pro-license.js';
+import {verifyLicense,activeLabel,licenseDetails} from './pro-license.js';
 import {emptyLibrary,validateLibrary,addEntry,customerFromInvoice} from './pro-data.js';
 import {state,load,check} from './generator.js';
 const $=id=>document.getElementById(id);
@@ -16,12 +16,22 @@ function showActive(label){
     if(!element)continue;element.dataset.inactive??=element.textContent;element.textContent=label?text:element.dataset.inactive;
   }
 }
+// Nur bei geändertem Stand neu schreiben, damit Screenreader den Status nicht bei jeder Speicherung wiederholen.
+function showLicense(details){
+  const status=$('proLicenseStatus'),text=details?'Pro-Version aktiv. '+details:'Pro ist nicht aktiviert.';
+  status.classList.toggle('active',!!details);
+  if(status.textContent===text)return;
+  if(!details){status.textContent=text;return}
+  const title=document.createElement('strong');title.textContent='Pro-Version aktiv.';status.replaceChildren(title,' '+details);
+}
 function render(){
   const enabled=!!claims&&(claims.expiresAt===null||Date.now()<claims.expiresAt);
   $('proFeatures').hidden=!enabled;
+  // Mit aktiver Lizenz ersetzt der Status das leere Codefeld, zum Wechseln erst deaktivieren.
+  $('proActivation').hidden=enabled;$('proDeactivate').hidden=!enabled;
   showActive(enabled?activeLabel(claims):null);
+  showLicense(enabled?licenseDetails(claims):null);
   $('proAdminLink').hidden=claims?.role!=='admin';
-  $('proLicenseStatus').textContent=enabled?`Pro aktiv für ${claims.recipient} (${claims.role==='admin'?'Admin':'Geschenk'}). ${claims.expiresAt===null?'Unbefristet.':'Gültig bis '+new Date(claims.expiresAt-1).toLocaleDateString('de-DE',{timeZone:'UTC'})+'.'}`:'Pro ist nicht aktiviert.';
   for(const [type,id] of [['customers','proCustomers'],['articles','proArticles'],['archive','proArchive']]){
     const select=$(id),selected=select.value;select.replaceChildren(new Option('Bitte auswählen',''));
     for(const entry of library[type])select.add(new Option(entry.label,entry.id));select.value=selected;
@@ -52,16 +62,17 @@ $('proActivateCode').onclick=async()=>{
     const code=$('proLicenseCode').value.trim();
     if(!code)throw new Error('Bitte füge den vollständigen Lizenzcode aus deiner Lizenzdatei ein.');
     await activate(code,current);
+    if(current===sequence)$('proLicenseStatus').focus();
   }catch(error){if(current===sequence){$('proCodeError').textContent=error.message;$('proLicenseCode').setAttribute('aria-invalid','true');$('proLicenseCode').focus();}}
 };
 $('proLicenseFile').onchange=async()=>{
   const file=$('proLicenseFile').files[0];$('proLicenseFile').value='';if(!file)return;const current=++sequence;
-  try{if(file.size>8000)throw new Error('Die Lizenzdatei ist zu groß.');await activate(await file.text(),current)}catch(error){if(current===sequence)message(error.message)}
+  try{if(file.size>8000)throw new Error('Die Lizenzdatei ist zu groß.');await activate(await file.text(),current);if(current===sequence)$('proLicenseStatus').focus()}catch(error){if(current===sequence)message(error.message)}
 };
 $('proRemember').onchange=()=>{
   try{if($('proRemember').checked&&token)localStorage.setItem(keys.license,token);else localStorage.removeItem(keys.license)}catch{message('Die Lizenz konnte nicht gespeichert werden. Sie bleibt in dieser Sitzung aktiv.');}
 };
-$('proDeactivate').onclick=()=>{sequence++;token='';claims=null;clearCode();$('proRemember').checked=false;try{localStorage.removeItem(keys.license)}catch{}render();message('Pro deaktiviert. Gespeicherte Pro-Daten bleiben erhalten und lassen sich nach erneuter Aktivierung öffnen.');};
+$('proDeactivate').onclick=()=>{sequence++;token='';claims=null;clearCode();$('proRemember').checked=false;try{localStorage.removeItem(keys.license)}catch{}render();$('proLicenseCode').focus();message('Pro deaktiviert. Gespeicherte Pro-Daten bleiben erhalten und lassen sich nach erneuter Aktivierung öffnen.');};
 $('proSaveData').onchange=()=>{
   try{
     if($('proSaveData').checked){localStorage.setItem(keys.data,JSON.stringify(library));localStorage.setItem(keys.save,'yes')}

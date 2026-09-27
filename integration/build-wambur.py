@@ -50,6 +50,10 @@ CSS = """
 .ik .pro-badge::before{content:"✓"}
 .ik .pro-badge+h2{margin-top:0}
 .ik #proPanel.active{border-color:#f59e0b;border-style:solid}
+.ik .pro-state{margin:10px 0;font-size:14px}
+.ik .pro-state.active{padding:10px 14px;border-radius:8px;background:rgba(74,222,128,.12);border:1px solid var(--ik-ok);color:var(--ik-text)}
+.ik .pro-state.active strong{color:var(--ik-ok)}
+.ik .pro-state.active strong::before{content:"✓ "}
 .ik table.items{width:100%;border-collapse:collapse;margin:0}
 .ik table.items th{font-size:12px;color:var(--ik-muted);text-align:left;font-weight:500;padding:2px 3px;border:0;background:none}
 .ik table.items td{padding:3px;border:0}

@@ -29,6 +29,8 @@ try {
   await evaluate('await import("./pro-app.js")');
   assert.deepEqual(await evaluate('[document.getElementById("proBadge").hidden,document.getElementById("proNav").textContent,document.getElementById("proSummary").textContent]'),
     [true,'Pro aktivieren','Invoice Kit Pro: aktivieren und verwenden'],'Ohne Lizenz keine Pro-Anzeige');
+  assert.deepEqual(await evaluate('[document.getElementById("proActivation").hidden,document.getElementById("proDeactivate").hidden,document.getElementById("proLicenseStatus").textContent,document.getElementById("proLicenseStatus").classList.contains("active")]'),
+    [false,true,'Pro ist nicht aktiviert.',false],'Ohne Lizenz Codefeld statt Aktiv-Status');
   await evaluate(`g.load(${JSON.stringify(invoice())})`);
   assert.equal(await evaluate('g.check()'),true);
   assert.equal(await evaluate('document.querySelectorAll("#preview svg").length'),1);
@@ -122,16 +124,20 @@ try {
     await cmd('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13,text:'\r',unmodifiedText:'\r'});
     await cmd('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
     await waitFor('!document.getElementById("proAdminLink").hidden');
+    // Nach der Aktivierung ersetzt der Aktiv-Status das Codefeld und erhält den Fokus.
+    assert.deepEqual(await evaluate('[document.activeElement.id,document.getElementById("proActivation").hidden,document.getElementById("proDeactivate").hidden,document.getElementById("proLicenseStatus").textContent,document.getElementById("proLicenseStatus").classList.contains("active")]'),
+      ['proLicenseStatus',true,false,'Pro-Version aktiv. Lizenzcode aktiv für Invoice Kit Admin (Admin-Lizenz), unbefristet.',true]);
     // Aktives Pro ist auch bei zugeklapptem Bereich sichtbar, ein Klick auf den Hinweis öffnet ihn.
     await evaluate('document.getElementById("proPanel").open=false');
     assert.deepEqual(await evaluate('[document.getElementById("proBadge").hidden,document.getElementById("proBadge").textContent,document.getElementById("proNav").textContent,document.getElementById("proSummary").textContent.includes("ist aktiv")]'),
-      [false,'Pro aktiv für Invoice Kit Admin','Pro aktiv',true]);
+      [false,'Pro-Version aktiv · Lizenzcode aktiv für Invoice Kit Admin','Pro aktiv',true]);
     await evaluate('document.getElementById("proBadge").click()');assert.equal(await evaluate('document.getElementById("proPanel").open'),true);
     assert.equal(await evaluate('document.getElementById("proLicenseCode").value'),'', 'Code nach Aktivierung geleert');
     assert.equal(await evaluate('document.getElementById("proCodeError").textContent'),'');
     assert.equal(await evaluate('localStorage.getItem("invoice-kit-pro-license")'),null);
     writeFileSync('.test-artifacts/pro-code.png',Buffer.from((await cmd('Page.captureScreenshot',{format:'png'})).data,'base64'));
     await evaluate(`document.getElementById('proDeactivate').click()`);
+    assert.deepEqual(await evaluate('[document.activeElement.id,document.getElementById("proActivation").hidden,document.getElementById("proDeactivate").hidden,document.getElementById("proBadge").hidden]'),['proLicenseCode',false,true,true],'Deaktivieren zeigt wieder das Codefeld');
     await upload('#proLicenseFile',adminTxt);await waitFor('!document.getElementById("proAdminLink").hidden');
     await evaluate(`document.getElementById('proDeactivate').click();document.getElementById('proLicenseCode').value=${JSON.stringify(gift)};document.getElementById('proActivateCode').click()`);
     await waitFor('!document.getElementById("proFeatures").hidden');
@@ -148,10 +154,11 @@ try {
     assert.equal(await evaluate('JSON.parse(localStorage.getItem("invoice-kit-pro-data")).archive.length'),1);
     await go('/#proPanel');await evaluate('window.g=await import("./generator.js");await import("./pro-app.js")');await waitFor('!document.getElementById("proFeatures").hidden');
     await evaluate(`document.getElementById('proArticles').selectedIndex=1;document.getElementById('proUseArticle').click()`);await waitFor('g.state().items.length===2');
-    await upload('#proLicenseFile',join(adminDir,'admin.invoicekit-license'));await waitFor('!document.getElementById("proAdminLink").hidden');
+    assert.equal(await evaluate('document.getElementById("proLicenseStatus").textContent'),'Pro-Version aktiv. Lizenzcode aktiv für Geschenkkunde Test (Geschenk-Lizenz), unbefristet.');
+    await evaluate(`document.getElementById('proDeactivate').click()`);await upload('#proLicenseFile',join(adminDir,'admin.invoicekit-license'));await waitFor('!document.getElementById("proAdminLink").hidden');
     writeFileSync('.test-artifacts/pro.png',Buffer.from((await cmd('Page.captureScreenshot',{format:'png'})).data,'base64'));
     await evaluate(`document.getElementById('clearData').click()`);assert.equal(await evaluate('document.getElementById("proFeatures").hidden'),true);
-    assert.deepEqual(await evaluate('[document.getElementById("proBadge").hidden,document.getElementById("proNav").textContent]'),[true,'Pro aktivieren'],'Pro-Anzeige nach Gesamtlöschung entfernt');
+    assert.deepEqual(await evaluate('[document.getElementById("proBadge").hidden,document.getElementById("proNav").textContent,document.getElementById("proActivation").hidden,document.getElementById("proLicenseStatus").textContent]'),[true,'Pro aktivieren',false,'Pro ist nicht aktiviert.'],'Pro-Anzeige nach Gesamtlöschung entfernt');
     assert.equal(await evaluate('localStorage.getItem("invoice-kit-pro-data")'),null);assert.equal(await evaluate('localStorage.getItem("invoice-kit-pro-license")'),null);
     await upload('#proLicenseFile',giftPath);await evaluate(`document.getElementById('clearData').click()`);await pause(100);
     assert.equal(await evaluate('document.getElementById("proFeatures").hidden'),true,'Gesamtlöschung beendet auch eine laufende Aktivierung');

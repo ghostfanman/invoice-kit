@@ -22,7 +22,7 @@ Die öffentliche Admin-Seite ist ohne passenden Schlüssel gesperrt. Es gibt kei
 
 Auf der Admin-Seite den Namen oder die Firma des Kunden eintragen. Optional ein Ablaufdatum wählen, ansonsten gilt das Geschenk unbefristet. „Geschenk-Lizenz herunterladen“ erzeugt eine signierte Datei. Übergib dem Kunden nur diese `.invoicekit-license`-Datei und den [Generator-Link](https://ghostfanman.github.io/invoice-kit/#proPanel). Der Versand erfolgt durch dich, nicht automatisch durch Invoice Kit.
 
-Der Kunde lädt die Datei unter „Pro aktivieren“ oder fügt ihren vollständigen Textinhalt als Lizenzcode ein. Danach steht oben im Formular „Pro aktiv für“ mit dem eingetragenen Namen, bei befristeten Geschenken mit dem letzten gültigen Tag. Es werden weder Rechnung noch Lizenz zu einem Prüfserver geschickt. Die Signaturprüfung erfolgt lokal mit dem veröffentlichten Prüfschlüssel. Das Ablaufdatum gilt einschließlich des gewählten Tages in UTC.
+Der Kunde lädt die Datei unter „Pro aktivieren“ oder fügt ihren vollständigen Textinhalt als Lizenzcode ein. Danach steht oben im Formular „Pro-Version aktiv · Lizenzcode aktiv für“ mit dem eingetragenen Namen, bei befristeten Geschenken mit dem letzten gültigen Tag. Im Pro-Bereich zeigt ein grünes Statusfeld Name, Lizenzart und Gültigkeit anstelle des Codefelds. Wer eine andere Lizenz laden will, deaktiviert Pro zuerst auf diesem Gerät. Es werden weder Rechnung noch Lizenz zu einem Prüfserver geschickt. Die Signaturprüfung erfolgt lokal mit dem veröffentlichten Prüfschlüssel. Das Ablaufdatum gilt einschließlich des gewählten Tages in UTC.
 
 Alternativ lassen sich Lizenzen lokal per Kommandozeile erstellen:
 
@@ -67,6 +67,6 @@ Mit laufendem lokalen HTTP-Server und Chromium prüft dieser Befehl den vollstä
 INVOICE_KIT_ADMIN_DIR="$HOME/.local/share/invoice-kit-admin" node test/browser-check.mjs
 ```
 
-Der Test prüft außerdem TXT-Import, eingefügte Admin- und Geschenkcodes, leere und ungültige Eingaben, Tastaturaktivierung und das Leeren des Codefeldes.
+Der Test prüft außerdem TXT-Import, eingefügte Admin- und Geschenkcodes, leere und ungültige Eingaben, Tastaturaktivierung, das Leeren des Codefeldes und den Aktiv-Status, der nach der Aktivierung das Codefeld ersetzt.
 
 Der Test verwendet den Schlüssel lokal zur Ausstellung einer fiktiven Test-Geschenkdatei. Er veröffentlicht keine Lizenz und sendet keine Nachricht. Testdownloads und das temporäre Browserprofil werden anschließend entfernt.

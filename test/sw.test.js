@@ -6,7 +6,7 @@ const source=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
 function harness(){
   const events={},deleted=[],added=[];let fetched=0,claimed=false;
   const cache={addAll:async paths=>added.push(...paths),match:async()=>({offline:true})};
-  const context={URL,Set,self:{registration:{scope:'https://example.org/invoice-kit/'},addEventListener:(name,fn)=>events[name]=fn,skipWaiting:async()=>{},clients:{claim:async()=>{claimed=true}}},caches:{open:async()=>cache,keys:async()=>['invoice-kit-v2','invoice-kit-v4','invoice-kit-v8','other-app-v1','wambur-assets'],delete:async name=>deleted.push(name)},fetch:async()=>{fetched++;return {network:true}}};
+  const context={URL,Set,self:{registration:{scope:'https://example.org/invoice-kit/'},addEventListener:(name,fn)=>events[name]=fn,skipWaiting:async()=>{},clients:{claim:async()=>{claimed=true}}},caches:{open:async()=>cache,keys:async()=>['invoice-kit-v2','invoice-kit-v4','invoice-kit-v9','other-app-v1','wambur-assets'],delete:async name=>deleted.push(name)},fetch:async()=>{fetched++;return {network:true}}};
   vm.runInNewContext(source,context);
   return {events,deleted,added,cache,get claimed(){return claimed},get fetched(){return fetched}};
 }

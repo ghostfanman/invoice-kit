@@ -49,6 +49,10 @@
 .ik .pro-badge::before{content:"✓"}
 .ik .pro-badge+h2{margin-top:0}
 .ik #proPanel.active{border-color:#f59e0b;border-style:solid}
+.ik .pro-state{margin:10px 0;font-size:14px}
+.ik .pro-state.active{padding:10px 14px;border-radius:8px;background:rgba(74,222,128,.12);border:1px solid var(--ik-ok);color:var(--ik-text)}
+.ik .pro-state.active strong{color:var(--ik-ok)}
+.ik .pro-state.active strong::before{content:"✓ "}
 .ik table.items{width:100%;border-collapse:collapse;margin:0}
 .ik table.items th{font-size:12px;color:var(--ik-muted);text-align:left;font-weight:500;padding:2px 3px;border:0;background:none}
 .ik table.items td{padding:3px;border:0}
@@ -192,7 +196,9 @@
 
     <details id="proPanel">
       <summary id="proSummary">Invoice Kit Pro: aktivieren und verwenden</summary>
+      <p id="proLicenseStatus" class="pro-state" role="status" tabindex="-1">Pro ist nicht aktiviert.</p>
       <p>Kunden und Artikel wiederverwenden, Rechnungen lokal als bearbeitbare Kopien archivieren. Die Basisfunktionen bleiben kostenlos verfügbar.</p>
+      <div id="proActivation">
       <label for="proLicenseCode">Admin- oder Geschenk-Lizenzcode</label>
       <textarea id="proLicenseCode" rows="3" maxlength="8000" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="proCodeHint proCodeError"></textarea>
       <p id="proCodeHint" class="hint">Öffne deine Lizenzdatei in einem Texteditor und füge den vollständigen Inhalt hier ein. Der Code beginnt mit IKPRO1. Die Prüfung findet nur auf deinem Gerät statt.</p>
@@ -201,9 +207,9 @@
       <label for="proLicenseFile">Alternativ: Lizenzdatei auswählen</label>
       <input id="proLicenseFile" type="file" accept=".txt,.invoicekit-license,text/plain" aria-describedby="proLicenseHint">
       <p id="proLicenseHint" class="hint">TXT-Dateien und bisherige .invoicekit-license-Dateien werden unterstützt. Unter Linux zeigt Strg+H im Dateidialog auch versteckte Ordner wie .local an.</p>
+      </div>
       <label class="check" for="proRemember"><input id="proRemember" type="checkbox"> Lizenz auf diesem Gerät merken</label>
-      <p id="proLicenseStatus" role="status">Pro ist nicht aktiviert.</p>
-      <button class="ghost" id="proDeactivate" type="button">Pro auf diesem Gerät deaktivieren</button>
+      <button class="ghost" id="proDeactivate" type="button" hidden>Pro auf diesem Gerät deaktivieren</button>
       <p><a id="proAdminLink" href="admin.html" hidden>Admin: Pro als Geschenk ausstellen</a></p>
       <div id="proFeatures" hidden>
         <label class="check" for="proSaveData"><input id="proSaveData" type="checkbox" aria-describedby="proDataHint"> Pro-Daten auf diesem Gerät speichern</label>
