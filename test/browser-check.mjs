@@ -6,6 +6,7 @@ import {join} from 'node:path';
 import assert from 'node:assert/strict';
 import {invoice} from './fixture.js';
 const origin=process.env.INVOICE_KIT_TEST_ORIGIN || 'http://127.0.0.1:8765';
+mkdirSync('.test-artifacts',{recursive:true});
 const profile=mkdtempSync(join(tmpdir(),'invoice-kit-chrome-'));
 const port=process.env.INVOICE_KIT_CDP_PORT || String(10000+Math.floor(Math.random()*40000));
 const chrome=spawn(process.env.CHROMIUM || 'chromium',['--headless','--no-sandbox','--disable-dev-shm-usage','--no-first-run',`--user-data-dir=${profile}`,`--remote-debugging-port=${port}`,'about:blank'],{stdio:'ignore',detached:true});
@@ -83,7 +84,6 @@ try {
   for(const extra of [{free:'promo',taxCase:'KU'},{free:'promo',taxCase:'O',lang:'en'},{free:'gift',taxCase:'K',toVatId:'ATU12345678',toCountry:'AT'}])variants.push(await evaluate(`g.buildXML(${JSON.stringify(invoice(extra))})`));
   writeFileSync('.test-artifacts/geschenk.png',Buffer.from((await cmd('Page.captureScreenshot',{format:'png'})).data,'base64'));
   await evaluate(`g.load(${JSON.stringify(invoice())});await navigator.serviceWorker.ready`);
-  mkdirSync('.test-artifacts',{recursive:true});
   writeFileSync('.test-artifacts/generator.png',Buffer.from((await cmd('Page.captureScreenshot',{format:'png',captureBeyondViewport:false})).data,'base64'));
   await cmd('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
   assert.ok(await evaluate('document.documentElement.scrollWidth<=390'),'Mobile Breite: '+JSON.stringify(await evaluate(`({width:document.documentElement.scrollWidth,inner:innerWidth,overflow:[...document.querySelectorAll('body *')].filter(e=>e.getBoundingClientRect().right>395&&!e.closest('.table-scroll')).slice(0,20).map(e=>[e.tagName,e.id,e.className,e.getBoundingClientRect().width])})`)));
