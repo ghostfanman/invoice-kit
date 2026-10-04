@@ -39,7 +39,7 @@ if(import.meta.url===`file://${process.argv[1]}`){
   rmSync(out,{recursive:true,force:true});mkdirSync(out,{recursive:true});
   const profile=mkdtempSync(join(tmpdir(),'invoice-kit-export-'));
   const port=String(10000+Math.floor(Math.random()*40000));
-  const chrome=spawn(process.env.CHROMIUM || 'chromium',['--headless','--no-sandbox','--disable-dev-shm-usage','--no-first-run',`--user-data-dir=${profile}`,`--remote-debugging-port=${port}`,'about:blank'],{stdio:'ignore'});
+  const chrome=spawn(process.env.CHROMIUM || 'chromium',['--headless','--no-sandbox','--disable-dev-shm-usage','--no-first-run',`--user-data-dir=${profile}`,`--remote-debugging-port=${port}`,'about:blank'],{stdio:'ignore',detached:true});
   const pause=ms=>new Promise(r=>setTimeout(r,ms));
   let ws;const pending=new Map();let id=0;
   try{
@@ -60,5 +60,5 @@ if(import.meta.url===`file://${process.argv[1]}`){
       writeFileSync(join(out,`${name}.xml`),r.xml);writeFileSync(join(out,`${name}.pdf`),Buffer.from(r.pdf));
       console.log(`${name}: XML ${r.xml.length} Zeichen, PDF ${r.pdf.length} Bytes`);
     }
-  }finally{ws?.close();chrome.kill();await new Promise(ok=>{if(chrome.exitCode!==null)ok();else{chrome.once("exit",ok);setTimeout(ok,10000)}});rmSync(profile,{recursive:true,force:true,maxRetries:10,retryDelay:200})}
+  }finally{ws?.close();try{process.kill(-chrome.pid,'SIGTERM')}catch{chrome.kill()}await new Promise(ok=>{if(chrome.exitCode!==null)ok();else{chrome.once("exit",ok);setTimeout(ok,10000)}});try{rmSync(profile,{recursive:true,force:true,maxRetries:10,retryDelay:200})}catch{/* Chromium-Hilfsprozesse schreiben noch: temporäres Profil bleibt liegen */}}
 }

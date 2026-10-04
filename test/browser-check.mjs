@@ -8,7 +8,7 @@ import {invoice} from './fixture.js';
 const origin=process.env.INVOICE_KIT_TEST_ORIGIN || 'http://127.0.0.1:8765';
 const profile=mkdtempSync(join(tmpdir(),'invoice-kit-chrome-'));
 const port=process.env.INVOICE_KIT_CDP_PORT || String(10000+Math.floor(Math.random()*40000));
-const chrome=spawn(process.env.CHROMIUM || 'chromium',['--headless','--no-sandbox','--disable-dev-shm-usage','--no-first-run',`--user-data-dir=${profile}`,`--remote-debugging-port=${port}`,'about:blank'],{stdio:'ignore'});
+const chrome=spawn(process.env.CHROMIUM || 'chromium',['--headless','--no-sandbox','--disable-dev-shm-usage','--no-first-run',`--user-data-dir=${profile}`,`--remote-debugging-port=${port}`,'about:blank'],{stdio:'ignore',detached:true});
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 let ws;const pending=new Map();let id=0;const browserErrors=[];
 try {
@@ -209,5 +209,5 @@ try {
   assert.deepEqual(browserErrors,[]);
   console.log(`Browsertest bestanden: ${variants.length} CII-Varianten, UBL, mehrseitiges PDF (${pdfResult.pages} Seiten), XML-Anhang, Escaping, Speicherwahl, Labels, Tastaturfokus, Offline-Dateien und Wambur-Vorschauen. Screenshots: .test-artifacts/`);
 } finally {
-  ws?.close();chrome.kill();await new Promise(resolve=>{if(chrome.exitCode!==null)resolve();else{chrome.once('exit',resolve);setTimeout(resolve,10000)}});rmSync(profile,{recursive:true,force:true,maxRetries:10,retryDelay:200});
+  ws?.close();try{process.kill(-chrome.pid,'SIGTERM')}catch{chrome.kill()}await new Promise(resolve=>{if(chrome.exitCode!==null)resolve();else{chrome.once('exit',resolve);setTimeout(resolve,10000)}});try{rmSync(profile,{recursive:true,force:true,maxRetries:10,retryDelay:200})}catch{/* Chromium-Hilfsprozesse schreiben noch: temporäres Profil bleibt liegen */};
 }
