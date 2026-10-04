@@ -245,6 +245,7 @@ function buildXML(s,profile="xrechnung"){
   const d=iso=>`<udt:DateTimeString format="102">${iso.replaceAll("-","")}</udt:DateTimeString>`;
   const a=n=>n.toFixed(2), q=decimalText;
   const noVA=tc==="O";                         // BR-O-02: bei "nicht steuerbar" keine USt-IdNrn. im XML
+  const catOf=r=>cat==="S"&&r===0?"Z":cat;      // BR-S-05/BR-Z-05: Nullsatz im Normalfall ist Kategorie Z
   const rateEl=r=>cat==="O"?"":`<ram:RateApplicablePercent>${decimalText(r)}</ram:RateApplicablePercent>`;
   const vat=normalizeVAT;
   const party=(o)=>`${o.id?`
@@ -278,7 +279,7 @@ function buildXML(s,profile="xrechnung"){
       <ram:SpecifiedLineTradeAgreement><ram:NetPriceProductTradePrice><ram:ChargeAmount>${q(Math.abs(l.price))}</ram:ChargeAmount></ram:NetPriceProductTradePrice></ram:SpecifiedLineTradeAgreement>
       <ram:SpecifiedLineTradeDelivery><ram:BilledQuantity unitCode="${esc(l.unit||"C62")}">${q(l.price<0?-l.qty:l.qty)}</ram:BilledQuantity></ram:SpecifiedLineTradeDelivery>
       <ram:SpecifiedLineTradeSettlement>
-        <ram:ApplicableTradeTax><ram:TypeCode>VAT</ram:TypeCode><ram:CategoryCode>${cat}</ram:CategoryCode>${rateEl(l.rate)}</ram:ApplicableTradeTax>
+        <ram:ApplicableTradeTax><ram:TypeCode>VAT</ram:TypeCode><ram:CategoryCode>${catOf(l.rate)}</ram:CategoryCode>${rateEl(l.rate)}</ram:ApplicableTradeTax>
         <ram:SpecifiedTradeSettlementLineMonetarySummation><ram:LineTotalAmount>${a(l.total)}</ram:LineTotalAmount></ram:SpecifiedTradeSettlementLineMonetarySummation>
       </ram:SpecifiedLineTradeSettlement>
     </ram:IncludedSupplyChainTradeLineItem>`).join("");
@@ -288,7 +289,7 @@ function buildXML(s,profile="xrechnung"){
         <ram:TypeCode>VAT</ram:TypeCode>${reason?`
         <ram:ExemptionReason>${esc(reason)}</ram:ExemptionReason>`:""}
         <ram:BasisAmount>${a(b.basis)}</ram:BasisAmount>
-        <ram:CategoryCode>${cat}</ram:CategoryCode>
+        <ram:CategoryCode>${catOf(b.rate)}</ram:CategoryCode>
         <ram:RateApplicablePercent>${decimalText(b.rate)}</ram:RateApplicablePercent>
       </ram:ApplicableTradeTax>`).join("");   // BR-DE-14: Satz im Kopf immer angeben (bei O = 0)
   // Unentgeltlich: Zahlungsart 1 (nicht festgelegt), ohne Bankverbindung und Fälligkeit.
@@ -299,7 +300,7 @@ function buildXML(s,profile="xrechnung"){
         <ram:ChargeIndicator><udt:Indicator>false</udt:Indicator></ram:ChargeIndicator>
         <ram:ActualAmount>${a(x.amount)}</ram:ActualAmount>
         <ram:Reason>Unentgeltlich: ${esc(L.de[s.free])}</ram:Reason>
-        <ram:CategoryTradeTax><ram:TypeCode>VAT</ram:TypeCode><ram:CategoryCode>${cat}</ram:CategoryCode>${rateEl(x.rate)}</ram:CategoryTradeTax>
+        <ram:CategoryTradeTax><ram:TypeCode>VAT</ram:TypeCode><ram:CategoryCode>${catOf(x.rate)}</ram:CategoryCode>${rateEl(x.rate)}</ram:CategoryTradeTax>
       </ram:SpecifiedTradeAllowanceCharge>`).join("");
   const skontoLine=t.sk?`#SKONTO#TAGE=${t.skDays}#PROZENT=${t.sk.toFixed(2)}#\n`:"";
   const period=s.serviceEnd?`

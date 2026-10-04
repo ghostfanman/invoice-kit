@@ -22,17 +22,22 @@ Die Länder- und Währungslisten sind lokale Momentaufnahmen. Die E-Mail-Prüfun
 
 Der Viewer verarbeitet unterstützte Strukturen und ignoriert nicht dargestellte Zusatzfelder. Er ersetzt keine Prüfung aller Geschäftsregeln. XML mit DTD oder Entity-Deklarationen wird abgelehnt. Bei ungültigen oder fehlenden Zahlen darf eine Summenprüfung nicht als erfolgreich erscheinen. Formatierte Datums- und Währungswerte werden vor der HTML-Ausgabe ebenfalls escaped.
 
-## Externe Validatoren, lokal auszuführen
+## Externe Validatoren
 
-Für einen belastbaren Nachweis müssen die tatsächlich exportierten Dateien geprüft werden. Speichere pro Prüflauf die Dateien, ihren SHA-256-Hash, Toolversionen, Regelwerkversionen, vollständige Befehle und Prüfberichte. Verwende lokale Programme und lade Rechnungsdaten nicht zu einem Webvalidator hoch.
+`tools/validate-exports.sh` prüft die tatsächlich exportierten Dateien lokal, ohne Rechnungsdaten hochzuladen:
 
-1. **KoSIT:** Die XML-Datei mit dem [KoSIT-Validator](https://github.com/itplr-kosit/validator) und einer passenden [XRechnung-Konfiguration](https://github.com/itplr-kosit/validator-configuration-xrechnung) prüfen. Die Konfiguration muss zum deklarierten Profil passen. Schema- und Schematron-Fehler getrennt erfassen.
-2. **Mustang:** Das ZUGFeRD-/Factur-X-PDF und seine eingebettete XML mit [Mustangproject](https://www.mustangproject.org/) prüfen. Profil, Einbettung und Rechnungsregeln anhand des vollständigen Berichts beurteilen.
-3. **veraPDF:** Das PDF mit [veraPDF](https://verapdf.org/) gegen das deklarierte PDF/A-3b-Profil prüfen. PDF/A-Konformität allein bestätigt keine korrekte Rechnung oder XML.
+1. **Export:** `tools/export-samples.mjs` lädt jeden Prüffall über Chromium in den Generator, führt die Formularprüfung aus und speichert die XRechnung-XML sowie das ZUGFeRD-PDF so, wie der Nutzer sie erhält.
+2. **KoSIT:** [KoSIT-Validator](https://github.com/itplr-kosit/validator) v1.6.3 mit [validator-configuration-xrechnung](https://github.com/itplr-kosit/validator-configuration-xrechnung) v2026-08-31 (XRechnung 3.0.2, XRechnung-Schematron 2.6.0, CEN-Regeln 1.3.16). `tools/kosit-config.py` setzt die CII-Szenarien wie das offizielle Ziel `compile` aus den Originalquellen zusammen. Geprüft werden die XRechnung-XML und die aus jedem PDF extrahierte EN-16931-XML. Schema- und Schematron-Ergebnis stehen getrennt im Bericht.
+3. **Mustang:** [Mustangproject](https://www.mustangproject.org/) 2.26.0 prüft PDF-Struktur, Einbettung, Profil sowie XML-Schema und Schematron.
+4. **veraPDF:** Das in Mustang enthaltene [veraPDF](https://verapdf.org/) prüft jedes PDF gegen PDF/A-3b.
 
-Zu prüfen sind insbesondere alle sieben Steuerfälle, gemischte Steuersätze, Korrekturen mit negativen Mengen beziehungsweise Preisen, Nullbeträge, unentgeltliche Rechnungen mit Nachlass auf Belegebene und Zahlungsart 1, Skonto, Fremdwährungen, alle Zahlungsarten und mehrseitige PDFs. Negative Preise bei Korrekturen werden im XML in positive Preise mit entsprechendem Mengenvorzeichen umgewandelt.
+Alle Downloads sind auf Versionen und SHA-256-Prüfsummen festgelegt. Das Skript schreibt nach `.test-artifacts/validation/` die Exportdateien, alle Einzelberichte und `BERICHT.md` mit Werkzeugversionen, Ergebnissen und Prüfsummen. Der eingecheckte Stand steht in [PRUEFBERICHT.md](PRUEFBERICHT.md). Der GitHub-Workflow `Validierung` führt den Lauf bei jedem Push und Pull Request aus.
 
-Diese externen Prüfungen sind nicht Teil des Node-Testlaufs. Ohne zugehörige Berichte darf kein Release als vollständig nach EN 16931, XRechnung, ZUGFeRD oder PDF/A validiert bezeichnet werden. Die Metadaten im PDF beschreiben das angestrebte Profil, keinen unabhängigen Prüfbeleg.
+Die Prüffälle decken alle sieben Steuerfälle, gemischte Steuersätze einschließlich 0 %, Korrekturen mit negativen Mengen und Preisen, Nullbeträge, unentgeltliche Rechnungen mit Nachlass auf Belegebene und Zahlungsart 1, Skonto, Fremdwährungen mit und ohne Umrechnung, alle Zahlungsarten, Leistungszeitraum mit Leitweg-ID und mehrseitige PDFs ab. Negative Preise bei Korrekturen werden im XML in positive Preise mit entsprechendem Mengenvorzeichen umgewandelt. Ein Nullsatz im Normalfall wird als Kategorie Z (BR-Z) ausgewiesen, nicht als S mit 0 % (BR-S-05).
+
+Erwartete Hinweise: Die PDFs deklarieren das Profil EN 16931 und erhalten daher von den XRechnung-Regeln in Mustang den Hinweis BR-DE-21. Bei einem Leistungszeitraum bleibt `ApplicableHeaderTradeDelivery` leer, weil das CII-Schema das Element verlangt und kein Lieferdatum vorliegt. Die Factur-X-Regeln melden dazu die Warnung PEPPOL-EN16931-R008, keinen Fehler.
+
+Die Prüfung belegt die Konformität der Prüffälle mit den genannten Regelwerkversionen. Neue Regelwerkversionen erfordern einen neuen Lauf mit angepassten Versionen im Skript.
 
 ## Referenzen für die Implementierung
 

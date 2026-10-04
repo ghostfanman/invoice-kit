@@ -60,6 +60,13 @@ try {
     variants.push(await evaluate(`g.buildXML(${JSON.stringify(s)})`));
   }
   for(const extra of [{cur:'USD',fx:'0.92',paymentMeans:'30'},{docType:'384',refNum:'alt',refDate:'2026-09-01',items:[{desc:'Korrektur',qty:1,price:-100,rate:19,unit:'C62'}]},{skonto:'2',skontoDays:'7',serviceEnd:'2026-09-30'}])variants.push(await evaluate(`g.buildXML(${JSON.stringify(invoice(extra))})`));
+  // BR-S-05/BR-Z-05: 0 % im Normalfall wird Kategorie Z, auch bei Nachlässen einer unentgeltlichen Rechnung.
+  for(const free of ['','gift']){
+    const zero=await evaluate(`g.buildXML(${JSON.stringify(invoice({free,items:[{desc:'A',qty:1,price:100,rate:19,unit:'C62'},{desc:'B',qty:1,price:10,rate:0,unit:'C62'}]}))})`);
+    assert.ok(!/<ram:CategoryCode>S<\/ram:CategoryCode>\s*<ram:RateApplicablePercent>0<\/ram:RateApplicablePercent>/.test(zero),'Kein Normalsatz mit 0 %');
+    assert.equal((zero.match(/<ram:CategoryCode>Z<\/ram:CategoryCode>/g)||[]).length,free?3:2,'Position, Steuergruppe und ggf. Nachlass mit Z');
+    variants.push(zero);
+  }
   // Unentgeltliche Rechnung: Warenwert sichtbar, Nachlass 100 % je Steuersatz, keine Zahlungsangaben.
   const gift=invoice({free:'gift',iban:'',due:'',items:[{desc:'Muster',qty:2,price:50,rate:19,unit:'C62'},{desc:'Buch',qty:1,price:20,rate:7,unit:'C62'}]});
   await evaluate(`g.load(${JSON.stringify(gift)})`);
@@ -202,5 +209,5 @@ try {
   assert.deepEqual(browserErrors,[]);
   console.log(`Browsertest bestanden: ${variants.length} CII-Varianten, UBL, mehrseitiges PDF (${pdfResult.pages} Seiten), XML-Anhang, Escaping, Speicherwahl, Labels, Tastaturfokus, Offline-Dateien und Wambur-Vorschauen. Screenshots: .test-artifacts/`);
 } finally {
-  ws?.close();chrome.kill();await new Promise(resolve=>{if(chrome.exitCode!==null)resolve();else{chrome.once('exit',resolve);setTimeout(resolve,2000)}});rmSync(profile,{recursive:true,force:true});
+  ws?.close();chrome.kill();await new Promise(resolve=>{if(chrome.exitCode!==null)resolve();else{chrome.once('exit',resolve);setTimeout(resolve,10000)}});rmSync(profile,{recursive:true,force:true,maxRetries:10,retryDelay:200});
 }

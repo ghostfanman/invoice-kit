@@ -53,11 +53,17 @@ node test/browser-check.mjs
 
 Der Browsertest prüft Generator, Viewer, PDF mit eingebetteter XML, Offline-Betrieb, Speicherwahl, Tastaturzugang und das Escaping von XML-Inhalten. Screenshots und Testdateien liegen im ignorierten Ordner `.test-artifacts/`.
 
-## Grenzen der Prüfung
+## Konformitätsprüfung der Exporte
 
-Die Formularvalidierung und der Viewer prüfen Eingaben und Plausibilität. Eine erfolgreiche Anzeige bestätigt weder Konformität noch einen Anspruch auf Vorsteuerabzug. Der Browser führt keine vollständige Prüfung nach XML-Schema, Schematron, EN 16931 oder PDF/A durch. USt-IdNrn. werden nur anhand lokaler Grundformate geprüft, ohne Online-Abfrage oder Bestätigung der Registrierung.
+Die Exporte werden mit den offiziellen Validatoren geprüft: KoSIT-Validator mit der XRechnung-Konfiguration (XML-Schema CII D16B, Schematron EN 16931 und XRechnung 3.0.2), Mustang (ZUGFeRD/Factur-X) und veraPDF (PDF/A-3b). Geprüft werden 22 Fälle mit allen Steuerfällen, gemischten Steuersätzen einschließlich 0 %, Korrekturen, Nullbeträgen, unentgeltlichen Rechnungen, Skonto, Fremdwährungen, allen Zahlungsarten, Leistungszeitraum und mehrseitigem PDF. Jede XRechnung, jedes PDF und jede eingebettete XML wird angenommen. Das Ergebnis mit Werkzeugversionen und SHA-256-Prüfsummen steht in [docs/PRUEFBERICHT.md](docs/PRUEFBERICHT.md).
 
-Für konkrete Exportdateien sind getrennte lokale Prüfungen mit KoSIT, Mustang und veraPDF erforderlich. Umfang, Quellen und Vorgehen stehen in [docs/VALIDIERUNG.md](docs/VALIDIERUNG.md). Dieses Repository enthält keine aktuellen Prüfprotokolle dieser externen Validatoren und behauptet daher keine vollständige Konformität.
+```sh
+tools/validate-exports.sh
+```
+
+Das Skript erzeugt die Prüffälle über Chromium, baut die Validatoren aus festen Versionen mit geprüften Prüfsummen und endet nur dann erfolgreich, wenn alle Dateien angenommen werden. Es braucht Java 17 oder neuer, Maven und Git. Die Werkzeuge liegen danach im ignorierten Ordner `.validators/`. Der GitHub-Workflow `Validierung` führt Tests und Konformitätsprüfung bei jedem Push aus.
+
+Verbleibende Grenzen: Die Prüfung belegt die Konformität der getesteten Fälle, nicht jeder denkbaren Eingabe. Der Viewer prüft fremde Rechnungen auf Plausibilität, nicht vollständig nach Schematron. Eine gültige Datei bestätigt keinen Anspruch auf Vorsteuerabzug und nicht die sachliche Richtigkeit. USt-IdNrn. werden nur anhand lokaler Grundformate geprüft, ohne Online-Abfrage.
 
 ## Projektstruktur und Wambur
 

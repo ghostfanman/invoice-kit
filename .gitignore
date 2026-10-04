@@ -9,3 +9,6 @@ __pycache__/
 *.invoicekit-license
 .invoice-kit-private/
 Admin-Lizenz.txt
+
+# Lokal gebaute Validatoren (tools/validate-exports.sh)
+.validators/
