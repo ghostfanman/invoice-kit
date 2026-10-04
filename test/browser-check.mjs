@@ -6,9 +6,10 @@ import {join} from 'node:path';
 import assert from 'node:assert/strict';
 import {invoice} from './fixture.js';
 const origin=process.env.INVOICE_KIT_TEST_ORIGIN || 'http://127.0.0.1:8765';
+mkdirSync('.test-artifacts',{recursive:true});
 const profile=mkdtempSync(join(tmpdir(),'invoice-kit-chrome-'));
 const port=process.env.INVOICE_KIT_CDP_PORT || String(10000+Math.floor(Math.random()*40000));
-const chrome=spawn(process.env.CHROMIUM || 'chromium',['--headless','--no-sandbox','--disable-dev-shm-usage','--no-first-run',`--user-data-dir=${profile}`,`--remote-debugging-port=${port}`,'about:blank'],{stdio:'ignore'});
+const chrome=spawn(process.env.CHROMIUM || 'chromium',['--headless','--no-sandbox','--disable-dev-shm-usage','--no-first-run',`--user-data-dir=${profile}`,`--remote-debugging-port=${port}`,'about:blank'],{stdio:'ignore',detached:true});
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 let ws;const pending=new Map();let id=0;const browserErrors=[];
 try {
@@ -60,6 +61,13 @@ try {
     variants.push(await evaluate(`g.buildXML(${JSON.stringify(s)})`));
   }
   for(const extra of [{cur:'USD',fx:'0.92',paymentMeans:'30'},{docType:'384',refNum:'alt',refDate:'2026-09-01',items:[{desc:'Korrektur',qty:1,price:-100,rate:19,unit:'C62'}]},{skonto:'2',skontoDays:'7',serviceEnd:'2026-09-30'}])variants.push(await evaluate(`g.buildXML(${JSON.stringify(invoice(extra))})`));
+  // BR-S-05/BR-Z-05: 0 % im Normalfall wird Kategorie Z, auch bei Nachlässen einer unentgeltlichen Rechnung.
+  for(const free of ['','gift']){
+    const zero=await evaluate(`g.buildXML(${JSON.stringify(invoice({free,items:[{desc:'A',qty:1,price:100,rate:19,unit:'C62'},{desc:'B',qty:1,price:10,rate:0,unit:'C62'}]}))})`);
+    assert.ok(!/<ram:CategoryCode>S<\/ram:CategoryCode>\s*<ram:RateApplicablePercent>0<\/ram:RateApplicablePercent>/.test(zero),'Kein Normalsatz mit 0 %');
+    assert.equal((zero.match(/<ram:CategoryCode>Z<\/ram:CategoryCode>/g)||[]).length,free?3:2,'Position, Steuergruppe und ggf. Nachlass mit Z');
+    variants.push(zero);
+  }
   // Unentgeltliche Rechnung: Warenwert sichtbar, Nachlass 100 % je Steuersatz, keine Zahlungsangaben.
   const gift=invoice({free:'gift',iban:'',due:'',items:[{desc:'Muster',qty:2,price:50,rate:19,unit:'C62'},{desc:'Buch',qty:1,price:20,rate:7,unit:'C62'}]});
   await evaluate(`g.load(${JSON.stringify(gift)})`);
@@ -76,7 +84,6 @@ try {
   for(const extra of [{free:'promo',taxCase:'KU'},{free:'promo',taxCase:'O',lang:'en'},{free:'gift',taxCase:'K',toVatId:'ATU12345678',toCountry:'AT'}])variants.push(await evaluate(`g.buildXML(${JSON.stringify(invoice(extra))})`));
   writeFileSync('.test-artifacts/geschenk.png',Buffer.from((await cmd('Page.captureScreenshot',{format:'png'})).data,'base64'));
   await evaluate(`g.load(${JSON.stringify(invoice())});await navigator.serviceWorker.ready`);
-  mkdirSync('.test-artifacts',{recursive:true});
   writeFileSync('.test-artifacts/generator.png',Buffer.from((await cmd('Page.captureScreenshot',{format:'png',captureBeyondViewport:false})).data,'base64'));
   await cmd('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
   assert.ok(await evaluate('document.documentElement.scrollWidth<=390'),'Mobile Breite: '+JSON.stringify(await evaluate(`({width:document.documentElement.scrollWidth,inner:innerWidth,overflow:[...document.querySelectorAll('body *')].filter(e=>e.getBoundingClientRect().right>395&&!e.closest('.table-scroll')).slice(0,20).map(e=>[e.tagName,e.id,e.className,e.getBoundingClientRect().width])})`)));
@@ -202,5 +209,5 @@ try {
   assert.deepEqual(browserErrors,[]);
   console.log(`Browsertest bestanden: ${variants.length} CII-Varianten, UBL, mehrseitiges PDF (${pdfResult.pages} Seiten), XML-Anhang, Escaping, Speicherwahl, Labels, Tastaturfokus, Offline-Dateien und Wambur-Vorschauen. Screenshots: .test-artifacts/`);
 } finally {
-  ws?.close();chrome.kill();await new Promise(resolve=>{if(chrome.exitCode!==null)resolve();else{chrome.once('exit',resolve);setTimeout(resolve,2000)}});rmSync(profile,{recursive:true,force:true});
+  ws?.close();try{process.kill(-chrome.pid,'SIGTERM')}catch{chrome.kill()}await new Promise(resolve=>{if(chrome.exitCode!==null)resolve();else{chrome.once('exit',resolve);setTimeout(resolve,10000)}});try{rmSync(profile,{recursive:true,force:true,maxRetries:10,retryDelay:200})}catch{/* Chromium-Hilfsprozesse schreiben noch: temporäres Profil bleibt liegen */};
 }

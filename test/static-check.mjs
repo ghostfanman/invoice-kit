@@ -14,7 +14,7 @@ try {
     }
   }
   const files=[];
-  const scan=dir=>{for(const entry of readdirSync(dir,{withFileTypes:true})){if(['.git','.agents','.codex','node_modules','dist-wambur','__pycache__','.test-artifacts'].includes(entry.name))continue;const path=join(dir,entry.name);if(entry.isDirectory())scan(path);else files.push(path)}};
+  const scan=dir=>{for(const entry of readdirSync(dir,{withFileTypes:true})){if(['.git','.agents','.codex','node_modules','dist-wambur','__pycache__','.test-artifacts','.validators'].includes(entry.name))continue;const path=join(dir,entry.name);if(entry.isDirectory())scan(path);else files.push(path)}};
   scan('.');
   for(const file of files.filter(f=>/\.(?:m?js)$/.test(f)))execFileSync(process.execPath,['--check',file]);
   for(const file of files.filter(f=>!f.startsWith('vendor/')&&/\.(?:html|js|mjs|md|py|webmanifest)$/.test(f))){
