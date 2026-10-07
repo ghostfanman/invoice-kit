@@ -1,0 +1,9 @@
+node_modules
+.next
+data
+.smoke-artifacts
+coverage
+.env
+.env.*
+!.env.example
+*.tsbuildinfo

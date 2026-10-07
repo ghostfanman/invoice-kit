@@ -1,0 +1,1163 @@
+{
+  "generator": {
+    "name": "RepoLaunch",
+    "version": "0.1.0"
+  },
+  "schemaVersion": 1,
+  "repository": {
+    "source": "fixture",
+    "fixtureName": "cli-tool",
+    "fullName": "repolaunch-fixtures/cli-tool",
+    "htmlUrl": "https://github.com/repolaunch-fixtures/cli-tool",
+    "defaultBranch": "main",
+    "commitSha": "1111111111111111111111111111111111111111",
+    "analyzedAt": "2026-10-07T12:00:00.000Z",
+    "meta": {
+      "description": "Trim, filter and summarize large log files from the command line.",
+      "topics": [
+        "cli",
+        "logs"
+      ],
+      "homepage": null,
+      "archived": false,
+      "disabled": false,
+      "fork": false,
+      "isTemplate": false,
+      "hasIssues": true,
+      "hasDiscussions": false,
+      "pushedAt": "2026-09-20T08:00:00Z",
+      "createdAt": "2025-03-01T10:00:00Z",
+      "license": {
+        "spdxId": "MIT",
+        "name": "MIT License"
+      }
+    },
+    "display": {
+      "stars": 42
+    },
+    "tree": {
+      "entries": 6,
+      "scannedDirs": [
+        "",
+        ".github"
+      ],
+      "truncated": false
+    },
+    "readme": {
+      "state": "present",
+      "path": "README.md",
+      "size": 688
+    },
+    "files": {
+      "package.json": {
+        "state": "present",
+        "path": "package.json",
+        "size": 281
+      },
+      "pyproject.toml": {
+        "state": "missing",
+        "path": "pyproject.toml"
+      },
+      "Cargo.toml": {
+        "state": "missing",
+        "path": "Cargo.toml"
+      },
+      "go.mod": {
+        "state": "missing",
+        "path": "go.mod"
+      },
+      "composer.json": {
+        "state": "missing",
+        "path": "composer.json"
+      },
+      "action.yml": {
+        "state": "missing",
+        "path": "action.yml"
+      },
+      "action.yaml": {
+        "state": "missing",
+        "path": "action.yaml"
+      },
+      ".github/FUNDING.yml": {
+        "state": "missing",
+        "path": ".github/FUNDING.yml"
+      },
+      "docs/README.md": {
+        "state": "unknown",
+        "path": "docs/README.md",
+        "reason": {
+          "de": "Verzeichnis nicht gelesen",
+          "en": "directory not read"
+        }
+      },
+      "docs/index.md": {
+        "state": "unknown",
+        "path": "docs/index.md",
+        "reason": {
+          "de": "Verzeichnis nicht gelesen",
+          "en": "directory not read"
+        }
+      }
+    },
+    "releases": {
+      "state": "present",
+      "items": [
+        {
+          "tag": "v1.4.0",
+          "name": "1.4.0",
+          "publishedAt": "2026-08-30T12:00:00Z",
+          "prerelease": false,
+          "htmlUrl": "https://github.com/repolaunch-fixtures/cli-tool/releases/tag/v1.4.0",
+          "hasNotes": true
+        }
+      ],
+      "tagsFound": true
+    },
+    "goodFirstIssues": {
+      "state": "not_checked",
+      "count": 0
+    },
+    "stats": {
+      "requests": 7,
+      "notModified": 0,
+      "bytes": 2756,
+      "durationMs": 56
+    },
+    "notes": []
+  },
+  "user": {
+    "goal": "users",
+    "language": "de"
+  },
+  "audit": {
+    "schemaVersion": 1,
+    "rulesetVersion": "2026.10.0",
+    "generatedAt": "2026-10-07T12:00:00.000Z",
+    "classification": {
+      "detected": "cli",
+      "used": "cli",
+      "overridden": false,
+      "signals": [
+        {
+          "type": "cli",
+          "reason": "Manifest definiert ausführbare Befehle (logtrim)",
+          "evidence": "package.json"
+        },
+        {
+          "type": "cli",
+          "reason": "Topic weist auf ein CLI hin",
+          "evidence": "Topics"
+        },
+        {
+          "type": "cli",
+          "reason": "Beschreibung nennt Kommandozeile",
+          "evidence": "Beschreibung"
+        }
+      ]
+    },
+    "findings": [
+      {
+        "id": "understanding.description@1",
+        "ruleId": "understanding.description",
+        "ruleVersion": 1,
+        "category": "understanding",
+        "title": "Aussagekräftige Repository-Beschreibung",
+        "rationale": "Die Beschreibung erscheint in Suchergebnissen, Vorschauen und Listen. Sie ist oft der erste Kontakt.",
+        "status": "present",
+        "severity": "none",
+        "weight": 3,
+        "evidence": [
+          {
+            "kind": "field",
+            "label": "GitHub API: description",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool",
+            "snippet": "Trim, filter and summarize large log files from the command line."
+          }
+        ],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null
+      },
+      {
+        "id": "understanding.readme@1",
+        "ruleId": "understanding.readme",
+        "ruleVersion": 1,
+        "category": "understanding",
+        "title": "README vorhanden",
+        "rationale": "Die README ist laut GitHub meist das Erste, was Besucher sehen. Ohne sie fehlt jede Erklärung.",
+        "status": "present",
+        "severity": "none",
+        "weight": 3,
+        "evidence": [
+          {
+            "kind": "file",
+            "label": "README.md (688 B)",
+            "path": "README.md",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/blob/1111111111111111111111111111111111111111/README.md"
+          }
+        ],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null
+      },
+      {
+        "id": "understanding.intro@1",
+        "ruleId": "understanding.intro",
+        "ruleVersion": 1,
+        "category": "understanding",
+        "title": "Einleitender Absatz in der README",
+        "rationale": "Ein kurzer Absatz direkt unter dem Titel erklärt Zweck und Nutzen, bevor Details folgen.",
+        "status": "present",
+        "severity": "none",
+        "weight": 2,
+        "evidence": [
+          {
+            "kind": "file",
+            "label": "Einleitung",
+            "path": "README.md",
+            "lines": [
+              5,
+              6
+            ],
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/blob/1111111111111111111111111111111111111111/README.md#L5-L6",
+            "snippet": "logtrim is a small command line tool for developers and SREs who need to cut multi-gigabyte\nlog files down to the lines that matter, without loading them into memory."
+          }
+        ],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null
+      },
+      {
+        "id": "understanding.audience@1",
+        "ruleId": "understanding.audience",
+        "ruleVersion": 1,
+        "category": "understanding",
+        "title": "Zielgruppe und Nutzen benannt",
+        "rationale": "Besucher entscheiden schneller, wenn Funktionen, Anwendungsfälle oder die Zielgruppe ausdrücklich genannt sind.",
+        "status": "present",
+        "severity": "none",
+        "weight": 2,
+        "evidence": [
+          {
+            "kind": "file",
+            "label": "Zielgruppe im Text genannt",
+            "path": "README.md",
+            "lines": [
+              5,
+              5
+            ],
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/blob/1111111111111111111111111111111111111111/README.md#L5-L5",
+            "snippet": "logtrim is a small command line tool for developers and SREs who need to cut multi-gigabyte"
+          }
+        ],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null
+      },
+      {
+        "id": "understanding.example@1",
+        "ruleId": "understanding.example",
+        "ruleVersion": 1,
+        "category": "understanding",
+        "title": "Konkretes Nutzungsbeispiel",
+        "rationale": "Ein kurzes Beispiel zeigt schneller als jede Beschreibung, wie sich das Projekt anfühlt.",
+        "status": "present",
+        "severity": "none",
+        "weight": 3,
+        "evidence": [
+          {
+            "kind": "file",
+            "label": "Abschnitt \"Usage\" mit Codebeispiel",
+            "path": "README.md",
+            "lines": [
+              18,
+              21
+            ],
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/blob/1111111111111111111111111111111111111111/README.md#L18-L21",
+            "snippet": "```sh\nlogtrim app.log --level error --since 2h\nlogtrim app.log --grep \"timeout\" --summary\n```"
+          }
+        ],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null
+      },
+      {
+        "id": "usability.quickstart@1",
+        "ruleId": "usability.quickstart",
+        "ruleVersion": 1,
+        "category": "usability",
+        "title": "Dokumentierter Schnellstart",
+        "rationale": "Ein klarer erster Schritt (Installation oder Start) ist die Voraussetzung jeder Nutzung.",
+        "status": "present",
+        "severity": "none",
+        "weight": 3,
+        "evidence": [
+          {
+            "kind": "file",
+            "label": "Abschnitt \"Installation\"",
+            "path": "README.md",
+            "lines": [
+              8,
+              15
+            ],
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/blob/1111111111111111111111111111111111111111/README.md#L8-L15",
+            "snippet": "## Installation\n\n```sh\nnpm install -g logtrim\n```\n\nRequires Node.js 20 or newer.\n"
+          }
+        ],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null
+      },
+      {
+        "id": "usability.prerequisites@1",
+        "ruleId": "usability.prerequisites",
+        "ruleVersion": 1,
+        "category": "usability",
+        "title": "Voraussetzungen genannt",
+        "rationale": "Fehlende Angaben zu Laufzeit oder Versionen führen zu fehlgeschlagenen ersten Versuchen.",
+        "status": "present",
+        "severity": "none",
+        "weight": 2,
+        "evidence": [
+          {
+            "kind": "file",
+            "label": "Voraussetzung im Text",
+            "path": "README.md",
+            "lines": [
+              14,
+              14
+            ],
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/blob/1111111111111111111111111111111111111111/README.md#L14-L14",
+            "snippet": "Requires Node.js 20 or newer."
+          }
+        ],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null
+      },
+      {
+        "id": "usability.visual_demo@1",
+        "ruleId": "usability.visual_demo",
+        "ruleVersion": 1,
+        "category": "usability",
+        "title": "Screenshot, Animation oder Demo",
+        "rationale": "Bei sichtbaren Produkten zeigt ein Bild sofort, was man bekommt. Bei CLIs ist es ein Pluspunkt, kein Muss.",
+        "status": "missing",
+        "severity": "low",
+        "weight": 1,
+        "evidence": [
+          {
+            "kind": "absence",
+            "label": "README.md: kein Bild außer Badges und kein Link auf Demo/Screenshot/Video",
+            "path": "README.md",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/blob/1111111111111111111111111111111111111111/README.md"
+          }
+        ],
+        "task": "Füge einen aktuellen Screenshot, eine kurze Aufnahme oder einen Demo-Link in die README ein.",
+        "effort": "20 bis 60 Min.",
+        "effortMinutes": [
+          20,
+          60
+        ],
+        "impactHypothesis": "Höhere Klickrate auf Demo bzw. Installation, besonders bei Webprodukten."
+      },
+      {
+        "id": "usability.docs@1",
+        "ruleId": "usability.docs",
+        "ruleVersion": 1,
+        "category": "usability",
+        "title": "Weiterführende Dokumentation",
+        "rationale": "Über den Einstieg hinaus brauchen Nutzer eine Stelle für Details: docs-Ordner, Wiki oder Doku-Seite.",
+        "status": "missing",
+        "severity": "medium",
+        "weight": 2,
+        "evidence": [
+          {
+            "kind": "absence",
+            "label": "Kein docs/-Verzeichnis im Wurzelverzeichnis und kein Doku-Link in der README",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/tree/1111111111111111111111111111111111111111"
+          }
+        ],
+        "task": "Lege einen docs-Ordner oder eine Doku-Seite an und verlinke sie prominent in der README.",
+        "effort": "1 bis 4 Std.",
+        "effortMinutes": [
+          60,
+          240
+        ],
+        "impactHypothesis": "Fortgeschrittene Nutzer bleiben, wiederkehrende Fragen nehmen ab."
+      },
+      {
+        "id": "usability.cli_reference@1",
+        "ruleId": "usability.cli_reference",
+        "ruleVersion": 1,
+        "category": "usability",
+        "title": "Befehle und Optionen dokumentiert",
+        "rationale": "CLI-Nutzer suchen Befehle, Flags und Beispiele. Ohne Referenz bleibt nur das Ausprobieren.",
+        "status": "present",
+        "severity": "none",
+        "weight": 3,
+        "evidence": [
+          {
+            "kind": "file",
+            "label": "Abschnitt \"Options\"",
+            "path": "README.md",
+            "lines": [
+              23,
+              31
+            ],
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/blob/1111111111111111111111111111111111111111/README.md#L23-L31",
+            "snippet": "### Options\n\n| Flag | Description |\n| --- | --- |\n| `--level` | Minimum log level |\n| `--since` | Only lines newer than the given duration |\n| `--summary` | Print counts per level instead of lines |\n\nRun `logtrim --help` for all options."
+          }
+        ],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null
+      },
+      {
+        "id": "usability.api_reference@1",
+        "ruleId": "usability.api_reference",
+        "ruleVersion": 1,
+        "category": "usability",
+        "title": "API-Referenz",
+        "rationale": "Bibliotheksnutzer brauchen eine Übersicht der öffentlichen Funktionen oder einen Link zur Referenz.",
+        "status": "not_relevant",
+        "severity": "none",
+        "weight": 0,
+        "evidence": [],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null,
+        "exclusionReason": "Für Projekttyp \"CLI-Tool\" und Ziel \"Mehr Nutzer\" nicht relevant (Gewicht 0)."
+      },
+      {
+        "id": "usability.template_flag@1",
+        "ruleId": "usability.template_flag",
+        "ruleVersion": 1,
+        "category": "usability",
+        "title": "Als Template-Repository nutzbar",
+        "rationale": "Mit der Template-Einstellung bietet GitHub \"Use this template\" an; das senkt die Hürde für Vorlagen deutlich.",
+        "status": "not_relevant",
+        "severity": "none",
+        "weight": 0,
+        "evidence": [],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null,
+        "exclusionReason": "Für Projekttyp \"CLI-Tool\" und Ziel \"Mehr Nutzer\" nicht relevant (Gewicht 0)."
+      },
+      {
+        "id": "trust.license@1",
+        "ruleId": "trust.license",
+        "ruleVersion": 1,
+        "category": "trust",
+        "title": "Lizenzinformation",
+        "rationale": "Ohne erkennbare Lizenz ist unklar, ob und wie andere das Projekt nutzen dürfen. Das ist keine Rechtsberatung.",
+        "status": "present",
+        "severity": "none",
+        "weight": 3,
+        "evidence": [
+          {
+            "kind": "field",
+            "label": "GitHub API: license.spdx_id (GitHub-Lizenzerkennung)",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool",
+            "snippet": "MIT (MIT License)"
+          }
+        ],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null
+      },
+      {
+        "id": "trust.maintenance@1",
+        "ruleId": "trust.maintenance",
+        "ruleVersion": 1,
+        "category": "trust",
+        "title": "Erkennbarer Wartungsstatus",
+        "rationale": "Nutzer prüfen, ob ein Projekt gepflegt wird. Archivierte oder lange inaktive Projekte wirken riskant.",
+        "status": "present",
+        "severity": "none",
+        "weight": 2,
+        "evidence": [
+          {
+            "kind": "field",
+            "label": "GitHub API: pushed_at (letzter Push auf einen beliebigen Branch)",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool",
+            "snippet": "2026-09-20T08:00:00Z (vor 17 Tagen)"
+          },
+          {
+            "kind": "field",
+            "label": "Letztes Release v1.4.0",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/releases/tag/v1.4.0",
+            "snippet": "2026-08-30T12:00:00Z"
+          }
+        ],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null
+      },
+      {
+        "id": "trust.releases@1",
+        "ruleId": "trust.releases",
+        "ruleVersion": 1,
+        "category": "trust",
+        "title": "Versionierte Releases oder Tags",
+        "rationale": "Releases geben Nutzern stabile Stände und zeigen Fortschritt nachvollziehbar.",
+        "status": "present",
+        "severity": "none",
+        "weight": 3,
+        "evidence": [
+          {
+            "kind": "field",
+            "label": "Release v1.4.0",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/releases/tag/v1.4.0",
+            "snippet": "1.4.0, 2026-08-30T12:00:00Z"
+          }
+        ],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null
+      },
+      {
+        "id": "trust.contributing@1",
+        "ruleId": "trust.contributing",
+        "ruleVersion": 1,
+        "category": "trust",
+        "title": "Beitragsrichtlinien",
+        "rationale": "CONTRIBUTING-Dateien verlinkt GitHub automatisch bei Issues und Pull Requests. Sie senken die Einstiegshürde.",
+        "status": "missing",
+        "severity": "low",
+        "weight": 1,
+        "evidence": [
+          {
+            "kind": "absence",
+            "label": "Dateiliste @ 1111111: keine Datei contributing, contributing.md, contributing.rst, contributing.txt, contributing.adoc in /, .github/, docs/",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/tree/1111111111111111111111111111111111111111"
+          }
+        ],
+        "task": "Lege CONTRIBUTING.md an: Setup, Tests, Stil, Ablauf für Pull Requests.",
+        "effort": "30 bis 90 Min.",
+        "effortMinutes": [
+          30,
+          90
+        ],
+        "impactHypothesis": "Mehr und besser vorbereitete Beiträge."
+      },
+      {
+        "id": "trust.security_policy@1",
+        "ruleId": "trust.security_policy",
+        "ruleVersion": 1,
+        "category": "trust",
+        "title": "Sicherheitsrichtlinie",
+        "rationale": "Eine SECURITY.md sagt, wie Schwachstellen vertraulich gemeldet werden. Für Unternehmen ist das oft ein Prüfpunkt.",
+        "status": "missing",
+        "severity": "medium",
+        "weight": 2,
+        "evidence": [
+          {
+            "kind": "absence",
+            "label": "Dateiliste @ 1111111: keine Datei security.md, security.txt, security in /, .github/, docs/",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/tree/1111111111111111111111111111111111111111"
+          }
+        ],
+        "task": "Lege SECURITY.md an: Meldeweg (z. B. private Sicherheitsmeldung über GitHub), unterstützte Versionen, Reaktionszeit ohne Garantie.",
+        "effort": "15 bis 30 Min.",
+        "effortMinutes": [
+          15,
+          30
+        ],
+        "impactHypothesis": "Höheres Vertrauen bei professionellen Nutzern."
+      },
+      {
+        "id": "trust.contact@1",
+        "ruleId": "trust.contact",
+        "ruleVersion": 1,
+        "category": "trust",
+        "title": "Kontakt- oder Supportweg",
+        "rationale": "Nutzer brauchen einen Weg für Fragen und Fehlerberichte: Issues, Discussions oder ein Kontaktabschnitt.",
+        "status": "present",
+        "severity": "none",
+        "weight": 2,
+        "evidence": [
+          {
+            "kind": "field",
+            "label": "GitHub API: has_issues / has_discussions",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool",
+            "snippet": "true / false"
+          }
+        ],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null
+      },
+      {
+        "id": "trust.code_of_conduct@1",
+        "ruleId": "trust.code_of_conduct",
+        "ruleVersion": 1,
+        "category": "trust",
+        "title": "Verhaltenskodex",
+        "rationale": "Ein Verhaltenskodex signalisiert neuen Mitwirkenden, wie Zusammenarbeit abläuft.",
+        "status": "not_relevant",
+        "severity": "none",
+        "weight": 0,
+        "evidence": [],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null,
+        "exclusionReason": "Für Projekttyp \"CLI-Tool\" und Ziel \"Mehr Nutzer\" nicht relevant (Gewicht 0)."
+      },
+      {
+        "id": "trust.changelog@1",
+        "ruleId": "trust.changelog",
+        "ruleVersion": 1,
+        "category": "trust",
+        "title": "Änderungsprotokoll",
+        "rationale": "Ein Changelog oder Release Notes zeigen, was sich ändert, und erleichtern Updates.",
+        "status": "present",
+        "severity": "none",
+        "weight": 2,
+        "evidence": [
+          {
+            "kind": "field",
+            "label": "Release Notes zu v1.4.0",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/releases/tag/v1.4.0"
+          }
+        ],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null
+      },
+      {
+        "id": "distribution.topics@1",
+        "ruleId": "distribution.topics",
+        "ruleVersion": 1,
+        "category": "distribution",
+        "title": "Passende Topics",
+        "rationale": "Topics machen ein Repository über GitHub-Themenseiten und Suche auffindbar. Nur 2 Topic(s).",
+        "status": "missing",
+        "severity": "medium",
+        "weight": 2,
+        "evidence": [
+          {
+            "kind": "field",
+            "label": "GitHub API: topics",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool",
+            "snippet": "cli, logs"
+          }
+        ],
+        "task": "Vergib drei bis acht präzise Topics (Sprache, Problemfeld, Projekttyp).",
+        "effort": "5 bis 10 Min.",
+        "effortMinutes": [
+          5,
+          10
+        ],
+        "impactHypothesis": "Mehr Besucher über Themenseiten und Suche; keine Garantie für Rankings."
+      },
+      {
+        "id": "distribution.homepage@1",
+        "ruleId": "distribution.homepage",
+        "ruleVersion": 1,
+        "category": "distribution",
+        "title": "Website-Feld gesetzt",
+        "rationale": "Das Website-Feld erscheint prominent neben der Beschreibung und führt zu Demo, Doku oder Produktseite.",
+        "status": "missing",
+        "severity": "low",
+        "weight": 1,
+        "evidence": [
+          {
+            "kind": "field",
+            "label": "GitHub API: homepage",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool",
+            "snippet": "(leer)"
+          }
+        ],
+        "task": "Trage im Repository unter \"About\" eine Website ein (Demo, Doku oder Produktseite).",
+        "effort": "2 bis 10 Min.",
+        "effortMinutes": [
+          2,
+          10
+        ],
+        "impactHypothesis": "Mehr Besuche der Demo- oder Produktseite."
+      },
+      {
+        "id": "distribution.next_step@1",
+        "ruleId": "distribution.next_step",
+        "ruleVersion": 1,
+        "category": "distribution",
+        "title": "Klarer nächster Schritt oben in der README",
+        "rationale": "Wer die ersten Zeilen liest, sollte sofort wissen, was als Nächstes zu tun ist: installieren, Demo öffnen oder Doku lesen.",
+        "status": "present",
+        "severity": "none",
+        "weight": 2,
+        "evidence": [
+          {
+            "kind": "file",
+            "label": "Installationsbefehl im oberen Teil",
+            "path": "README.md",
+            "lines": [
+              11,
+              11
+            ],
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/blob/1111111111111111111111111111111111111111/README.md#L11-L11",
+            "snippet": "npm install -g logtrim"
+          }
+        ],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null
+      },
+      {
+        "id": "distribution.registry@1",
+        "ruleId": "distribution.registry",
+        "ruleVersion": 1,
+        "category": "distribution",
+        "title": "Verweis auf Paketregister",
+        "rationale": "Ein Link oder Badge zum Paketregister zeigt, dass eine installierbare Version existiert. Die Veröffentlichung selbst wurde nicht extern geprüft.",
+        "status": "missing",
+        "severity": "medium",
+        "weight": 2,
+        "evidence": [
+          {
+            "kind": "absence",
+            "label": "README.md: kein Link zu npm, PyPI, crates.io, pkg.go.dev, Packagist, RubyGems, Docker Hub, GHCR oder Marketplace",
+            "path": "README.md",
+            "url": "https://github.com/repolaunch-fixtures/cli-tool/blob/1111111111111111111111111111111111111111/README.md"
+          }
+        ],
+        "task": "Falls veröffentlicht: verlinke die Registry-Seite (npm, PyPI, crates.io usw.) in der README. Falls nicht: Veröffentlichung prüfen.",
+        "effort": "5 bis 60 Min.",
+        "effortMinutes": [
+          5,
+          60
+        ],
+        "impactHypothesis": "Einfachere Installation über bekannte Paketmanager."
+      },
+      {
+        "id": "distribution.funding@1",
+        "ruleId": "distribution.funding",
+        "ruleVersion": 1,
+        "category": "distribution",
+        "title": "Finanzierungsmöglichkeit sichtbar",
+        "rationale": "Wer Sponsoren sucht, muss einen Weg zum Unterstützen anbieten. GitHub zeigt FUNDING.yml als Sponsor-Button an.",
+        "status": "not_relevant",
+        "severity": "none",
+        "weight": 0,
+        "evidence": [],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null,
+        "exclusionReason": "Für Projekttyp \"CLI-Tool\" und Ziel \"Mehr Nutzer\" nicht relevant (Gewicht 0)."
+      },
+      {
+        "id": "distribution.commercial_offer@1",
+        "ruleId": "distribution.commercial_offer",
+        "ruleVersion": 1,
+        "category": "distribution",
+        "title": "Kommerzielles Angebot benannt",
+        "rationale": "Wer zahlende Kunden sucht, muss sagen, was man kaufen kann und wie man Kontakt aufnimmt.",
+        "status": "not_relevant",
+        "severity": "none",
+        "weight": 0,
+        "evidence": [],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null,
+        "exclusionReason": "Für Projekttyp \"CLI-Tool\" und Ziel \"Mehr Nutzer\" nicht relevant (Gewicht 0)."
+      },
+      {
+        "id": "distribution.contributor_entry@1",
+        "ruleId": "distribution.contributor_entry",
+        "ruleVersion": 1,
+        "category": "distribution",
+        "title": "Einstiegsaufgaben für Mitwirkende",
+        "rationale": "Offene Issues mit dem Label \"good first issue\" geben neuen Mitwirkenden einen konkreten Startpunkt.",
+        "status": "not_relevant",
+        "severity": "none",
+        "weight": 0,
+        "evidence": [],
+        "task": null,
+        "effort": null,
+        "effortMinutes": null,
+        "impactHypothesis": null,
+        "exclusionReason": "Für Projekttyp \"CLI-Tool\" und Ziel \"Mehr Nutzer\" nicht relevant (Gewicht 0)."
+      }
+    ],
+    "tasks": [
+      {
+        "rank": 1,
+        "findingId": "distribution.topics@1",
+        "title": "Passende Topics",
+        "task": "Vergib drei bis acht präzise Topics (Sprache, Problemfeld, Projekttyp).",
+        "severity": "medium",
+        "effort": "5 bis 10 Min.",
+        "impactHypothesis": "Mehr Besucher über Themenseiten und Suche; keine Garantie für Rankings."
+      },
+      {
+        "rank": 2,
+        "findingId": "distribution.registry@1",
+        "title": "Verweis auf Paketregister",
+        "task": "Falls veröffentlicht: verlinke die Registry-Seite (npm, PyPI, crates.io usw.) in der README. Falls nicht: Veröffentlichung prüfen.",
+        "severity": "medium",
+        "effort": "5 bis 60 Min.",
+        "impactHypothesis": "Einfachere Installation über bekannte Paketmanager."
+      },
+      {
+        "rank": 3,
+        "findingId": "trust.security_policy@1",
+        "title": "Sicherheitsrichtlinie",
+        "task": "Lege SECURITY.md an: Meldeweg (z. B. private Sicherheitsmeldung über GitHub), unterstützte Versionen, Reaktionszeit ohne Garantie.",
+        "severity": "medium",
+        "effort": "15 bis 30 Min.",
+        "impactHypothesis": "Höheres Vertrauen bei professionellen Nutzern."
+      },
+      {
+        "rank": 4,
+        "findingId": "usability.docs@1",
+        "title": "Weiterführende Dokumentation",
+        "task": "Lege einen docs-Ordner oder eine Doku-Seite an und verlinke sie prominent in der README.",
+        "severity": "medium",
+        "effort": "1 bis 4 Std.",
+        "impactHypothesis": "Fortgeschrittene Nutzer bleiben, wiederkehrende Fragen nehmen ab."
+      },
+      {
+        "rank": 5,
+        "findingId": "distribution.homepage@1",
+        "title": "Website-Feld gesetzt",
+        "task": "Trage im Repository unter \"About\" eine Website ein (Demo, Doku oder Produktseite).",
+        "severity": "low",
+        "effort": "2 bis 10 Min.",
+        "impactHypothesis": "Mehr Besuche der Demo- oder Produktseite."
+      }
+    ],
+    "score": {
+      "value": 76,
+      "achievedWeight": 35,
+      "possibleWeight": 46,
+      "unknownWeight": 0,
+      "coverage": 1,
+      "byCategory": [
+        {
+          "category": "understanding",
+          "achieved": 13,
+          "possible": 13,
+          "unknownWeight": 0
+        },
+        {
+          "category": "usability",
+          "achieved": 8,
+          "possible": 11,
+          "unknownWeight": 0
+        },
+        {
+          "category": "trust",
+          "achieved": 12,
+          "possible": 15,
+          "unknownWeight": 0
+        },
+        {
+          "category": "distribution",
+          "achieved": 2,
+          "possible": 7,
+          "unknownWeight": 0
+        }
+      ],
+      "excluded": [
+        {
+          "ruleId": "usability.api_reference",
+          "status": "not_relevant",
+          "reason": "Für Projekttyp \"CLI-Tool\" und Ziel \"Mehr Nutzer\" nicht relevant (Gewicht 0)."
+        },
+        {
+          "ruleId": "usability.template_flag",
+          "status": "not_relevant",
+          "reason": "Für Projekttyp \"CLI-Tool\" und Ziel \"Mehr Nutzer\" nicht relevant (Gewicht 0)."
+        },
+        {
+          "ruleId": "trust.code_of_conduct",
+          "status": "not_relevant",
+          "reason": "Für Projekttyp \"CLI-Tool\" und Ziel \"Mehr Nutzer\" nicht relevant (Gewicht 0)."
+        },
+        {
+          "ruleId": "distribution.funding",
+          "status": "not_relevant",
+          "reason": "Für Projekttyp \"CLI-Tool\" und Ziel \"Mehr Nutzer\" nicht relevant (Gewicht 0)."
+        },
+        {
+          "ruleId": "distribution.commercial_offer",
+          "status": "not_relevant",
+          "reason": "Für Projekttyp \"CLI-Tool\" und Ziel \"Mehr Nutzer\" nicht relevant (Gewicht 0)."
+        },
+        {
+          "ruleId": "distribution.contributor_entry",
+          "status": "not_relevant",
+          "reason": "Für Projekttyp \"CLI-Tool\" und Ziel \"Mehr Nutzer\" nicht relevant (Gewicht 0)."
+        }
+      ],
+      "formula": "Score = Summe der Gewichte erfüllter Regeln / Summe der Gewichte bewerteter Regeln × 100 = 35 / 46 × 100. Unbekannte und nicht relevante Regeln zählen nicht. Abdeckung = bewertete Gewichte / (bewertete + unbekannte Gewichte) = 46 / 46."
+    },
+    "monetization": {
+      "required": false,
+      "summary": "Für dein Ziel ist kein Geschäftsmodell erforderlich. Nicht jedes Repository braucht eines; die Optionen dienen nur der Orientierung.",
+      "licenseNote": "Erkannte Lizenz: MIT (GitHub-Lizenzerkennung). Freizügige Lizenzen erlauben in der Regel auch Dritten kommerzielle Nutzung, einschließlich eigener gehosteter Angebote. Keine Rechtsberatung.",
+      "options": [
+        {
+          "type": "sponsoring",
+          "title": "Sponsoring",
+          "fit": "conditional",
+          "reasons": [
+            "Bibliotheken und CLIs mit vielen Nutzern erhalten am ehesten Sponsoring."
+          ],
+          "whoPays": "Einzelpersonen und Unternehmen, die das Projekt nutzen",
+          "forWhat": "Fortbestand und Pflege des Projekts, ohne direkte Gegenleistung",
+          "prerequisites": [
+            "GitHub Sponsors: Teilnahmeberechtigung und Einrichtung durch dich (siehe GitHub-Dokumentation)",
+            ".github/FUNDING.yml und ein Hinweis in der README",
+            "Sichtbare, verlässliche Pflege"
+          ],
+          "effort": "1 bis 3 Std. Einrichtung, danach laufende Pflege der Sponsorenkommunikation",
+          "targetCustomers": "Firmen mit Abhängigkeit vom Projekt, zufriedene Einzelnutzer",
+          "priceHypothesis": "Stufen von 5, 25 und 100 € pro Monat (Testhypothese)"
+        },
+        {
+          "type": "paid_setup",
+          "title": "Bezahltes Setup",
+          "fit": "conditional",
+          "reasons": [
+            "Nur sinnvoll, wenn die Einrichtung für Kunden spürbar aufwendig ist."
+          ],
+          "whoPays": "Teams, die das Projekt einsetzen wollen, aber keine Zeit für Installation und Konfiguration haben",
+          "forWhat": "Installation, Konfiguration und Übergabe in ihrer Umgebung",
+          "prerequisites": [
+            "Reproduzierbare Installation (z. B. Docker) und klare Grenzen des Angebots",
+            "Kontaktweg und Angebotsbeschreibung in README oder Website"
+          ],
+          "effort": "Je Kunde 2 bis 8 Std.",
+          "targetCustomers": "Kleine Firmen und Teams ohne eigenes Betriebsteam",
+          "priceHypothesis": "Einmalig 300 bis 1.500 € je Installation (Testhypothese)"
+        },
+        {
+          "type": "support_maintenance",
+          "title": "Support und Wartung",
+          "fit": "conditional",
+          "reasons": [
+            "Möglich, sobald Unternehmen das Projekt produktiv nutzen."
+          ],
+          "whoPays": "Unternehmen, die das Projekt produktiv einsetzen",
+          "forWhat": "Verbindlichen Ansprechpartner, Reaktionszeiten, Updates und Fehlerbehebung",
+          "prerequisites": [
+            "Erkennbar gepflegtes Projekt mit Releases",
+            "Klar definierte Reaktionszeiten, die du einhalten kannst",
+            "Sicherheitsrichtlinie und Kontaktweg"
+          ],
+          "effort": "Laufend, je Kunde einige Stunden pro Monat",
+          "targetCustomers": "Firmen mit geschäftskritischer Nutzung",
+          "priceHypothesis": "Ab 150 € pro Monat für einen festen Reaktionsrahmen (Testhypothese)"
+        },
+        {
+          "type": "training",
+          "title": "Schulung",
+          "fit": "unlikely",
+          "reasons": [
+            "Ohne Dokumentation fehlt die Grundlage."
+          ],
+          "whoPays": "Teams, die das Projekt schneller oder tiefer nutzen wollen",
+          "forWhat": "Workshops, Einführungen oder Beratungsstunden",
+          "prerequisites": [
+            "Dokumentation, auf die eine Schulung aufbauen kann",
+            "Nachfrage, z. B. wiederkehrende Fragen in Issues"
+          ],
+          "effort": "Vorbereitung 1 bis 3 Tage, danach je Termin",
+          "targetCustomers": "Teams in Unternehmen, Agenturen",
+          "priceHypothesis": "500 bis 1.500 € pro halbem Tag (Testhypothese)"
+        },
+        {
+          "type": "hosted_version",
+          "title": "Gehostete Version",
+          "fit": "unlikely",
+          "reasons": [
+            "Nur für Webprodukte naheliegend."
+          ],
+          "whoPays": "Nutzer, die das Produkt ohne eigenen Betrieb verwenden wollen",
+          "forWhat": "Betrieb, Updates, Backups und Verfügbarkeit",
+          "prerequisites": [
+            "Betriebsfähiges Webprodukt mit Mandantentrennung",
+            "Datenschutz, Impressum, AGB und Zahlungsabwicklung",
+            "Prüfung, ob Lizenz und Rechte Dritter ein gehostetes Angebot erlauben (keine Rechtsberatung)"
+          ],
+          "effort": "Hoch: Wochen bis Monate, danach laufender Betrieb",
+          "targetCustomers": "Kleine Teams ohne IT-Betrieb",
+          "priceHypothesis": "10 bis 30 € pro Monat und Team (Testhypothese)"
+        },
+        {
+          "type": "commercial_features",
+          "title": "Zusätzliche kommerzielle Funktionen",
+          "fit": "unlikely",
+          "reasons": [
+            "Passt nicht zu deinem Ziel."
+          ],
+          "whoPays": "Fortgeschrittene oder geschäftliche Nutzer",
+          "forWhat": "Funktionen über den offenen Kern hinaus, z. B. Team- oder Integrationsfunktionen",
+          "prerequisites": [
+            "Klare Trennung zwischen offenem Kern und kommerziellem Teil",
+            "Rechte an allen Beiträgen klären; keine automatische Lizenzänderung (keine Rechtsberatung)"
+          ],
+          "effort": "Mittel bis hoch, abhängig vom Funktionsumfang",
+          "targetCustomers": "Unternehmen mit erweiterten Anforderungen",
+          "priceHypothesis": "50 bis 300 € pro Jahr und Lizenz (Testhypothese)"
+        }
+      ],
+      "disclaimers": [
+        "Preise sind Testhypothesen, keine erhobenen Marktpreise.",
+        "Keine Rechtsberatung. Bestehende Lizenzen, Rechte Dritter und Beiträge anderer beachten.",
+        "Keine automatische Lizenzänderung; Dual Licensing wird nicht pauschal empfohlen.",
+        "GitHub Sponsors setzt Teilnahmeberechtigung und Einrichtung durch den Maintainer voraus.",
+        "Die Analyse eines öffentlichen Repositorys ist keine Erlaubnis, dessen Inhalte kommerziell weiterzuverwenden."
+      ]
+    },
+    "launchPlan": {
+      "basis": "rules",
+      "tasks": [
+        {
+          "week": 1,
+          "title": "Passende Topics",
+          "why": "Vergib drei bis acht präzise Topics (Sprache, Problemfeld, Projekttyp).",
+          "effort": "5 bis 10 Min.",
+          "signal": "Befund ist bei erneutem Audit \"vorhanden\"",
+          "findingIds": [
+            "distribution.topics@1"
+          ]
+        },
+        {
+          "week": 1,
+          "title": "Verweis auf Paketregister",
+          "why": "Falls veröffentlicht: verlinke die Registry-Seite (npm, PyPI, crates.io usw.) in der README. Falls nicht: Veröffentlichung prüfen.",
+          "effort": "5 bis 60 Min.",
+          "signal": "Befund ist bei erneutem Audit \"vorhanden\"",
+          "findingIds": [
+            "distribution.registry@1"
+          ]
+        },
+        {
+          "week": 1,
+          "title": "Sicherheitsrichtlinie",
+          "why": "Lege SECURITY.md an: Meldeweg (z. B. private Sicherheitsmeldung über GitHub), unterstützte Versionen, Reaktionszeit ohne Garantie.",
+          "effort": "15 bis 30 Min.",
+          "signal": "Befund ist bei erneutem Audit \"vorhanden\"",
+          "findingIds": [
+            "trust.security_policy@1"
+          ]
+        },
+        {
+          "week": 2,
+          "title": "Weiterführende Dokumentation",
+          "why": "Lege einen docs-Ordner oder eine Doku-Seite an und verlinke sie prominent in der README.",
+          "effort": "1 bis 4 Std.",
+          "signal": "Befund ist bei erneutem Audit \"vorhanden\"",
+          "findingIds": [
+            "usability.docs@1"
+          ]
+        },
+        {
+          "week": 2,
+          "title": "Website-Feld gesetzt",
+          "why": "Trage im Repository unter \"About\" eine Website ein (Demo, Doku oder Produktseite).",
+          "effort": "2 bis 10 Min.",
+          "signal": "Befund ist bei erneutem Audit \"vorhanden\"",
+          "findingIds": [
+            "distribution.homepage@1"
+          ]
+        },
+        {
+          "week": 2,
+          "title": "Nächstes Release vorbereiten",
+          "why": "Ein Release bündelt die Verbesserungen und gibt einen konkreten Anlass für die Ankündigung.",
+          "effort": "30 bis 90 Min.",
+          "signal": "Release mit Notes veröffentlicht",
+          "findingIds": []
+        },
+        {
+          "week": 3,
+          "title": "Release ankündigen",
+          "why": "Kurze, ehrliche Ankündigung mit Nutzen, Installationsweg und Link. Keine Versprechen zu Reichweite.",
+          "effort": "30 bis 60 Min.",
+          "signal": "Besuche und Rückfragen nach der Ankündigung (sofern messbar)",
+          "findingIds": []
+        },
+        {
+          "week": 3,
+          "title": "In einer passenden Entwicklercommunity vorstellen",
+          "why": "Eine Community wählen, in der die Zielgruppe tatsächlich aktiv ist, und deren Regeln zu Eigenwerbung beachten.",
+          "effort": "30 bis 60 Min.",
+          "signal": "Qualifizierte Rückmeldungen, Issues oder Installationen",
+          "findingIds": []
+        },
+        {
+          "week": 4,
+          "title": "Rückmeldungen auswerten",
+          "why": "Fragen und Issues sammeln; die häufigste Frage direkt in der README beantworten.",
+          "effort": "30 bis 60 Min.",
+          "signal": "Anzahl wiederkehrender Fragen sinkt",
+          "findingIds": []
+        },
+        {
+          "week": 4,
+          "title": "Erneut auditieren und vergleichen",
+          "why": "Neuer Audit auf dem aktuellen Commit zeigt, welche Befunde erledigt sind.",
+          "effort": "5 bis 10 Min.",
+          "signal": "Weniger fehlende Befunde mit hoher Schwere",
+          "findingIds": []
+        }
+      ]
+    },
+    "injectionFlags": []
+  },
+  "ai": null,
+  "export": {
+    "files": [
+      {
+        "name": "audit.json",
+        "included": true
+      },
+      {
+        "name": "audit.md",
+        "included": true
+      },
+      {
+        "name": "README.suggested.md",
+        "included": false,
+        "reason": "Wird nur mit dem optionalen KI-Launch-Paket erzeugt, das nicht ausgeführt wurde."
+      },
+      {
+        "name": "launch-plan.md",
+        "included": true
+      },
+      {
+        "name": "monetization-plan.md",
+        "included": true
+      },
+      {
+        "name": "marketing-drafts.md",
+        "included": false,
+        "reason": "Wird nur mit dem optionalen KI-Launch-Paket erzeugt, das nicht ausgeführt wurde."
+      }
+    ]
+  }
+}

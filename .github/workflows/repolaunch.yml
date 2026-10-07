@@ -1,0 +1,63 @@
+name: RepoLaunch
+
+on:
+  push:
+    paths:
+      - "repolaunch/**"
+      - ".github/workflows/repolaunch.yml"
+  pull_request:
+    paths:
+      - "repolaunch/**"
+      - ".github/workflows/repolaunch.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repolaunch-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: repolaunch
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: repolaunch/package-lock.json
+      - name: Abhängigkeiten (Lockfile)
+        run: npm ci --no-audit --no-fund
+      - name: Typprüfung
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Tests
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Browser-Smoke-Test (Demo-Daten, Testadapter, axe-core)
+        env:
+          REPOLAUNCH_DEMO: "1"
+          AI_PROVIDER: fake
+          REPOLAUNCH_DATA_DIR: ${{ runner.temp }}/repolaunch-data
+          RATE_LIMIT_JOBS_PER_HOUR: "200"
+          RATE_LIMIT_AI_PER_HOUR: "100"
+          GITHUB_TOKEN: ""
+        run: |
+          npx next start -p 3100 > "${RUNNER_TEMP}/server.log" 2>&1 &
+          for i in $(seq 1 30); do curl -fs http://127.0.0.1:3100/api/health >/dev/null && break; sleep 1; done
+          CHROMIUM_PATH="$(command -v google-chrome)" BASE_URL=http://127.0.0.1:3100 npm run smoke:browser
+      - name: Server-Log bei Fehler
+        if: failure()
+        run: cat "${RUNNER_TEMP}/server.log" || true

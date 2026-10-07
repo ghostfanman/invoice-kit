@@ -1,0 +1,8 @@
+{
+  "version": "beispiel",
+  "rules": {
+    "distribution.topics": { "weights": { "library": 3 } },
+    "trust.code_of_conduct": { "enabled": false },
+    "usability.visual_demo": { "goalAdjust": { "users": 1 } }
+  }
+}
