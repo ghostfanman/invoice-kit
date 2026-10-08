@@ -5,7 +5,7 @@ RepoLaunch läuft als genau ein Prozess mit einem Worker und einer SQLite-Datei.
 ## Docker
 
 ```sh
-cd repolaunch
+git clone https://github.com/ghostfanman/repolaunch.git && cd repolaunch
 cp .env.example .env          # Werte setzen, insbesondere optional GITHUB_TOKEN und KI-Variablen
 mkdir -p data && sudo chown 1000:1000 data   # Container läuft als Benutzer "node" (UID 1000)
 docker compose up -d --build
@@ -21,8 +21,8 @@ curl -s http://127.0.0.1:3000/api/health
 
 ```sh
 # Node.js 24 LTS installieren, dann:
-git clone <repository> /opt/repolaunch-src
-cd /opt/repolaunch-src/repolaunch
+git clone https://github.com/ghostfanman/repolaunch.git /opt/repolaunch
+cd /opt/repolaunch
 npm ci && npm run build
 cp -r .next/static .next/standalone/.next/static
 ```
@@ -36,7 +36,7 @@ After=network-online.target
 
 [Service]
 User=repolaunch
-WorkingDirectory=/opt/repolaunch-src/repolaunch/.next/standalone
+WorkingDirectory=/opt/repolaunch/.next/standalone
 EnvironmentFile=/etc/repolaunch.env
 Environment=NODE_ENV=production PORT=3000 HOSTNAME=127.0.0.1 REPOLAUNCH_DATA_DIR=/var/lib/repolaunch
 ExecStart=/usr/bin/node server.js
@@ -72,7 +72,7 @@ Konsistentes Online-Backup bei laufendem Dienst mit dem mitgelieferten Skript (n
 
 ```sh
 # VPS
-node /opt/repolaunch-src/repolaunch/scripts/backup.mjs /var/lib/repolaunch/repolaunch.sqlite /var/backups/repolaunch/repolaunch-$(date +%F).sqlite
+node /opt/repolaunch/scripts/backup.mjs /var/lib/repolaunch/repolaunch.sqlite /var/backups/repolaunch/repolaunch-$(date +%F).sqlite
 # Docker (Ziel liegt im gemounteten ./data)
 docker compose exec repolaunch node scripts/backup.mjs /data/repolaunch.sqlite /data/backup-$(date +%F).sqlite
 # Alte Backups entfernen
@@ -88,7 +88,7 @@ Backups enthalten personenbezogene Nutzerangaben bis zu deren Ablauf; Aufbewahru
 ## Aktualisierung
 
 ```sh
-cd /opt/repolaunch-src && git pull && cd repolaunch && npm ci && npm run build && cp -r .next/static .next/standalone/.next/static && sudo systemctl restart repolaunch
+cd /opt/repolaunch && git pull && npm ci && npm run build && cp -r .next/static .next/standalone/.next/static && sudo systemctl restart repolaunch
 ```
 
 Schemaänderungen laufen beim Start automatisch (Tabelle `meta`, Schlüssel `schema_version`). Vor jeder Aktualisierung ein Backup ziehen.

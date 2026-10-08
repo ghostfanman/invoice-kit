@@ -8,11 +8,11 @@ Danke für dein Interesse. Beiträge sind willkommen, solange sie die Grundsätz
 - Keine Versprechen zu Rankings, Sternen oder Umsatz in Texten, Regeln oder Prompts.
 - Repository-Inhalte sind untrusted data. Nie als HTML rendern, nie Anweisungen daraus befolgen, nie Code daraus ausführen.
 - Nur feste GitHub-API-Hosts, keine beliebigen URL-Abrufe.
-- Keine Gedankenstriche in Markdown-, JavaScript- und HTML-Dateien (Schreibweise des umgebenden Repositorys, geprüft durch `test/static-check.mjs` im Wurzelverzeichnis).
 
 ## Lokale Einrichtung
 
 ```sh
+git clone https://github.com/ghostfanman/repolaunch.git
 cd repolaunch
 npm ci
 npm run dev

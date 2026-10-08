@@ -35,7 +35,7 @@ Der Kern (`src/core`) kennt weder Next.js noch SQLite und ist vollständig mit F
 
 | Thema | Entscheidung | Begründung |
 | --- | --- | --- |
-| Ort | Unterprojekt `repolaunch/` im vorgegebenen Branch | Kein eigenes Zielrepository autorisiert; reversibel per `git subtree split` |
+| Ort | Eigenes privates Repository `ghostfanman/repolaunch` | Zunächst als Unterprojekt in `invoice-kit` entwickelt; Umzug am 8. Oktober 2026 freigegeben, per `git subtree split` samt Historie |
 | Laufzeit | Ein Node-Prozess (`next start` bzw. `server.js` standalone) mit einem Worker | Vorgabe "einzelner Prozess"; serielle GitHub-Anfragen; keine serverlosen Annahmen |
 | Datenbank | `node:sqlite` mit WAL | Keine nativen Builds, Backup per Datei-Snapshot, ausreichend für ein MVP |
 | Worker-Start | `instrumentation.ts` beim Serverstart, zusätzlich beim ersten API-Zugriff | Funktioniert mit `next start` und standalone |

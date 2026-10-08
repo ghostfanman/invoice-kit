@@ -17,6 +17,7 @@ RepoLaunch verspricht keine Rankings, Trending-Platzierungen, Sterne oder Umsät
 Voraussetzungen: Node.js 24 LTS (empfohlen) oder Node.js ab 22.13. Keine nativen Abhängigkeiten; SQLite kommt über das eingebaute `node:sqlite`.
 
 ```sh
+git clone https://github.com/ghostfanman/repolaunch.git
 cd repolaunch
 npm ci
 cp .env.example .env        # optional anpassen
@@ -96,4 +97,4 @@ Alle Einstellungen über Umgebungsvariablen, siehe [.env.example](.env.example).
 
 ## Lizenz
 
-Der Audit-Kern und dieses Repository-Verzeichnis stehen unter der [MIT-Lizenz](LICENSE). Siehe auch [CONTRIBUTING.md](CONTRIBUTING.md) und [SECURITY.md](SECURITY.md).
+Der Audit-Kern und dieses Repository stehen unter der [MIT-Lizenz](LICENSE). Siehe auch [CONTRIBUTING.md](CONTRIBUTING.md) und [SECURITY.md](SECURITY.md).
